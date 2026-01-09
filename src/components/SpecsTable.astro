@@ -1,0 +1,19 @@
+---
+const { specs } = Astro.props as { specs: Record<string, string> };
+---
+
+<section>
+  <h2>Specs</h2>
+  <div class="table-wrap">
+    <table>
+      <tbody>
+        {Object.entries(specs).map(([label, value]) => (
+          <tr>
+            <th>{label}</th>
+            <td>{value}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</section>

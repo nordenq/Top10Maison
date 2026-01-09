@@ -1,0 +1,272 @@
+---
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+
+const {
+  title,
+  description,
+  canonical,
+  schema = []
+} = Astro.props as {
+  title: string;
+  description: string;
+  canonical: string;
+  schema?: Array<Record<string, unknown>>;
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="robots" content="index,follow" />
+    {schema.map((entry) => (
+      <script type="application/ld+json">{JSON.stringify(entry)}</script>
+    ))}
+    <style>
+      :root {
+        color-scheme: light;
+        --paper: #f6f1e9;
+        --ink: #2c2a26;
+        --accent: #c96b2c;
+        --muted: #6d655c;
+        --card: #ffffff;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Georgia", "Times New Roman", serif;
+        background: radial-gradient(circle at top left, #fdf8f1 0%, #f6f1e9 50%, #efe7db 100%);
+        color: var(--ink);
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 16px;
+      }
+
+      main {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 48px 24px 80px;
+      }
+
+      .site-header,
+      .site-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 24px 32px;
+        background: #fffaf2;
+      }
+
+      .logo {
+        font-weight: 700;
+        letter-spacing: 0.04em;
+      }
+
+      .nav a {
+        margin-left: 16px;
+        font-size: 0.95rem;
+        color: var(--muted);
+      }
+
+      .hero {
+        display: grid;
+        gap: 24px;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        margin-bottom: 32px;
+      }
+
+      .card {
+        display: grid;
+        gap: 16px;
+        background: var(--card);
+        padding: 16px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(35, 24, 13, 0.08);
+      }
+
+      .card-body h3 {
+        margin: 0 0 8px;
+      }
+
+      .grid {
+        display: grid;
+        gap: 24px;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      }
+
+      .product-card {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: 160px 1fr;
+        padding: 20px;
+        background: var(--card);
+        border-radius: 20px;
+        box-shadow: 0 12px 34px rgba(35, 24, 13, 0.12);
+      }
+
+      .product-meta {
+        position: relative;
+      }
+
+      .rank {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        background: var(--accent);
+        color: #fff;
+        padding: 4px 8px;
+        border-radius: 999px;
+        font-size: 0.8rem;
+      }
+
+      .product-actions {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .price {
+        font-weight: 600;
+        color: var(--muted);
+      }
+
+      .cta-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin: 16px 0;
+      }
+
+      .breadcrumbs ol {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 0;
+        margin: 0 0 16px;
+        list-style: none;
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      .breadcrumbs li {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .table-wrap {
+        overflow-x: auto;
+        margin: 16px 0 32px;
+        background: #fffdf8;
+        border-radius: 16px;
+        border: 1px solid #efe1cf;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 560px;
+      }
+
+      th,
+      td {
+        text-align: left;
+        padding: 12px 16px;
+        border-bottom: 1px solid #efe1cf;
+      }
+
+      th {
+        font-weight: 600;
+        color: var(--muted);
+      }
+
+      .affiliate-button {
+        padding: 10px 16px;
+        background: var(--accent);
+        color: #fff;
+        border-radius: 999px;
+        font-weight: 600;
+      }
+
+      .stack {
+        display: grid;
+        gap: 24px;
+      }
+
+      .pros-cons {
+        display: grid;
+        gap: 24px;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      }
+
+      .toc {
+        background: #fff6ea;
+        padding: 16px 20px;
+        border-radius: 16px;
+        margin-bottom: 32px;
+      }
+
+      .verdict {
+        padding: 20px;
+        background: #fff8ee;
+        border-radius: 16px;
+        border: 1px solid #f0d8bf;
+        margin: 24px 0;
+      }
+
+      .affiliate-disclosure {
+        margin: 24px 0;
+        padding: 16px;
+        background: #fff0dc;
+        border-left: 4px solid var(--accent);
+        border-radius: 12px;
+      }
+
+      .faq dt {
+        font-weight: 600;
+        margin-top: 16px;
+      }
+
+      .faq dd {
+        margin: 8px 0 0;
+        color: var(--muted);
+      }
+
+      @media (max-width: 720px) {
+        .site-header,
+        .site-footer {
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        .product-card {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <Header />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

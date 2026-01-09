@@ -1,0 +1,167 @@
+[
+  {
+    "slug": "kitchen",
+    "name": "Kitchen",
+    "description": "Best kitchen products and appliances",
+    "intro": "Kitchen upgrades should make daily cooking easier, not more complicated. This page helps you compare reliable appliances, cookware, and essentials that deliver consistent results without wasting counter space. We prioritize durability, cleaning ease, and practical features that matter in busy kitchens. Use these guides to narrow your options fast and move from research to purchase with confidence.",
+    "image": "/images/categories/kitchen.svg",
+    "published": true,
+    "selectionFactors": ["capacity", "ease of cleaning", "counter space"],
+    "howToChoose": [
+      "Match size and capacity to how often you cook at home.",
+      "Look for durable finishes that handle heat and daily use.",
+      "Prioritize features that save time, like quick presets or easy cleanup."
+    ],
+    "faq": [
+      {
+        "question": "What matters most when buying kitchen products?",
+        "answer": "Start with durability and daily ease of use, then compare features that save time."
+      },
+      {
+        "question": "How do I avoid overspending on appliances?",
+        "answer": "Focus on the few features you will use weekly and skip add-ons that inflate price."
+      }
+    ],
+    "subcategories": [
+      {
+        "slug": "appliances",
+        "name": "Appliances",
+        "description": "Kitchen appliances for daily cooking",
+        "intentCopy": "Compare appliances by real-world performance, not just wattage. We highlight options built for everyday cooking and reliable results.",
+        "published": true,
+        "intentTable": [
+          {
+            "label": "Budget-first",
+            "audience": "First-time buyers",
+            "priority": "Low upfront cost",
+            "priceBand": "$50-$120"
+          },
+          {
+            "label": "Best overall value",
+            "audience": "Most homes",
+            "priority": "Balanced performance",
+            "priceBand": "$120-$220"
+          },
+          {
+            "label": "Premium build",
+            "audience": "Frequent cooks",
+            "priority": "Durability and features",
+            "priceBand": "$220-$400"
+          },
+          {
+            "label": "Small-space friendly",
+            "audience": "Apartments",
+            "priority": "Compact footprint",
+            "priceBand": "$80-$180"
+          }
+        ],
+        "faq": [
+          {
+            "question": "What is the best appliance for most homes?",
+            "answer": "Pick a model that balances performance, size, and easy cleanup over extra features."
+          }
+        ]
+      },
+      {
+        "slug": "cookware",
+        "name": "Cookware",
+        "description": "Pots, pans, and tools for every recipe",
+        "intentCopy": "Cookware choices should match your cooking style, heat source, and how often you cook. We focus on pieces that last and perform consistently.",
+        "published": true,
+        "intentTable": [
+          {
+            "label": "Budget-first",
+            "audience": "Occasional cooks",
+            "priority": "Low cost",
+            "priceBand": "$40-$100"
+          },
+          {
+            "label": "Best overall value",
+            "audience": "Most homes",
+            "priority": "Versatility",
+            "priceBand": "$100-$220"
+          },
+          {
+            "label": "Premium build",
+            "audience": "Daily cooks",
+            "priority": "Long-term durability",
+            "priceBand": "$220-$450"
+          },
+          {
+            "label": "Small-space friendly",
+            "audience": "Compact kitchens",
+            "priority": "Stackable sets",
+            "priceBand": "$70-$160"
+          }
+        ],
+        "faq": [
+          {
+            "question": "Is nonstick cookware worth it?",
+            "answer": "Nonstick is convenient for low-oil cooking but should be replaced more frequently than stainless or cast iron."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "bedroom",
+    "name": "Bedroom",
+    "description": "Comfort-first bedroom essentials",
+    "intro": "Bedroom essentials need to feel good night after night, not just on day one. This guide highlights bedding and sleep products that balance comfort, breathability, and long-term value. We focus on materials that age well, easy-care fabrics, and fits that actually stay put. Use these comparisons to make a smart, lasting choice.",
+    "image": "/images/categories/bedroom.svg",
+    "published": true,
+    "selectionFactors": ["comfort", "breathability", "care needs"],
+    "howToChoose": [
+      "Choose materials that match your sleep temperature.",
+      "Prioritize easy-care fabrics if you wash bedding often.",
+      "Set a budget based on how long you plan to keep the item."
+    ],
+    "faq": [
+      {
+        "question": "What makes bedroom products feel premium?",
+        "answer": "Look for breathable materials and construction that holds up after repeated washing."
+      }
+    ],
+    "subcategories": [
+      {
+        "slug": "bedding",
+        "name": "Bedding",
+        "description": "Sheets, duvets, and pillows",
+        "intentCopy": "Bedding buyers want comfort and temperature control. We focus on sets that stay soft, wash well, and last through daily use.",
+        "published": true,
+        "intentTable": [
+          {
+            "label": "Budget-first",
+            "audience": "Guest rooms",
+            "priority": "Low cost",
+            "priceBand": "$30-$80"
+          },
+          {
+            "label": "Best overall value",
+            "audience": "Primary bedrooms",
+            "priority": "Comfort vs price",
+            "priceBand": "$80-$160"
+          },
+          {
+            "label": "Premium build",
+            "audience": "Hot sleepers",
+            "priority": "Breathability",
+            "priceBand": "$160-$300"
+          },
+          {
+            "label": "Small-space friendly",
+            "audience": "Dorms",
+            "priority": "Easy care",
+            "priceBand": "$40-$120"
+          }
+        ],
+        "faq": [
+          {
+            "question": "What bedding is best for hot sleepers?",
+            "answer": "Look for breathable fabrics like percale cotton or linen with lower thread counts."
+          }
+        ]
+      }
+    ]
+  }
+]

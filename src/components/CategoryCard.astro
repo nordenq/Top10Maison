@@ -1,0 +1,24 @@
+---
+import type { Category, Subcategory } from "../utils/data";
+import { categoryUrl, subcategoryUrl } from "../utils/routes";
+
+const { category, subcategory } = Astro.props as {
+  category: Category;
+  subcategory?: Subcategory;
+};
+
+const href = subcategory
+  ? subcategoryUrl(category.slug, subcategory.slug)
+  : categoryUrl(category.slug);
+const title = subcategory ? subcategory.name : category.name;
+const description = subcategory ? subcategory.description : category.description;
+const image = category.image;
+---
+
+<a class="card" href={href}>
+  <img src={image} alt={title} loading="lazy" width="640" height="360" />
+  <div class="card-body">
+    <h3>{title}</h3>
+    <p>{description}</p>
+  </div>
+</a>

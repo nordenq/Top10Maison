@@ -1,0 +1,12 @@
+---
+const { title, bullets } = Astro.props as { title: string; bullets: string[] };
+---
+
+<section>
+  <h2>{title}</h2>
+  <ul>
+    {bullets.map((item) => (
+      <li>{item}</li>
+    ))}
+  </ul>
+</section>

@@ -1,0 +1,45 @@
+---
+import type { Product } from "../utils/data";
+import AffiliateButton from "./AffiliateButton.astro";
+import { productUrl } from "../utils/routes";
+
+const { product, rank } = Astro.props as { product: Product; rank: number };
+---
+
+<article class="product-card" id={product.slug}>
+  <div class="product-meta">
+    <span class="rank">#{rank}</span>
+    <a href={productUrl(product.slug)}>
+      <img src={product.image} alt={product.name} loading="lazy" width="640" height="360" />
+    </a>
+  </div>
+  <div class="product-body">
+    <h3><a href={productUrl(product.slug)}>{product.name}</a></h3>
+    <p>{product.description}</p>
+    <p><strong>Best for:</strong> {product.bestFor}</p>
+
+    <div class="pros-cons">
+      <div>
+        <h4>Pros</h4>
+        <ul>
+          {product.pros.map((item) => (
+            <li>{item}</li>
+          ))}
+        </ul>
+      </div>
+      <div>
+        <h4>Cons</h4>
+        <ul>
+          {product.cons.map((item) => (
+            <li>{item}</li>
+          ))}
+        </ul>
+      </div>
+    </div>
+
+    <div class="product-actions">
+      <span class="price">{product.price}</span>
+      <AffiliateButton url={product.affiliateUrl} label="Check price" productSlug={product.slug} />
+    </div>
+  </div>
+</article>

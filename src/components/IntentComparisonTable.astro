@@ -1,0 +1,31 @@
+---
+const { rows } = Astro.props as {
+  rows: Array<{ label: string; audience: string; priority: string; priceBand: string }>;
+};
+---
+
+<section>
+  <h2>Buyer intent comparison</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Intent</th>
+          <th>Who it is for</th>
+          <th>Key priority</th>
+          <th>Price band</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((row) => (
+          <tr>
+            <td>{row.label}</td>
+            <td>{row.audience}</td>
+            <td>{row.priority}</td>
+            <td>{row.priceBand}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</section>

@@ -1,0 +1,170 @@
+[
+  {
+    "slug": "cosori-air-fryer",
+    "name": "Cosori Air Fryer",
+    "description": "Compact air fryer with fast heat-up and easy presets.",
+    "image": "/images/products/cosori-air-fryer.svg",
+    "price": "$129",
+    "affiliateUrl": "https://www.amazon.com/dp/B07GJBBGHG",
+    "published": true,
+    "pros": ["Fast preheat", "Simple controls", "Even cooking"],
+    "cons": ["Limited basket size", "Noisy fan"],
+    "bestFor": "Small households who want quick weeknight meals",
+    "uniqueValue": "Strong performance in a compact footprint",
+    "notIdealFor": "Large families",
+    "specs": {
+      "Capacity": "5.8 qt",
+      "Power": "1700 W",
+      "Dimensions": "11.8 x 14.7 x 12.0 in",
+      "Warranty": "1 year",
+      "Noise level": "Moderate"
+    },
+    "faq": [
+      {
+        "question": "Is the Cosori Air Fryer easy to clean?",
+        "answer": "Yes, the basket is nonstick and the removable parts are dishwasher safe."
+      }
+    ],
+    "alternatives": ["ninja-af101"]
+  },
+  {
+    "slug": "ninja-af101",
+    "name": "Ninja AF101",
+    "description": "Reliable air fryer with crisp results and dishwasher-safe basket.",
+    "image": "/images/products/ninja-af101.svg",
+    "price": "$119",
+    "affiliateUrl": "https://www.amazon.com/dp/B07FDJMC9Q",
+    "published": true,
+    "pros": ["Crisp finish", "Solid build", "Easy cleaning"],
+    "cons": ["Small capacity", "Basic presets"],
+    "bestFor": "Budget-conscious shoppers who still want strong performance",
+    "uniqueValue": "Great crisping at a lower price point",
+    "notIdealFor": "Cooking for more than two people",
+    "specs": {
+      "Capacity": "4 qt",
+      "Power": "1550 W",
+      "Dimensions": "8.5 x 12.1 x 11 in",
+      "Warranty": "1 year",
+      "Noise level": "Moderate"
+    },
+    "faq": [
+      {
+        "question": "Does the Ninja AF101 cook evenly?",
+        "answer": "Yes, it delivers consistent crisping when food is placed in a single layer."
+      }
+    ],
+    "alternatives": ["cosori-air-fryer"]
+  },
+  {
+    "slug": "greenpan-lima",
+    "name": "GreenPan Lima",
+    "description": "Ceramic nonstick pan with easy release and sturdy base.",
+    "image": "/images/products/greenpan-lima.svg",
+    "price": "$79",
+    "affiliateUrl": "https://www.amazon.com/dp/B004WQP6NW",
+    "published": true,
+    "pros": ["Smooth nonstick", "Even heating", "Easy to wash"],
+    "cons": ["Handle gets warm", "Not induction-ready"],
+    "bestFor": "Everyday cooking with minimal oil",
+    "uniqueValue": "Reliable ceramic nonstick at a fair price",
+    "notIdealFor": "Induction cooktops",
+    "specs": {
+      "Material": "Ceramic nonstick",
+      "Size": "10 inch",
+      "Oven safe": "Up to 400F",
+      "Warranty": "Limited",
+      "Weight": "2.5 lb"
+    },
+    "faq": [
+      {
+        "question": "Is the GreenPan Lima dishwasher safe?",
+        "answer": "Hand washing is recommended to extend the coating life, but it can handle gentle cycles."
+      }
+    ],
+    "alternatives": ["tramontina-fry-pan"]
+  },
+  {
+    "slug": "tramontina-fry-pan",
+    "name": "Tramontina Fry Pan",
+    "description": "Heavy-gauge aluminum pan with durable nonstick coating.",
+    "image": "/images/products/tramontina-fry-pan.svg",
+    "price": "$69",
+    "affiliateUrl": "https://www.amazon.com/dp/B009HBKQR0",
+    "published": true,
+    "pros": ["Even heat", "Comfortable handle", "Great value"],
+    "cons": ["Bulky for small cabinets", "Not ideal for high heat"],
+    "bestFor": "Budget shoppers who still want dependable performance",
+    "uniqueValue": "Solid build without premium pricing",
+    "notIdealFor": "Very small kitchens",
+    "specs": {
+      "Material": "Aluminum",
+      "Size": "10 inch",
+      "Oven safe": "Up to 400F",
+      "Warranty": "Lifetime",
+      "Weight": "3.2 lb"
+    },
+    "faq": [
+      {
+        "question": "Does the Tramontina pan warp over time?",
+        "answer": "It stays flat with normal use if you avoid rapid temperature changes."
+      }
+    ],
+    "alternatives": ["greenpan-lima"]
+  },
+  {
+    "slug": "brooklinen-core-sheet-set",
+    "name": "Brooklinen Core Sheet Set",
+    "description": "Soft percale sheets designed for breathable comfort.",
+    "image": "/images/products/brooklinen-core-sheet-set.svg",
+    "price": "$179",
+    "affiliateUrl": "https://www.amazon.com/dp/B01N9F1W1U",
+    "published": true,
+    "pros": ["Breathable weave", "Crisp feel", "Good size range"],
+    "cons": ["Premium price", "Wrinkles easily"],
+    "bestFor": "Hot sleepers who want a crisp feel",
+    "uniqueValue": "Cooling percale with upscale finish",
+    "notIdealFor": "Shoppers on a tight budget",
+    "specs": {
+      "Material": "Percale cotton",
+      "Thread count": "270",
+      "Fit": "15 inch deep",
+      "Warranty": "1 year",
+      "Care": "Machine washable"
+    },
+    "faq": [
+      {
+        "question": "Do Brooklinen sheets soften over time?",
+        "answer": "Yes, they soften after a few washes while maintaining a crisp feel."
+      }
+    ],
+    "alternatives": ["mellanni-sheet-set"]
+  },
+  {
+    "slug": "mellanni-sheet-set",
+    "name": "Mellanni Sheet Set",
+    "description": "Microfiber sheets known for softness and easy care.",
+    "image": "/images/products/mellanni-sheet-set.svg",
+    "price": "$39",
+    "affiliateUrl": "https://www.amazon.com/dp/B00NLLF8VC",
+    "published": true,
+    "pros": ["Soft feel", "Low price", "Easy care"],
+    "cons": ["Less breathable", "Lightweight fabric"],
+    "bestFor": "Budget-focused bedrooms",
+    "uniqueValue": "Comfortable sheets at a low price",
+    "notIdealFor": "Hot sleepers",
+    "specs": {
+      "Material": "Microfiber",
+      "Thread count": "N/A",
+      "Fit": "16 inch deep",
+      "Warranty": "Lifetime",
+      "Care": "Machine washable"
+    },
+    "faq": [
+      {
+        "question": "Do Mellanni sheets pill?",
+        "answer": "They resist pilling with gentle washing and low-heat drying."
+      }
+    ],
+    "alternatives": ["brooklinen-core-sheet-set"]
+  }
+]

@@ -1,0 +1,261 @@
+import categoriesData from "../data/categories.json";
+import productsData from "../data/products.json";
+import toplistsData from "../data/toplists.json";
+
+export type Subcategory = {
+  slug: string;
+  name: string;
+  description: string;
+  intentCopy: string;
+  intentTable: Array<{
+    label: string;
+    audience: string;
+    priority: string;
+    priceBand: string;
+  }>;
+  faq: FaqItem[];
+  published: boolean;
+};
+
+export type Category = {
+  slug: string;
+  name: string;
+  description: string;
+  intro: string;
+  image: string;
+  selectionFactors: string[];
+  howToChoose: string[];
+  faq: FaqItem[];
+  subcategories: Subcategory[];
+  published: boolean;
+};
+
+export type Product = {
+  slug: string;
+  name: string;
+  description: string;
+  image: string;
+  price: string;
+  affiliateUrl: string;
+  pros: string[];
+  cons: string[];
+  bestFor: string;
+  uniqueValue: string;
+  notIdealFor: string;
+  specs: Record<string, string>;
+  faq: FaqItem[];
+  alternatives: string[];
+  published: boolean;
+};
+
+export type Toplist = {
+  slug: string;
+  category: string;
+  subcategory: string;
+  title: string;
+  h1: string;
+  metaTitle: string;
+  metaDescription: string;
+  count: number;
+  keywordSlug: string;
+  products: string[];
+  affiliate: boolean;
+  performanceScore: number;
+  quickCompareCriteria: string[];
+  howWePicked: string[];
+  whoShouldBuy: string[];
+  faq: FaqItem[];
+  published: boolean;
+};
+
+export type FaqItem = {
+  question: string;
+  answer: string;
+};
+
+function assert(condition: boolean, message: string): asserts condition {
+  if (!condition) {
+    throw new Error(message);
+  }
+}
+
+function assertNonEmpty(value: string, label: string): void {
+  assert(value.trim().length > 0, `${label} must not be empty.`);
+}
+
+function assertMaxLength(value: string, max: number, label: string): void {
+  assert(value.length <= max, `${label} must be ${max} characters or fewer.`);
+}
+
+function assertNonEmptyArray(values: string[], label: string): void {
+  assert(Array.isArray(values) && values.length > 0, `${label} must not be empty.`);
+  for (const value of values) {
+    assertNonEmpty(value, `${label} item`);
+  }
+}
+
+function assertAllowedValues(values: string[], allowed: string[], label: string): void {
+  for (const value of values) {
+    assert(allowed.includes(value), `${label} contains unsupported value: ${value}`);
+  }
+}
+
+function assertFaq(items: FaqItem[], label: string): void {
+  assert(Array.isArray(items) && items.length > 0, `${label} FAQ must not be empty.`);
+  for (const item of items) {
+    assertNonEmpty(item.question, `${label} FAQ question`);
+    assertNonEmpty(item.answer, `${label} FAQ answer`);
+  }
+}
+
+export function getCategories(): Category[] {
+  const categories = (categoriesData as Category[]).filter((category) => category.published);
+  assert(Array.isArray(categories) && categories.length > 0, "categories.json must contain at least one published category.");
+
+  const slugs = new Set<string>();
+  for (const category of categories) {
+    assertNonEmpty(category.slug, "Category slug");
+    assert(typeof category.published === "boolean", `Category ${category.slug} published must be boolean.`);
+    assertNonEmpty(category.name, `Category ${category.slug} name`);
+    assertNonEmpty(category.description, `Category ${category.slug} description`);
+    assertNonEmpty(category.intro, `Category ${category.slug} intro`);
+    assertNonEmpty(category.image, `Category ${category.slug} image`);
+    assertNonEmptyArray(category.selectionFactors, `Category ${category.slug} selectionFactors`);
+    assertNonEmptyArray(category.howToChoose, `Category ${category.slug} howToChoose`);
+    assertFaq(category.faq, `Category ${category.slug}`);
+    assert(Array.isArray(category.subcategories) && category.subcategories.length > 0, `Category ${category.slug} must have subcategories.`);
+    assert(!slugs.has(category.slug), `Duplicate category slug: ${category.slug}`);
+    slugs.add(category.slug);
+
+    const subSlugs = new Set<string>();
+    const publishedSubcategories = category.subcategories.filter((subcategory) => subcategory.published);
+    assert(publishedSubcategories.length > 0, `Category ${category.slug} must have published subcategories.`);
+    category.subcategories = publishedSubcategories;
+    for (const subcategory of category.subcategories) {
+      assertNonEmpty(subcategory.slug, `Subcategory slug in ${category.slug}`);
+      assert(typeof subcategory.published === "boolean", `Subcategory ${subcategory.slug} published must be boolean.`);
+      assertNonEmpty(subcategory.name, `Subcategory ${subcategory.slug} name`);
+      assertNonEmpty(subcategory.description, `Subcategory ${subcategory.slug} description`);
+      assertNonEmpty(subcategory.intentCopy, `Subcategory ${subcategory.slug} intentCopy`);
+      assert(Array.isArray(subcategory.intentTable) && subcategory.intentTable.length > 0, `Subcategory ${subcategory.slug} intentTable must not be empty.`);
+      for (const row of subcategory.intentTable) {
+        assertNonEmpty(row.label, `Subcategory ${subcategory.slug} intentTable label`);
+        assertNonEmpty(row.audience, `Subcategory ${subcategory.slug} intentTable audience`);
+        assertNonEmpty(row.priority, `Subcategory ${subcategory.slug} intentTable priority`);
+        assertNonEmpty(row.priceBand, `Subcategory ${subcategory.slug} intentTable priceBand`);
+      }
+      assertFaq(subcategory.faq, `Subcategory ${subcategory.slug}`);
+      assert(!subSlugs.has(subcategory.slug), `Duplicate subcategory slug in ${category.slug}: ${subcategory.slug}`);
+      subSlugs.add(subcategory.slug);
+    }
+  }
+
+  return categories;
+}
+
+export function getProducts(): Product[] {
+  const products = (productsData as Product[]).filter((product) => product.published);
+  assert(Array.isArray(products) && products.length > 0, "products.json must contain at least one published product.");
+
+  const slugs = new Set<string>();
+  for (const product of products) {
+    assertNonEmpty(product.slug, "Product slug");
+    assert(typeof product.published === "boolean", `Product ${product.slug} published must be boolean.`);
+    assertNonEmpty(product.name, `Product ${product.slug} name`);
+    assertNonEmpty(product.description, `Product ${product.slug} description`);
+    assertNonEmpty(product.image, `Product ${product.slug} image`);
+    assertNonEmpty(product.price, `Product ${product.slug} price`);
+    assertNonEmpty(product.affiliateUrl, `Product ${product.slug} affiliateUrl`);
+    assertNonEmptyArray(product.pros, `Product ${product.slug} pros`);
+    assertNonEmptyArray(product.cons, `Product ${product.slug} cons`);
+    assertNonEmpty(product.bestFor, `Product ${product.slug} bestFor`);
+    assertNonEmpty(product.uniqueValue, `Product ${product.slug} uniqueValue`);
+    assertNonEmpty(product.notIdealFor, `Product ${product.slug} notIdealFor`);
+    assert(Object.keys(product.specs).length > 0, `Product ${product.slug} specs must not be empty.`);
+    assertFaq(product.faq, `Product ${product.slug}`);
+    assert(Array.isArray(product.alternatives) && product.alternatives.length > 0, `Product ${product.slug} alternatives must not be empty.`);
+    assert(!slugs.has(product.slug), `Duplicate product slug: ${product.slug}`);
+    slugs.add(product.slug);
+  }
+
+  return products;
+}
+
+export function getToplists(): Toplist[] {
+  const toplists = (toplistsData as Toplist[]).filter((toplist) => toplist.published);
+  assert(Array.isArray(toplists) && toplists.length > 0, "toplists.json must contain at least one published toplist.");
+
+  const slugs = new Set<string>();
+  for (const toplist of toplists) {
+    assertNonEmpty(toplist.slug, "Toplist slug");
+    assert(typeof toplist.published === "boolean", `Toplist ${toplist.slug} published must be boolean.`);
+    assertNonEmpty(toplist.category, `Toplist ${toplist.slug} category`);
+    assertNonEmpty(toplist.subcategory, `Toplist ${toplist.slug} subcategory`);
+    assertNonEmpty(toplist.title, `Toplist ${toplist.slug} title`);
+    assertNonEmpty(toplist.h1, `Toplist ${toplist.slug} h1`);
+    assertNonEmpty(toplist.metaTitle, `Toplist ${toplist.slug} metaTitle`);
+    assertNonEmpty(toplist.metaDescription, `Toplist ${toplist.slug} metaDescription`);
+    assertMaxLength(toplist.metaTitle, 60, `Toplist ${toplist.slug} metaTitle`);
+    assertMaxLength(toplist.metaDescription, 155, `Toplist ${toplist.slug} metaDescription`);
+    assertNonEmpty(toplist.keywordSlug, `Toplist ${toplist.slug} keywordSlug`);
+    assert(Number.isInteger(toplist.count) && toplist.count > 0, `Toplist ${toplist.slug} count must be a positive integer.`);
+    assert(Array.isArray(toplist.products) && toplist.products.length > 0, `Toplist ${toplist.slug} must have products.`);
+    assert(Number.isFinite(toplist.performanceScore), `Toplist ${toplist.slug} performanceScore must be a number.`);
+    assertNonEmptyArray(toplist.quickCompareCriteria, `Toplist ${toplist.slug} quickCompareCriteria`);
+    assertAllowedValues(toplist.quickCompareCriteria, ["Best for", "Key win", "Price range"], `Toplist ${toplist.slug} quickCompareCriteria`);
+    assertNonEmptyArray(toplist.howWePicked, `Toplist ${toplist.slug} howWePicked`);
+    assertNonEmptyArray(toplist.whoShouldBuy, `Toplist ${toplist.slug} whoShouldBuy`);
+    assertFaq(toplist.faq, `Toplist ${toplist.slug}`);
+    assert(!slugs.has(toplist.slug), `Duplicate toplist slug: ${toplist.slug}`);
+    slugs.add(toplist.slug);
+  }
+
+  return toplists;
+}
+
+export function buildDataIndex() {
+  const categories = getCategories();
+  const products = getProducts();
+  const toplists = getToplists();
+
+  const categoryMap = new Map<string, Category>();
+  const subcategoryMap = new Map<string, Subcategory>();
+  for (const category of categories) {
+    categoryMap.set(category.slug, category);
+    for (const subcategory of category.subcategories) {
+      subcategoryMap.set(`${category.slug}:${subcategory.slug}`, subcategory);
+    }
+  }
+
+  const productMap = new Map<string, Product>();
+  for (const product of products) {
+    productMap.set(product.slug, product);
+  }
+
+  for (const toplist of toplists) {
+    const categoryKey = toplist.category;
+    const subcategoryKey = `${toplist.category}:${toplist.subcategory}`;
+    assert(categoryMap.has(categoryKey), `Toplist ${toplist.slug} references missing category: ${categoryKey}`);
+    assert(subcategoryMap.has(subcategoryKey), `Toplist ${toplist.slug} references missing subcategory: ${subcategoryKey}`);
+
+    for (const productSlug of toplist.products) {
+      assert(productMap.has(productSlug), `Toplist ${toplist.slug} references missing product: ${productSlug}`);
+    }
+  }
+
+  for (const product of products) {
+    for (const alternativeSlug of product.alternatives) {
+      assert(productMap.has(alternativeSlug), `Product ${product.slug} references missing alternative: ${alternativeSlug}`);
+      assert(alternativeSlug !== product.slug, `Product ${product.slug} cannot list itself as an alternative.`);
+    }
+  }
+
+  return {
+    categories,
+    products,
+    toplists,
+    categoryMap,
+    subcategoryMap,
+    productMap
+  };
+}

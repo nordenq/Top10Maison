@@ -1,0 +1,136 @@
+---
+import Breadcrumbs from "../../../../components/Breadcrumbs.astro";
+import ContentLayout from "../../../../layouts/ContentLayout.astro";
+import FaqSection from "../../../../components/FaqSection.astro";
+import HowWePicked from "../../../../components/HowWePicked.astro";
+import ProductRankedCard from "../../../../components/ProductRankedCard.astro";
+import QuickCompareTable from "../../../../components/QuickCompareTable.astro";
+import WhoShouldBuy from "../../../../components/WhoShouldBuy.astro";
+import { buildDataIndex } from "../../../../utils/data";
+import { categoryUrl, subcategoryUrl, toplistUrl } from "../../../../utils/routes";
+import { buildCanonical, requireSite } from "../../../../utils/seo";
+import { buildArticleSchema, buildBreadcrumbSchema, buildFaqSchema } from "../../../../utils/schema";
+
+// Routing explanation:
+// /category/[category]/[subcategory]/top-[n]-[keyword].astro maps to
+// /category/{category-slug}/{subcategory-slug}/top-{n}-{keyword-slug}/.
+// getStaticPaths uses JSON data to generate every top list at build time.
+
+export function getStaticPaths() {
+  const { toplists } = buildDataIndex();
+  return toplists.map((list) => ({
+    params: {
+      category: list.category,
+      subcategory: list.subcategory,
+      n: String(list.count),
+      keyword: list.keywordSlug
+    }
+  }));
+}
+
+const { categories, toplists, productMap } = buildDataIndex();
+const paramsCategory = Astro.params.category;
+const paramsSubcategory = Astro.params.subcategory;
+const paramsN = Astro.params.n;
+const paramsKeyword = Astro.params.keyword;
+
+const list = toplists.find((item) =>
+  item.category === paramsCategory &&
+  item.subcategory === paramsSubcategory &&
+  String(item.count) === paramsN &&
+  item.keywordSlug === paramsKeyword
+);
+
+if (!list) {
+  throw new Error(`Missing toplist data for route: ${paramsCategory}/${paramsSubcategory}/top-${paramsN}-${paramsKeyword}`);
+}
+
+const category = categories.find((item) => item.slug === list.category);
+if (!category) {
+  throw new Error(`Missing category data for toplist: ${list.slug}`);
+}
+
+const subcategory = category.subcategories.find((item) => item.slug === list.subcategory);
+if (!subcategory) {
+  throw new Error(`Missing subcategory data for toplist: ${list.slug}`);
+}
+
+const products = list.products.map((slug) => {
+  const product = productMap.get(slug);
+  if (!product) {
+    throw new Error(`Missing product data for slug: ${slug}`);
+  }
+  return product;
+});
+
+const site = requireSite(Astro.site);
+const canonical = buildCanonical(
+  site,
+  toplistUrl(list.category, list.subcategory, list.count, list.keywordSlug)
+);
+const breadcrumbItems = [
+  { name: "Home", href: "/" },
+  { name: category.name, href: categoryUrl(category.slug) },
+  { name: subcategory.name, href: subcategoryUrl(category.slug, subcategory.slug) },
+  { name: list.title, href: toplistUrl(list.category, list.subcategory, list.count, list.keywordSlug) }
+];
+const schema = [
+  buildBreadcrumbSchema(site, [
+    { name: "Home", path: "/" },
+    { name: category.name, path: categoryUrl(category.slug) },
+    { name: subcategory.name, path: subcategoryUrl(category.slug, subcategory.slug) },
+    { name: list.title, path: toplistUrl(list.category, list.subcategory, list.count, list.keywordSlug) }
+  ]),
+  buildArticleSchema(site, list),
+  buildFaqSchema(list.faq)
+];
+
+const tocItems = [
+  { label: "Quick comparison", href: "#quick-comparison" },
+  { label: "Top picks", href: "#top-picks" },
+  { label: "How we picked", href: "#how-we-picked" },
+  { label: "Who should buy", href: "#who-should-buy" },
+  { label: "FAQ", href: "#faq" }
+];
+---
+
+<ContentLayout
+  title={list.metaTitle}
+  description={list.metaDescription}
+  canonical={canonical}
+  schema={schema}
+  tocItems={tocItems}
+  showAffiliateDisclosure={list.affiliate}
+>
+  <Breadcrumbs items={breadcrumbItems} />
+
+  <section>
+    <h1>{list.h1}</h1>
+    <p>{list.metaDescription}</p>
+  </section>
+
+  <section id="quick-comparison">
+    <QuickCompareTable products={products} criteria={list.quickCompareCriteria} />
+  </section>
+
+  <section id="top-picks">
+    <h2>Top picks</h2>
+    <div class="stack">
+      {products.map((product, index) => (
+        <ProductRankedCard product={product} rank={index + 1} />
+      ))}
+    </div>
+  </section>
+
+  <section id="how-we-picked">
+    <HowWePicked items={list.howWePicked} />
+  </section>
+
+  <section id="who-should-buy">
+    <WhoShouldBuy items={list.whoShouldBuy} />
+  </section>
+
+  <section id="faq">
+    <FaqSection items={list.faq} />
+  </section>
+</ContentLayout>

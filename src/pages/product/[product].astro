@@ -1,0 +1,92 @@
+---
+import AlternativesGrid from "../../components/AlternativesGrid.astro";
+import Breadcrumbs from "../../components/Breadcrumbs.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import ProsCons from "../../components/ProsCons.astro";
+import SpecsTable from "../../components/SpecsTable.astro";
+import VerdictBox from "../../components/VerdictBox.astro";
+import AffiliateButton from "../../components/AffiliateButton.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { buildDataIndex } from "../../utils/data";
+import { buildCanonical, buildTitle, requireSite } from "../../utils/seo";
+import { buildBreadcrumbSchema, buildFaqSchema, buildProductSchema } from "../../utils/schema";
+import { productUrl } from "../../utils/routes";
+
+// Routing explanation:
+// /product/[product].astro maps to /product/{product-slug}/.
+// getStaticPaths enumerates every product from JSON for static generation.
+
+export function getStaticPaths() {
+  const { products } = buildDataIndex();
+  return products.map((product) => ({
+    params: { product: product.slug }
+  }));
+}
+
+const { products, productMap } = buildDataIndex();
+const paramsProduct = Astro.params.product;
+
+const product = products.find((item) => item.slug === paramsProduct);
+if (!product) {
+  throw new Error(`Missing product data for slug: ${paramsProduct}`);
+}
+
+const alternativeProducts = product.alternatives.map((slug) => {
+  const alternative = productMap.get(slug);
+  if (!alternative) {
+    throw new Error(`Missing alternative product data for slug: ${slug}`);
+  }
+  return alternative;
+});
+
+const site = requireSite(Astro.site);
+const title = buildTitle(`${product.name} Review`, "Top10Maison");
+const description = product.description;
+const canonical = buildCanonical(site, productUrl(product.slug));
+const breadcrumbItems = [
+  { name: "Home", href: "/" },
+  { name: product.name, href: productUrl(product.slug) }
+];
+const schema = [
+  buildBreadcrumbSchema(site, [
+    { name: "Home", path: "/" },
+    { name: product.name, path: productUrl(product.slug) }
+  ]),
+  buildProductSchema(site, product),
+  buildFaqSchema(product.faq)
+];
+
+const verdictCopy = `${product.name} is best for ${product.bestFor}. It stands out for ${product.uniqueValue}, but may not suit buyers who need ${product.notIdealFor}.`;
+---
+
+<BaseLayout title={title} description={description} canonical={canonical} schema={schema}>
+  <Breadcrumbs items={breadcrumbItems} />
+
+  <section>
+    <h1>{product.name} Review</h1>
+    <img src={product.image} alt={product.name} loading="lazy" width="640" height="360" />
+    <p>{product.description}</p>
+    <div class="cta-row">
+      <AffiliateButton url={product.affiliateUrl} label="Check price" productSlug={product.slug} />
+      <AffiliateButton url={product.affiliateUrl} label="View on Amazon" productSlug={product.slug} />
+    </div>
+  </section>
+
+  <VerdictBox title="Quick verdict" verdict={verdictCopy} />
+
+  <SpecsTable specs={product.specs} />
+
+  <ProsCons pros={product.pros} cons={product.cons} />
+
+  <AlternativesGrid alternatives={alternativeProducts} title="Alternatives" />
+
+  <section>
+    <h2>Ready to buy?</h2>
+    <div class="cta-row">
+      <AffiliateButton url={product.affiliateUrl} label="Buy on Amazon" productSlug={product.slug} />
+      <AffiliateButton url={product.affiliateUrl} label="Check latest price" productSlug={product.slug} />
+    </div>
+  </section>
+
+  <FaqSection items={product.faq} />
+</BaseLayout>

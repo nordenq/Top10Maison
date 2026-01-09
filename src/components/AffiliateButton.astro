@@ -1,0 +1,18 @@
+---
+const { url, label, productSlug } = Astro.props as {
+  url: string;
+  label: string;
+  productSlug: string;
+};
+---
+
+<a
+  class="affiliate-button"
+  href={url}
+  rel="nofollow sponsored"
+  target="_blank"
+  data-affiliate="amazon"
+  data-product={productSlug}
+>
+  {label}
+</a>

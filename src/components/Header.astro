@@ -1,0 +1,15 @@
+---
+import { buildDataIndex } from "../utils/data";
+import { categoryUrl, homeUrl } from "../utils/routes";
+
+const { categories } = buildDataIndex();
+---
+
+<header class="site-header">
+  <a class="logo" href={homeUrl()}>Top10Maison</a>
+  <nav class="nav">
+    {categories.map((category) => (
+      <a href={categoryUrl(category.slug)}>{category.name}</a>
+    ))}
+  </nav>
+</header>

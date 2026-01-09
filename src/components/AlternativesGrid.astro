@@ -1,0 +1,20 @@
+---
+import type { Product } from "../utils/data";
+import { productUrl } from "../utils/routes";
+
+const { alternatives, title } = Astro.props as { alternatives: Product[]; title: string };
+---
+
+<section>
+  <h2>{title}</h2>
+  <div class="grid">
+    {alternatives.map((product) => (
+      <a class="card" href={productUrl(product.slug)}>
+        <div class="card-body">
+          <h3>{product.name}</h3>
+          <p>{product.uniqueValue}</p>
+        </div>
+      </a>
+    ))}
+  </div>
+</section>

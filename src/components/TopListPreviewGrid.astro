@@ -1,0 +1,20 @@
+---
+import type { Toplist } from "../utils/data";
+import { toplistUrl } from "../utils/routes";
+
+const { toplists, title } = Astro.props as { toplists: Toplist[]; title: string };
+---
+
+<section>
+  <h2>{title}</h2>
+  <div class="grid">
+    {toplists.map((list) => (
+      <a class="card" href={toplistUrl(list.category, list.subcategory, list.count, list.keywordSlug)}>
+        <div class="card-body">
+          <h3>{list.title}</h3>
+          <p>{list.metaDescription}</p>
+        </div>
+      </a>
+    ))}
+  </div>
+</section>

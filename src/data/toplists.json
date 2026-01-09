@@ -1,0 +1,102 @@
+[
+  {
+    "slug": "best-air-fryers-2026",
+    "category": "kitchen",
+    "subcategory": "appliances",
+    "title": "Best Air Fryers 2026",
+    "h1": "Best Air Fryers for Home Use (2026)",
+    "metaTitle": "Best Air Fryers 2026 | Top10Maison",
+    "metaDescription": "Discover the best air fryers of 2026. Tested, reviewed, and ranked.",
+    "count": 10,
+    "keywordSlug": "air-fryers-2026",
+    "products": ["cosori-air-fryer", "ninja-af101"],
+    "affiliate": true,
+    "published": true,
+    "performanceScore": 92,
+    "quickCompareCriteria": ["Best for", "Key win", "Price range"],
+    "howWePicked": [
+      "Performance consistency across common foods",
+      "Ease of cleaning and daily maintenance",
+      "Value per use based on price and durability"
+    ],
+    "whoShouldBuy": [
+      "You want faster weeknight meals with less oil",
+      "You care about easy cleanup",
+      "You need dependable results without a long learning curve"
+    ],
+    "faq": [
+      {
+        "question": "What size air fryer is best for a small kitchen?",
+        "answer": "A 4-6 quart model balances capacity with counter space and works for most small households."
+      },
+      {
+        "question": "Are air fryers cheaper to run than ovens?",
+        "answer": "Yes, they typically use less energy because they heat quickly and cook in smaller chambers."
+      }
+    ]
+  },
+  {
+    "slug": "best-nonstick-pans-2026",
+    "category": "kitchen",
+    "subcategory": "cookware",
+    "title": "Best Nonstick Pans 2026",
+    "h1": "Best Nonstick Pans for Everyday Cooking (2026)",
+    "metaTitle": "Best Nonstick Pans 2026 | Top10Maison",
+    "metaDescription": "Compare the best nonstick pans of 2026 for daily cooking and easy cleanup.",
+    "count": 8,
+    "keywordSlug": "nonstick-pans-2026",
+    "products": ["greenpan-lima", "tramontina-fry-pan"],
+    "affiliate": true,
+    "published": true,
+    "performanceScore": 88,
+    "quickCompareCriteria": ["Best for", "Key win", "Price range"],
+    "howWePicked": [
+      "Heat distribution across common stovetops",
+      "Coating durability with regular use",
+      "Comfortable handling and easy washing"
+    ],
+    "whoShouldBuy": [
+      "You cook daily and want fast cleanup",
+      "You want reliable nonstick without premium pricing",
+      "You need a go-to pan for eggs and quick meals"
+    ],
+    "faq": [
+      {
+        "question": "How long should a nonstick pan last?",
+        "answer": "With normal use and gentle cleaning, most nonstick pans last 2-4 years."
+      }
+    ]
+  },
+  {
+    "slug": "best-cotton-sheets-2026",
+    "category": "bedroom",
+    "subcategory": "bedding",
+    "title": "Best Cotton Sheets 2026",
+    "h1": "Best Cotton Sheets for Comfortable Sleep (2026)",
+    "metaTitle": "Best Cotton Sheets 2026 | Top10Maison",
+    "metaDescription": "Find the best cotton sheets of 2026 for breathable comfort and long-lasting softness.",
+    "count": 7,
+    "keywordSlug": "cotton-sheets-2026",
+    "products": ["brooklinen-core-sheet-set", "mellanni-sheet-set"],
+    "affiliate": true,
+    "published": true,
+    "performanceScore": 90,
+    "quickCompareCriteria": ["Best for", "Key win", "Price range"],
+    "howWePicked": [
+      "Breathability for warmer sleepers",
+      "Softness after repeated washes",
+      "Fit stability on common mattress depths"
+    ],
+    "whoShouldBuy": [
+      "You want sheets that stay cool",
+      "You need easy-care bedding",
+      "You prefer long-term comfort over trendiness"
+    ],
+    "faq": [
+      {
+        "question": "What cotton weave is best for hot sleepers?",
+        "answer": "Percale is usually the coolest because it is lightweight and breathable."
+      }
+    ]
+  }
+]

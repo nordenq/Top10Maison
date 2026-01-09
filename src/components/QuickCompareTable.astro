@@ -1,0 +1,49 @@
+---
+import type { Product } from "../utils/data";
+
+const { products, criteria } = Astro.props as {
+  products: Product[];
+  criteria: string[];
+};
+
+function resolveValue(product: Product, label: string): string {
+  switch (label) {
+    case "Best for":
+      return product.bestFor;
+    case "Key win":
+      return product.uniqueValue;
+    case "Price range":
+      return product.price;
+    default:
+      throw new Error(`Unsupported quick compare criteria: ${label}`);
+  }
+}
+---
+
+<section class="compare">
+  <h2>Quick comparison</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Rank</th>
+          <th>Product</th>
+          {criteria.map((label) => (
+            <th>{label}</th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {products.map((product, index) => (
+          <tr>
+            <td>#{index + 1}</td>
+            <td>{product.name}</td>
+            {criteria.map((label) => (
+              <td>{resolveValue(product, label)}</td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</section>

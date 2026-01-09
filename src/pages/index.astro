@@ -1,0 +1,39 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import CategoryCard from "../components/CategoryCard.astro";
+import { buildDataIndex } from "../utils/data";
+import { buildCanonical, buildTitle, requireSite } from "../utils/seo";
+import { buildBreadcrumbSchema } from "../utils/schema";
+
+const { categories } = buildDataIndex();
+
+const site = requireSite(Astro.site);
+const title = buildTitle("Top10Maison", "Top10Maison");
+const description = "Top10Maison ranks the best home products across every category.";
+const canonical = buildCanonical(site, "/");
+const schema = [
+  buildBreadcrumbSchema(site, [{ name: "Home", path: "/" }])
+];
+---
+
+<BaseLayout title={title} description={description} canonical={canonical} schema={schema}>
+  <section class="hero">
+    <div>
+      <h1>Top10Maison</h1>
+      <p>Data-driven rankings for the home products that matter most.</p>
+    </div>
+    <div class="card">
+      <h2>Start browsing</h2>
+      <p>Explore categories built for fast decisions and honest comparisons.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Top categories</h2>
+    <div class="grid">
+      {categories.map((category) => (
+        <CategoryCard category={category} />
+      ))}
+    </div>
+  </section>
+</BaseLayout>

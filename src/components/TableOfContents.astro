@@ -1,0 +1,14 @@
+---
+const { items } = Astro.props as {
+  items: Array<{ label: string; href: string }>;
+};
+---
+
+<nav class="toc" aria-label="Table of contents">
+  <h2>On this page</h2>
+  <ol>
+    {items.map((item) => (
+      <li><a href={item.href}>{item.label}</a></li>
+    ))}
+  </ol>
+</nav>
