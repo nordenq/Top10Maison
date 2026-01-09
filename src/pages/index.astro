@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { buildDataIndex } from "../utils/data";
-import { toplistUrl, categoryUrl } from "../utils/routes";
+import { subcategoryToplistUrl, categoryUrl } from "../utils/routes";
 import { buildCanonical, buildTitle, requireSite } from "../utils/seo";
 import { buildBreadcrumbSchema } from "../utils/schema";
 
@@ -81,7 +81,7 @@ const schema = [buildBreadcrumbSchema(site, [{ name: "Home", path: "/" }])];
           return (
             <a
               class="card grid gap-4 overflow-hidden md:grid-cols-[200px_1fr]"
-              href={toplistUrl(list.category, list.subcategory, list.childsubcategory, list.count, list.keywordSlug)}
+              href={subcategoryToplistUrl(list.category, list.subcategory, list.count, list.keywordSlug)}
             >
               <img class="h-full w-full object-cover" src={image} alt={list.title} loading="lazy" />
               <div class="p-5">

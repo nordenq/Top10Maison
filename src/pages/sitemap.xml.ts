@@ -5,7 +5,7 @@ import {
   childSubcategoryUrl,
   productUrl,
   subcategoryUrl,
-  toplistUrl
+  subcategoryToplistUrl
 } from "../utils/routes";
 
 export const prerender = true;
@@ -55,7 +55,7 @@ export const GET: APIRoute = ({ site }) => {
   for (const list of toplists) {
     urls.set(
       new URL(
-        toplistUrl(list.category, list.subcategory, list.childsubcategory, list.count, list.keywordSlug),
+        subcategoryToplistUrl(list.category, list.subcategory, list.count, list.keywordSlug),
         site
       ).toString(),
       0.6

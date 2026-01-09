@@ -9,13 +9,15 @@ const {
   description,
   canonical,
   schema = [],
-  ogImage
+  ogImage,
+  metaRefresh
 } = Astro.props as {
   title: string;
   description: string;
   canonical: string;
   schema?: Array<Record<string, unknown>>;
   ogImage?: string;
+  metaRefresh?: string;
 };
 ---
 
@@ -24,6 +26,7 @@ const {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {metaRefresh ? <meta http-equiv="refresh" content={metaRefresh} /> : null}
     <SEO title={title} description={description} canonical={canonical} schema={schema} ogImage={ogImage} />
     <meta name="google-adsense-account" content="ca-pub-3680083929895808" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />

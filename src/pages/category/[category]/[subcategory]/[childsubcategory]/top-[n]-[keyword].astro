@@ -1,169 +1,28 @@
 ---
-import Breadcrumbs from "../../../../../components/Breadcrumbs.astro";
-import ContentLayout from "../../../../../layouts/ContentLayout.astro";
-import FAQAccordion from "../../../../../components/FAQAccordion.astro";
-import HowWePicked from "../../../../../components/HowWePicked.astro";
-import ProductRankedCard from "../../../../../components/ProductRankedCard.astro";
-import ComparisonTable from "../../../../../components/ComparisonTable.astro";
-import AdSlot from "../../../../../components/AdSlot.astro";
-import { buildDataIndex } from "../../../../../utils/data";
-import { categoryUrl, childSubcategoryUrl, subcategoryUrl, toplistUrl, productUrl } from "../../../../../utils/routes";
-import { buildCanonical, requireSite } from "../../../../../utils/seo";
-import { buildArticleSchema, buildBreadcrumbSchema, buildFaqSchema, buildItemListSchema } from "../../../../../utils/schema";
+import Layout from "../../../../../layouts/BaseLayout.astro";
+import { subcategoryToplistUrl } from "../../../../../utils/routes";
 
-export function getStaticPaths() {
-  const { toplists } = buildDataIndex();
-  return toplists.map((list) => ({
-    params: {
-      category: list.category,
-      subcategory: list.subcategory,
-      childsubcategory: list.childsubcategory,
-      n: String(list.count),
-      keyword: list.keywordSlug
-    }
-  }));
-}
-
-const { categories, toplists, productMap } = buildDataIndex();
-const paramsCategory = Astro.params.category;
-const paramsSubcategory = Astro.params.subcategory;
-const paramsChildSubcategory = Astro.params.childsubcategory;
-const paramsN = Astro.params.n;
-const paramsKeyword = Astro.params.keyword;
-
-const list = toplists.find((item) =>
-  item.category === paramsCategory &&
-  item.subcategory === paramsSubcategory &&
-  item.childsubcategory === paramsChildSubcategory &&
-  String(item.count) === paramsN &&
-  item.keywordSlug === paramsKeyword
-);
-
-if (!list) {
-  throw new Error(
-    `Missing toplist data for route: ${paramsCategory}/${paramsSubcategory}/${paramsChildSubcategory}/top-${paramsN}-${paramsKeyword}`
-  );
-}
-
-const category = categories.find((item) => item.slug === list.category);
-if (!category) {
-  throw new Error(`Missing category data for toplist: ${list.slug}`);
-}
-
-const subcategory = category.subcategories.find((item) => item.slug === list.subcategory);
-if (!subcategory) {
-  throw new Error(`Missing subcategory data for toplist: ${list.slug}`);
-}
-
-const childsubcategory = subcategory.subcategories.find((item) => item.slug === list.childsubcategory);
-if (!childsubcategory) {
-  throw new Error(`Missing child subcategory data for toplist: ${list.slug}`);
-}
-
-const products = list.products.map((slug) => {
-  const product = productMap.get(slug);
-  if (!product) {
-    throw new Error(`Missing product data for slug: ${slug}`);
-  }
-  return product;
-});
-
-const site = requireSite(Astro.site);
-const canonical = buildCanonical(
-  site,
-  toplistUrl(list.category, list.subcategory, list.childsubcategory, list.count, list.keywordSlug)
-);
-const breadcrumbItems = [
-  { name: "Home", href: "/" },
-  { name: category.name, href: categoryUrl(category.slug) },
-  { name: subcategory.name, href: subcategoryUrl(category.slug, subcategory.slug) },
-  { name: childsubcategory.name, href: childSubcategoryUrl(category.slug, subcategory.slug, childsubcategory.slug) },
-  {
-    name: list.title,
-    href: toplistUrl(list.category, list.subcategory, list.childsubcategory, list.count, list.keywordSlug)
-  }
-];
-const itemListSchema = buildItemListSchema(
-  products.map((product) => ({
-    name: product.name,
-    url: new URL(productUrl(product.slug), site).toString()
-  }))
-);
-const schema = [
-  buildBreadcrumbSchema(site, [
-    { name: "Home", path: "/" },
-    { name: category.name, path: categoryUrl(category.slug) },
-    { name: subcategory.name, path: subcategoryUrl(category.slug, subcategory.slug) },
-    { name: childsubcategory.name, path: childSubcategoryUrl(category.slug, subcategory.slug, childsubcategory.slug) },
-    {
-      name: list.title,
-      path: toplistUrl(list.category, list.subcategory, list.childsubcategory, list.count, list.keywordSlug)
-    }
-  ]),
-  buildArticleSchema(site, list),
-  itemListSchema,
-  buildFaqSchema(list.faq)
-];
-
-const tocItems = [
-  { label: "Summary", href: "#summary" },
-  { label: "Top picks", href: "#top-picks" },
-  { label: "Comparison", href: "#comparison" },
-  { label: "How we picked", href: "#how-we-picked" },
-  { label: "Buying advice", href: "#buying-advice" },
-  { label: "FAQ", href: "#faq" }
-];
-
-const pageTitle = list.title?.trim();
-const summary = list.metaDescription;
+const { category, subcategory, childsubcategory, n, keyword } = Astro.params;
+const redirectUrl = subcategoryToplistUrl(category, subcategory, Number(n), keyword);
+const description = `This guide now lives at ${redirectUrl}. You are being redirected.`;
 ---
 
-<ContentLayout
-  title={list.metaTitle}
-  description={list.metaDescription}
-  canonical={canonical}
-  schema={schema}
-  tocItems={tocItems}
-  showAffiliateDisclosure={list.affiliate}
+<Layout
+  title="Guide moved | Top10Maison"
+  description={description}
+  canonical={redirectUrl}
+  metaRefresh={`0; url=${redirectUrl}`}
 >
-  <Breadcrumbs items={breadcrumbItems} />
-
-  <section id="summary" class="space-y-4">
-    {pageTitle ? <h1 class="text-3xl font-semibold">{pageTitle}</h1> : null}
-    <p class="text-base text-ink/70">{summary}</p>
-  </section>
-
-  <AdSlot slot="toplist-1" />
-
-  <section id="top-picks" class="space-y-6">
-    <h2 class="text-2xl font-semibold">Top picks</h2>
-    <div class="space-y-6">
-      {products.map((product, index) => (
-        <ProductRankedCard product={product} rank={index + 1} />
-      ))}
+  <section class="section">
+    <div class="mx-auto w-full max-w-3xl text-center">
+      <h1 class="text-2xl font-semibold">This guide has moved</h1>
+      <p class="mt-3 text-sm text-ink/70">
+        We updated our URL structure. You will be redirected automatically.
+      </p>
+      <a class="btn mt-6" href={redirectUrl}>Continue to the guide</a>
+      <p class="mt-3 text-xs text-ink/60">
+        Old path: /category/{category}/{subcategory}/{childsubcategory}/top-{n}-{keyword}
+      </p>
     </div>
   </section>
-
-  <AdSlot slot="toplist-2" />
-
-  {list.quickCompareCriteria?.length ? (
-    <ComparisonTable id="comparison" title="Quick comparison" products={products} criteria={list.quickCompareCriteria} />
-  ) : null}
-
-  {list.howWePicked?.length ? <HowWePicked id="how-we-picked" items={list.howWePicked} /> : null}
-
-  <section id="buying-advice" class="section">
-    <div class="mx-auto w-full max-w-4xl">
-      <h2 class="text-2xl font-semibold">Buying advice</h2>
-      <ul class="mt-4 list-disc space-y-2 pl-6 text-sm text-ink/70">
-        {list.whoShouldBuy.map((item) => (
-          <li>{item}</li>
-        ))}
-      </ul>
-    </div>
-  </section>
-
-  <AdSlot slot="toplist-3" />
-
-  <FAQAccordion id="faq" items={list.faq} />
-</ContentLayout>
+</Layout>

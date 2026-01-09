@@ -1,0 +1,122 @@
+---
+import Layout from "../../../layouts/BaseLayout.astro";
+import CategoryCard from "../../../components/CategoryCard.astro";
+import { buildDataIndex, getCategoryData } from "../../../utils/data";
+import { buildCanonical, requireSite } from "../../../utils/seo";
+import { buildBreadcrumbSchema } from "../../../utils/schema";
+import { categoryUrl, subcategoryUrl, childSubcategoryUrl, subcategoryToplistUrl } from "../../../utils/routes";
+
+export function getStaticPaths() {
+  const { categories } = buildDataIndex();
+  const paths = [];
+  for (const category of categories) {
+    paths.push({ params: { slugs: [category.slug] } });
+    for (const subcategory of category.subcategories) {
+      paths.push({ params: { slugs: [category.slug, subcategory.slug] } });
+      for (const child of subcategory.subcategories) {
+        paths.push({ params: { slugs: [category.slug, subcategory.slug, child.slug] } });
+      }
+    }
+  }
+  return paths;
+}
+
+const { slugs } = Astro.params;
+const categorySlug = Array.isArray(slugs) ? slugs.join("/") : slugs;
+const data = getCategoryData(slugs);
+
+const site = requireSite(Astro.site);
+const basePath = `/category/${categorySlug}/`;
+const canonical = buildCanonical(site, basePath);
+
+const breadcrumbItems = [
+  { name: "Home", path: "/" },
+  { name: data.category.name, path: categoryUrl(data.category.slug) }
+];
+
+if (data.subcategory) {
+  breadcrumbItems.push({
+    name: data.subcategory.name,
+    path: subcategoryUrl(data.category.slug, data.subcategory.slug)
+  });
+}
+
+if (data.childsubcategory) {
+  breadcrumbItems.push({
+    name: data.childsubcategory.name,
+    path: childSubcategoryUrl(data.category.slug, data.subcategory.slug, data.childsubcategory.slug)
+  });
+}
+
+const schema = [buildBreadcrumbSchema(site, breadcrumbItems)];
+
+const title = data.childsubcategory?.name ?? data.subcategory?.name ?? data.category.name;
+const description = data.childsubcategory?.description ?? data.subcategory?.description ?? data.category.description;
+const showSubcategories = !data.subcategory;
+const showChildSubcategories = Boolean(data.subcategory && !data.childsubcategory);
+const toplists = data.toplists.map((list) => ({
+  title: list.title,
+  description: list.metaDescription,
+  url: subcategoryToplistUrl(list.category, list.subcategory, list.count, list.keywordSlug)
+}));
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonical={canonical}
+  schema={schema}
+>
+  <section class="section">
+    <div class="mx-auto w-full max-w-5xl">
+      <h1 class="text-3xl font-semibold">{title}</h1>
+      <p class="mt-3 text-lg text-ink/70">{description}</p>
+    </div>
+  </section>
+
+  {showSubcategories ? (
+    <section class="section">
+      <div class="mx-auto w-full max-w-6xl">
+        <h2 class="text-2xl font-semibold">Subcategories</h2>
+        <div class="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {data.category.subcategories.map((subcategory) => (
+            <CategoryCard category={data.category} subcategory={subcategory} />
+          ))}
+        </div>
+      </div>
+    </section>
+  ) : null}
+
+  {showChildSubcategories ? (
+    <section class="section">
+      <div class="mx-auto w-full max-w-6xl">
+        <h2 class="text-2xl font-semibold">Subcategories</h2>
+        <div class="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {data.subcategory.subcategories.map((childsubcategory) => (
+            <CategoryCard
+              category={data.category}
+              parentSubcategory={data.subcategory}
+              childsubcategory={childsubcategory}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  ) : null}
+
+  {toplists.length ? (
+    <section class="section">
+      <div class="mx-auto w-full max-w-5xl">
+        <h2 class="text-2xl font-semibold">Top Lists in {title}</h2>
+        <div class="mt-6 grid gap-6">
+          {toplists.map((list) => (
+            <a href={list.url} class="card p-5 hover:shadow-card">
+              <h3 class="text-xl font-semibold">{list.title}</h3>
+              <p class="mt-2 text-sm text-ink/70">{list.description}</p>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  ) : null}
+</Layout>

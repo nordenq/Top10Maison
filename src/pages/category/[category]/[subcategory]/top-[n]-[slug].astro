@@ -1,0 +1,88 @@
+---
+import Layout from "../../../../layouts/BaseLayout.astro";
+import ProductCard from "../../../../components/ProductCard.astro";
+import FAQAccordion from "../../../../components/FAQAccordion.astro";
+import { buildDataIndex, getTopListData } from "../../../../utils/data";
+import { buildCanonical, requireSite } from "../../../../utils/seo";
+import { buildArticleSchema, buildBreadcrumbSchema, buildFaqSchema, buildItemListSchema, buildProductSchema } from "../../../../utils/schema";
+import { categoryUrl, subcategoryUrl, subcategoryToplistUrl, productUrl } from "../../../../utils/routes";
+
+export function getStaticPaths() {
+  const { toplists } = buildDataIndex();
+  return toplists.map((list) => ({
+    params: {
+      category: list.category,
+      subcategory: list.subcategory,
+      n: String(list.count),
+      slug: list.keywordSlug
+    }
+  }));
+}
+
+const { category, subcategory, n, slug } = Astro.params;
+const toplist = getTopListData(category, subcategory, n, slug);
+
+const site = requireSite(Astro.site);
+const canonical = buildCanonical(site, subcategoryToplistUrl(category, subcategory, Number(n), slug));
+const breadcrumbItems = [
+  { name: "Home", path: "/" },
+  { name: toplist.category.name, path: categoryUrl(toplist.category.slug) },
+  { name: toplist.subcategory.name, path: subcategoryUrl(toplist.category.slug, toplist.subcategory.slug) },
+  { name: toplist.title, path: subcategoryToplistUrl(category, subcategory, Number(n), slug) }
+];
+
+const schema = [
+  buildBreadcrumbSchema(site, breadcrumbItems),
+  buildArticleSchema(site, toplist.list, canonical),
+  buildItemListSchema(
+    toplist.products.map((product) => ({
+      name: product.name,
+      url: new URL(productUrl(product.slug), site).toString()
+    }))
+  ),
+  buildFaqSchema(toplist.faq),
+  ...toplist.products.map((product) => buildProductSchema(site, product))
+];
+---
+
+<Layout
+  title={toplist.list.metaTitle || toplist.title}
+  description={toplist.list.metaDescription || toplist.description}
+  canonical={canonical}
+  schema={schema}
+>
+  <section class="section">
+    <div class="mx-auto w-full max-w-5xl">
+      <h1 class="text-3xl font-semibold">{toplist.title}</h1>
+      <p class="mt-3 text-lg text-ink/70">{toplist.intro}</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="mx-auto w-full max-w-5xl">
+      <h2 class="text-2xl font-semibold">Top Picks</h2>
+      <div class="mt-6 grid gap-6">
+        {toplist.products.map((product, index) => (
+          <ProductCard product={product} rank={index + 1} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {toplist.selectionCriteria.length ? (
+    <section class="section">
+      <div class="mx-auto w-full max-w-4xl">
+        <h2 class="text-xl font-semibold">How We Chose</h2>
+        <ul class="mt-4 list-disc list-inside space-y-2 text-ink/70">
+          {toplist.selectionCriteria.map((item) => (
+            <li>{item}</li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  ) : null}
+
+  {toplist.faq?.length ? (
+    <FAQAccordion items={toplist.faq} />
+  ) : null}
+</Layout>

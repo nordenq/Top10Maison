@@ -53,17 +53,19 @@ export function buildReviewSchema(site: URL, product: Product): SchemaGraph {
   };
 }
 
-export function buildArticleSchema(site: URL, toplist: Toplist): SchemaGraph {
-  const pageUrl = new URL(
-    toplistUrl(
-      toplist.category,
-      toplist.subcategory,
-      toplist.childsubcategory,
-      toplist.count,
-      toplist.keywordSlug
-    ),
-    site
-  ).toString();
+export function buildArticleSchema(site: URL, toplist: Toplist, canonicalUrl?: string): SchemaGraph {
+  const pageUrl =
+    canonicalUrl ??
+    new URL(
+      toplistUrl(
+        toplist.category,
+        toplist.subcategory,
+        toplist.childsubcategory,
+        toplist.count,
+        toplist.keywordSlug
+      ),
+      site
+    ).toString();
 
   const schema: SchemaGraph = {
     "@context": "https://schema.org",

@@ -307,3 +307,115 @@ export function buildDataIndex() {
     productMap
   };
 }
+
+export function getTopListData(
+  categorySlug: string,
+  subcategorySlug: string,
+  count: string,
+  slug: string,
+  childSlug?: string
+) {
+  const { categories, toplists, productMap } = buildDataIndex();
+  const list = toplists.find(
+    (item) =>
+      item.category === categorySlug &&
+      item.subcategory === subcategorySlug &&
+      String(item.count) === String(count) &&
+      item.keywordSlug === slug &&
+      (childSlug ? item.childsubcategory === childSlug : true)
+  );
+
+  if (!list) {
+    throw new Error(`Missing toplist for ${categorySlug}/${subcategorySlug}/top-${count}-${slug}`);
+  }
+
+  const category = categories.find((item) => item.slug === categorySlug);
+  if (!category) {
+    throw new Error(`Missing category data for slug: ${categorySlug}`);
+  }
+
+  const subcategory = category.subcategories.find((item) => item.slug === subcategorySlug);
+  if (!subcategory) {
+    throw new Error(`Missing subcategory data for slug: ${categorySlug}:${subcategorySlug}`);
+  }
+
+  const childsubcategory = subcategory.subcategories.find((item) => item.slug === list.childsubcategory);
+  if (!childsubcategory) {
+    throw new Error(`Missing child subcategory data for toplist: ${list.slug}`);
+  }
+
+  const products = list.products.map((productSlug) => {
+    const product = productMap.get(productSlug);
+    if (!product) {
+      throw new Error(`Missing product data for slug: ${productSlug}`);
+    }
+    return product;
+  });
+
+  return {
+    category,
+    subcategory,
+    childsubcategory,
+    list,
+    products,
+    title: list.title,
+    description: list.metaDescription,
+    intro: childsubcategory.intentCopy,
+    selectionCriteria: list.howWePicked,
+    faq: list.faq
+  };
+}
+
+export function getCategoryData(slugPath: string | string[]) {
+  const { categories, toplists } = buildDataIndex();
+  const segments = Array.isArray(slugPath) ? slugPath : slugPath.split("/").filter(Boolean);
+  const [categorySlug, subcategorySlug, childSlug] = segments;
+
+  const category = categories.find((item) => item.slug === categorySlug);
+  if (!category) {
+    throw new Error(`Missing category data for slug: ${categorySlug}`);
+  }
+
+  const subcategory = subcategorySlug
+    ? category.subcategories.find((item) => item.slug === subcategorySlug)
+    : undefined;
+  if (subcategorySlug && !subcategory) {
+    throw new Error(`Missing subcategory data for slug: ${categorySlug}:${subcategorySlug}`);
+  }
+
+  const childsubcategory = childSlug
+    ? subcategory?.subcategories.find((item) => item.slug === childSlug)
+    : undefined;
+  if (childSlug && !childsubcategory) {
+    throw new Error(`Missing child subcategory data for slug: ${categorySlug}:${subcategorySlug}:${childSlug}`);
+  }
+
+  const filteredToplists = toplists.filter((list) => {
+    if (list.category !== category.slug) {
+      return false;
+    }
+    if (subcategory && list.subcategory !== subcategory.slug) {
+      return false;
+    }
+    if (childsubcategory && list.childsubcategory !== childsubcategory.slug) {
+      return false;
+    }
+    return true;
+  });
+
+  return {
+    category,
+    subcategory,
+    childsubcategory,
+    toplists: filteredToplists
+  };
+}
+
+export function getProductData(slug: string) {
+  const { products } = buildDataIndex();
+  const product = products.find((item) => item.slug === slug);
+  if (!product) {
+    throw new Error(`Missing product data for slug: ${slug}`);
+  }
+  return product;
+}

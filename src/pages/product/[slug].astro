@@ -1,0 +1,63 @@
+---
+import Layout from "../../layouts/BaseLayout.astro";
+import { buildDataIndex, getProductData } from "../../utils/data";
+import { buildCanonical, requireSite } from "../../utils/seo";
+import { buildBreadcrumbSchema, buildFaqSchema, buildProductSchema, buildReviewSchema } from "../../utils/schema";
+import { productUrl } from "../../utils/routes";
+import AffiliateButton from "../../components/AffiliateButton.astro";
+import FAQAccordion from "../../components/FAQAccordion.astro";
+
+export function getStaticPaths() {
+  const { products } = buildDataIndex();
+  return products.map((product) => ({
+    params: { slug: product.slug }
+  }));
+}
+
+const { slug } = Astro.params;
+const product = getProductData(slug);
+
+const site = requireSite(Astro.site);
+const canonical = buildCanonical(site, productUrl(product.slug));
+const schema = [
+  buildBreadcrumbSchema(site, [
+    { name: "Home", path: "/" },
+    { name: product.name, path: productUrl(product.slug) }
+  ]),
+  buildProductSchema(site, product),
+  buildReviewSchema(site, product),
+  buildFaqSchema(product.faq)
+];
+---
+
+<Layout
+  title={product.metaTitle || product.name}
+  description={product.metaDescription || product.description}
+  canonical={canonical}
+  schema={schema}
+>
+  <section class="section">
+    <article class="mx-auto w-full max-w-4xl">
+      <h1 class="text-3xl font-semibold">{product.name}</h1>
+      <img class="mt-6 rounded-xl" src={product.image} alt={product.name} loading="lazy" width="800" height="500" />
+      <p class="mt-4 text-lg text-ink/70">{product.description}</p>
+
+      <div class="mt-6">
+        <AffiliateButton url={product.affiliateUrl} label="View on Amazon" productSlug={product.slug} />
+      </div>
+
+      <section class="mt-10">
+        <h2 class="text-xl font-semibold">Specifications</h2>
+        <ul class="mt-3 list-disc list-inside space-y-2 text-ink/70">
+          {Object.entries(product.specs).map(([label, value]) => (
+            <li><strong>{label}:</strong> {value}</li>
+          ))}
+        </ul>
+      </section>
+
+      {product.faq?.length ? (
+        <FAQAccordion items={product.faq} />
+      ) : null}
+    </article>
+  </section>
+</Layout>
