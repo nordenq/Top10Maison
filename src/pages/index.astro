@@ -2,10 +2,25 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import CategoryCard from "../components/CategoryCard.astro";
 import { buildDataIndex } from "../utils/data";
+import { toplistUrl } from "../utils/routes";
 import { buildCanonical, buildTitle, requireSite } from "../utils/seo";
 import { buildBreadcrumbSchema } from "../utils/schema";
 
-const { categories } = buildDataIndex();
+const { categories, toplists } = buildDataIndex();
+const toplistsSorted = [...toplists].sort((a, b) => b.performanceScore - a.performanceScore);
+const featured = toplistsSorted[0];
+const trending = toplistsSorted.slice(1, 4);
+const totalGuides = toplists.length;
+const totalPicks = toplists.reduce((sum, item) => sum + item.count, 0);
+const featuredUrl = featured
+  ? toplistUrl(
+      featured.category,
+      featured.subcategory,
+      featured.childsubcategory,
+      featured.count,
+      featured.keywordSlug
+    )
+  : "#";
 
 const site = requireSite(Astro.site);
 const title = buildTitle("Top10Maison", "Top10Maison");
@@ -17,24 +32,297 @@ const schema = [
 ---
 
 <BaseLayout title={title} description={description} canonical={canonical} schema={schema}>
-  <section class="hero">
-    <div class="hero-text">
-      <h1>Top10Maison</h1>
-      <p class="hero-subtitle">Data-driven rankings for the home products that matter most.</p>
-      <a class="hero-cta" href="#top-categories">Browse top categories</a>
-    </div>
-    <div class="card">
-      <h2>Start browsing</h2>
-      <p>Explore categories built for fast decisions and honest comparisons.</p>
-    </div>
-  </section>
+  <div class="home">
+    <section class="home-hero">
+      <div class="home-hero__copy reveal" style={`--delay: 0ms`}>
+        <p class="eyebrow">Editorial buying guides</p>
+        <h1>Your home, sorted.</h1>
+        <p class="home-hero__lead">
+          Clear, fast rankings that help you choose the best products without the noise. Every guide is built
+          for decision-ready shoppers.
+        </p>
+        <div class="home-hero__actions">
+          <a class="button button--primary" href="#top-categories">Explore categories</a>
+          <a class="button button--ghost" href="#top-guides">See latest guides</a>
+        </div>
+        <div class="home-hero__stats">
+          <div class="stat-card">
+            <span class="stat-card__label">Live guides</span>
+            <span class="stat-card__value">{totalGuides}</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-card__label">Curated picks</span>
+            <span class="stat-card__value">{totalPicks}</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-card__label">Updated for</span>
+            <span class="stat-card__value">2026</span>
+          </div>
+        </div>
+      </div>
+      <div class="home-hero__feature reveal" style={`--delay: 120ms`}>
+        <div class="feature-card">
+          <span class="badge">Featured guide</span>
+          <h2>{featured.title}</h2>
+          <p>{featured.metaDescription}</p>
+          <div class="feature-meta">
+            <span>{featured.count} picks</span>
+            <span>{featured.performanceScore} score</span>
+          </div>
+          <a class="button button--primary" href={featuredUrl}>Read the guide</a>
+        </div>
+        <div class="feature-list" id="top-guides">
+          <h3>Top guides this week</h3>
+          {trending.map((item, index) => (
+            <a
+              class="feature-item reveal"
+              href={toplistUrl(
+                item.category,
+                item.subcategory,
+                item.childsubcategory,
+                item.count,
+                item.keywordSlug
+              )}
+              style={`--delay: ${220 + index * 80}ms`}
+            >
+              <span>{item.title}</span>
+              <span class="feature-item__meta">{item.count} picks</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
 
-  <section id="top-categories">
-    <h2>Top categories</h2>
-    <div class="grid">
-      {categories.map((category) => (
-        <CategoryCard category={category} />
-      ))}
-    </div>
-  </section>
+    <section id="top-categories" class="home-section">
+      <div class="section-head reveal" style={`--delay: 0ms`}>
+        <h2>Browse by room</h2>
+        <p>Start with a category and drill down to the guides that match your space, budget, and style.</p>
+      </div>
+      <div class="grid reveal" style={`--delay: 80ms`}>
+        {categories.map((category) => (
+          <CategoryCard category={category} />
+        ))}
+      </div>
+    </section>
+
+    <section class="home-section">
+      <div class="section-head reveal" style={`--delay: 0ms`}>
+        <h2>How we rank</h2>
+        <p>We focus on practical performance, usability, and value so each recommendation feels dependable.</p>
+      </div>
+      <div class="method-grid">
+        <div class="method-card reveal" style={`--delay: 80ms`}>
+          <span class="method-step">01</span>
+          <h3>Research</h3>
+          <p>We study product specs, reviews, and performance claims to find what matters most.</p>
+        </div>
+        <div class="method-card reveal" style={`--delay: 140ms`}>
+          <span class="method-step">02</span>
+          <h3>Compare</h3>
+          <p>Each guide scores products on consistent criteria so you can compare quickly.</p>
+        </div>
+        <div class="method-card reveal" style={`--delay: 200ms`}>
+          <span class="method-step">03</span>
+          <h3>Recommend</h3>
+          <p>We highlight best-for use cases and pricing tiers so the right pick is obvious.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <style>
+    .home {
+      display: grid;
+      gap: 4.5rem;
+    }
+
+    .home-hero {
+      display: grid;
+      gap: 2.5rem;
+      align-items: center;
+    }
+
+    .home-hero__copy h1 {
+      font-size: clamp(2.6rem, 4vw, 4rem);
+      margin: 0 0 0.6rem;
+    }
+
+    .home-hero__lead {
+      font-size: 1.15rem;
+      color: var(--muted);
+      margin: 0 0 1.6rem;
+    }
+
+    .home-hero__actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 1.6rem;
+    }
+
+    .home-hero__stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+    }
+
+    .stat-card {
+      display: grid;
+      gap: 4px;
+      padding: 12px 16px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid var(--line);
+      box-shadow: 0 8px 18px rgba(34, 30, 26, 0.06);
+    }
+
+    .stat-card__label {
+      font-size: 0.85rem;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .stat-card__value {
+      font-size: 1.4rem;
+      font-weight: 600;
+    }
+
+    .home-hero__feature {
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    .feature-card {
+      display: grid;
+      gap: 12px;
+      padding: 22px;
+      background: #fff;
+      border-radius: 24px;
+      border: 1px solid var(--line);
+      box-shadow: 0 18px 36px rgba(34, 30, 26, 0.12);
+    }
+
+    .feature-card h2 {
+      margin: 0;
+    }
+
+    .feature-card p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .feature-meta {
+      display: flex;
+      gap: 16px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .feature-list {
+      display: grid;
+      gap: 12px;
+      padding: 18px;
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      background: rgba(255, 253, 249, 0.9);
+    }
+
+    .feature-list h3 {
+      margin: 0;
+    }
+
+    .feature-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      border-radius: 14px;
+      background: #fff;
+      border: 1px solid var(--line);
+      font-weight: 500;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .feature-item:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent);
+    }
+
+    .feature-item__meta {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .home-section {
+      display: grid;
+      gap: 1.6rem;
+    }
+
+    .method-grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+
+    .method-card {
+      display: grid;
+      gap: 10px;
+      padding: 18px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid var(--line);
+      box-shadow: 0 10px 24px rgba(34, 30, 26, 0.08);
+    }
+
+    .method-step {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(14px);
+      animation: reveal 700ms ease forwards;
+      animation-delay: var(--delay, 0ms);
+    }
+
+    @keyframes reveal {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (min-width: 920px) {
+      .home-hero {
+        grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+      }
+    }
+
+    @media (max-width: 720px) {
+      .feature-card {
+        padding: 18px;
+      }
+
+      .home-hero__stats {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .reveal {
+        animation: none;
+        opacity: 1;
+        transform: none;
+      }
+    }
+  </style>
 </BaseLayout>

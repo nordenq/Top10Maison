@@ -8,13 +8,23 @@
     "h1": "Best Air Fryers for Home Use (2026)",
     "metaTitle": "Best Air Fryers 2026 | Top10Maison",
     "metaDescription": "Discover the best air fryers of 2026. Tested, reviewed, and ranked.",
+    "schemaHeadline": "Top 10 Air Fryers of 2026",
+    "schemaDatePublished": "2026-01-05",
+    "schemaImage": "https://www.top10maison.com/images/airfryer-header.jpg",
     "count": 10,
     "keywordSlug": "air-fryers-2026",
-    "products": ["cosori-air-fryer", "ninja-af101"],
+    "products": [
+      "cosori-air-fryer",
+      "ninja-af101"
+    ],
     "affiliate": true,
     "published": true,
     "performanceScore": 92,
-    "quickCompareCriteria": ["Best for", "Key win", "Price range"],
+    "quickCompareCriteria": [
+      "Best for",
+      "Key win",
+      "Price range"
+    ],
     "howWePicked": [
       "Performance consistency across common foods",
       "Ease of cleaning and daily maintenance",
@@ -45,6 +55,9 @@
     "h1": "Best Air Fryers Under $200",
     "metaTitle": "Best Air Fryers Under $200 | Top10Maison",
     "metaDescription": "Affordable air fryers that deliver strong performance, fast cooking, and reliable results without breaking the budget.",
+    "schemaHeadline": "Top 5 Air Fryers Under $200",
+    "schemaDatePublished": "2026-01-07",
+    "schemaImage": "https://www.top10maison.com/images/airfryer-200.jpg",
     "count": 5,
     "keywordSlug": "air-fryers-under-200",
     "products": [
@@ -57,7 +70,11 @@
     "affiliate": true,
     "published": true,
     "performanceScore": 89,
-    "quickCompareCriteria": ["Best for", "Key win", "Price range"],
+    "quickCompareCriteria": [
+      "Best for",
+      "Key win",
+      "Price range"
+    ],
     "howWePicked": [
       "Performance on common foods like fries, wings, and vegetables",
       "Speed to crisp and ease of daily cleanup",
@@ -90,11 +107,18 @@
     "metaDescription": "Compare the best nonstick pans of 2026 for daily cooking and easy cleanup.",
     "count": 8,
     "keywordSlug": "nonstick-pans-2026",
-    "products": ["greenpan-lima", "tramontina-fry-pan"],
+    "products": [
+      "greenpan-lima",
+      "tramontina-fry-pan"
+    ],
     "affiliate": true,
     "published": false,
     "performanceScore": 88,
-    "quickCompareCriteria": ["Best for", "Key win", "Price range"],
+    "quickCompareCriteria": [
+      "Best for",
+      "Key win",
+      "Price range"
+    ],
     "howWePicked": [
       "Heat distribution across common stovetops",
       "Coating durability with regular use",
@@ -110,7 +134,9 @@
         "question": "How long should a nonstick pan last?",
         "answer": "With normal use and gentle cleaning, most nonstick pans last 2-4 years."
       }
-    ]
+    ],
+    "schemaHeadline": "Best Nonstick Pans 2026",
+    "schemaDatePublished": "2026-01-01"
   },
   {
     "slug": "best-cotton-sheets-2026",
@@ -123,11 +149,18 @@
     "metaDescription": "Find the best cotton sheets of 2026 for breathable comfort and long-lasting softness.",
     "count": 7,
     "keywordSlug": "cotton-sheets-2026",
-    "products": ["brooklinen-core-sheet-set", "mellanni-sheet-set"],
+    "products": [
+      "brooklinen-core-sheet-set",
+      "mellanni-sheet-set"
+    ],
     "affiliate": true,
     "published": false,
     "performanceScore": 90,
-    "quickCompareCriteria": ["Best for", "Key win", "Price range"],
+    "quickCompareCriteria": [
+      "Best for",
+      "Key win",
+      "Price range"
+    ],
     "howWePicked": [
       "Breathability for warmer sleepers",
       "Softness after repeated washes",
@@ -143,6 +176,8 @@
         "question": "What cotton weave is best for hot sleepers?",
         "answer": "Percale is usually the coolest because it is lightweight and breathable."
       }
-    ]
+    ],
+    "schemaHeadline": "Best Cotton Sheets 2026",
+    "schemaDatePublished": "2026-01-01"
   }
 ]
