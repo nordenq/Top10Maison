@@ -1,0 +1,21 @@
+---
+const { items, title = "FAQ", id } = Astro.props as {
+  items: Array<{ question: string; answer: string }>;
+  title?: string;
+  id?: string;
+};
+---
+
+<section class="section" id={id}>
+  <div class="mx-auto w-full max-w-4xl">
+    <h2 class="text-2xl font-semibold">{title}</h2>
+    <div class="mt-4 space-y-3">
+      {items.map((item) => (
+        <details class="card p-4">
+          <summary class="cursor-pointer text-sm font-semibold">{item.question}</summary>
+          <p class="mt-2 text-sm text-ink/70">{item.answer}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>

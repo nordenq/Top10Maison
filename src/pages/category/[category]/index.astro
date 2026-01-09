@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import Breadcrumbs from "../../../components/Breadcrumbs.astro";
-import FaqSection from "../../../components/FaqSection.astro";
+import FAQAccordion from "../../../components/FAQAccordion.astro";
 import HowToChoose from "../../../components/HowToChoose.astro";
 import PageHero from "../../../components/PageHero.astro";
 import SubcategoryGrid from "../../../components/SubcategoryGrid.astro";
@@ -10,10 +10,6 @@ import { buildDataIndex } from "../../../utils/data";
 import { categoryUrl } from "../../../utils/routes";
 import { buildCanonical, buildTitle, requireSite } from "../../../utils/seo";
 import { buildBreadcrumbSchema, buildFaqSchema } from "../../../utils/schema";
-
-// Routing explanation:
-// /category/[category]/index.astro maps to /category/{category-slug}/.
-// getStaticPaths enumerates every category from JSON so routes are static at build time.
 
 export function getStaticPaths() {
   const { categories } = buildDataIndex();
@@ -63,9 +59,9 @@ const schema = [
 
   <SubcategoryGrid category={category} />
 
+  <TopListsRail toplists={featuredToplists} title="Featured guides" />
+
   <HowToChoose title="How to choose" bullets={category.howToChoose} />
 
-  <FaqSection items={category.faq} />
-
-  <TopListsRail toplists={featuredToplists} title="Best-performing top lists" />
+  <FAQAccordion items={category.faq} />
 </BaseLayout>

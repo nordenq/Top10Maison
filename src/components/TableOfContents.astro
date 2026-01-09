@@ -4,11 +4,11 @@ const { items } = Astro.props as {
 };
 ---
 
-<nav class="toc" aria-label="Table of contents">
-  <h2>On this page</h2>
-  <ol>
+<nav class="card mb-8 p-6" aria-label="Table of contents">
+  <h2 class="text-base font-semibold">On this page</h2>
+  <ol class="mt-3 space-y-2 text-sm text-ink/70">
     {items.map((item) => (
-      <li><a href={item.href}>{item.label}</a></li>
+      <li><a class="hover:text-accent" href={item.href}>{item.label}</a></li>
     ))}
   </ol>
 </nav>

@@ -1,20 +1,18 @@
 ---
 import AlternativesGrid from "../../components/AlternativesGrid.astro";
 import Breadcrumbs from "../../components/Breadcrumbs.astro";
-import FaqSection from "../../components/FaqSection.astro";
+import FAQAccordion from "../../components/FAQAccordion.astro";
 import ProsCons from "../../components/ProsCons.astro";
 import SpecsTable from "../../components/SpecsTable.astro";
 import VerdictBox from "../../components/VerdictBox.astro";
 import AffiliateButton from "../../components/AffiliateButton.astro";
+import TopListsRail from "../../components/TopListsRail.astro";
+import AdSlot from "../../components/AdSlot.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { buildDataIndex } from "../../utils/data";
 import { buildCanonical, buildTitle, requireSite } from "../../utils/seo";
-import { buildBreadcrumbSchema, buildFaqSchema, buildProductSchema } from "../../utils/schema";
+import { buildBreadcrumbSchema, buildFaqSchema, buildProductSchema, buildReviewSchema } from "../../utils/schema";
 import { productUrl } from "../../utils/routes";
-
-// Routing explanation:
-// /product/[product].astro maps to /product/{product-slug}/.
-// getStaticPaths enumerates every product from JSON for static generation.
 
 export function getStaticPaths() {
   const { products } = buildDataIndex();
@@ -23,7 +21,7 @@ export function getStaticPaths() {
   }));
 }
 
-const { products, productMap } = buildDataIndex();
+const { products, productMap, toplists } = buildDataIndex();
 const paramsProduct = Astro.params.product;
 
 const product = products.find((item) => item.slug === paramsProduct);
@@ -39,6 +37,11 @@ const alternativeProducts = product.alternatives.map((slug) => {
   return alternative;
 });
 
+const relatedToplists = toplists
+  .filter((list) => list.products.includes(product.slug))
+  .sort((a, b) => b.performanceScore - a.performanceScore)
+  .slice(0, 3);
+
 const site = requireSite(Astro.site);
 const title = buildTitle(`${product.name} Review`, "Top10Maison");
 const description = product.description;
@@ -53,6 +56,7 @@ const schema = [
     { name: product.name, path: productUrl(product.slug) }
   ]),
   buildProductSchema(site, product),
+  buildReviewSchema(site, product),
   buildFaqSchema(product.faq)
 ];
 
@@ -60,19 +64,33 @@ const verdictCopy = `${product.name} is best for ${product.bestFor}. It stands o
 ---
 
 <BaseLayout title={title} description={description} canonical={canonical} schema={schema}>
-  <Breadcrumbs items={breadcrumbItems} />
-
-  <section>
-    <h1>{product.name} Review</h1>
-    <img src={product.image} alt={product.name} loading="lazy" width="640" height="360" />
-    <p>{product.description}</p>
-    <div class="cta-row">
-      <AffiliateButton url={product.affiliateUrl} label="Check price" productSlug={product.slug} />
-      <AffiliateButton url={product.affiliateUrl} label="View on Amazon" productSlug={product.slug} />
+  <section class="section">
+    <div class="mx-auto w-full max-w-6xl">
+      <Breadcrumbs items={breadcrumbItems} />
+      <div class="grid gap-8 md:grid-cols-[1.1fr_0.9fr]">
+        <div class="card overflow-hidden">
+          <img class="w-full object-cover" src={product.image} alt={product.name} loading="lazy" width="800" height="500" />
+        </div>
+        <div class="card flex flex-col gap-4 p-6">
+          <p class="text-xs font-semibold uppercase tracking-[0.3em] text-ink/50">Product review</p>
+          <h1 class="text-3xl font-semibold">{product.name}</h1>
+          <p class="text-sm text-ink/70">{product.description}</p>
+          <div class="flex flex-wrap gap-3 text-sm">
+            <span class="rounded-full bg-background px-3 py-1">{product.price}</span>
+            <span class="rounded-full bg-success/10 px-3 py-1 text-success">Best for {product.bestFor}</span>
+          </div>
+          <div class="mt-auto flex flex-wrap gap-3">
+            <AffiliateButton url={product.affiliateUrl} label="Check price" productSlug={product.slug} />
+            <AffiliateButton url={product.affiliateUrl} label="View on Amazon" productSlug={product.slug} />
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
   <VerdictBox title="Quick verdict" verdict={verdictCopy} />
+
+  <AdSlot slot="product-1" />
 
   <SpecsTable specs={product.specs} />
 
@@ -80,13 +98,19 @@ const verdictCopy = `${product.name} is best for ${product.bestFor}. It stands o
 
   <AlternativesGrid alternatives={alternativeProducts} title="Alternatives" />
 
-  <section>
-    <h2>Ready to buy?</h2>
-    <div class="cta-row">
-      <AffiliateButton url={product.affiliateUrl} label="Buy on Amazon" productSlug={product.slug} />
-      <AffiliateButton url={product.affiliateUrl} label="Check latest price" productSlug={product.slug} />
+  {relatedToplists.length ? (
+    <TopListsRail toplists={relatedToplists} title="Related guides" />
+  ) : null}
+
+  <section class="section">
+    <div class="mx-auto w-full max-w-4xl">
+      <h2 class="text-2xl font-semibold">Ready to buy?</h2>
+      <div class="mt-4 flex flex-wrap gap-3">
+        <AffiliateButton url={product.affiliateUrl} label="Buy on Amazon" productSlug={product.slug} />
+        <AffiliateButton url={product.affiliateUrl} label="Check latest price" productSlug={product.slug} />
+      </div>
     </div>
   </section>
 
-  <FaqSection items={product.faq} />
+  <FAQAccordion items={product.faq} />
 </BaseLayout>

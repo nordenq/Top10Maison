@@ -2,11 +2,11 @@
 const { items } = Astro.props as { items: Array<{ name: string; href: string }> };
 ---
 
-<nav class="breadcrumbs" aria-label="Breadcrumb">
-  <ol>
+<nav class="mb-6 text-sm text-ink/60" aria-label="Breadcrumb">
+  <ol class="flex flex-wrap items-center gap-2">
     {items.map((item, index) => (
-      <li>
-        <a href={item.href}>{item.name}</a>
+      <li class="flex items-center gap-2">
+        <a class="hover:text-accent" href={item.href}>{item.name}</a>
         {index < items.length - 1 ? <span aria-hidden="true">/</span> : null}
       </li>
     ))}

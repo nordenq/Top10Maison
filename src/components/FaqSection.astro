@@ -5,14 +5,16 @@ const { items, title = "FAQ" } = Astro.props as {
 };
 ---
 
-<section class="faq">
-  <h2>{title}</h2>
-  <dl>
-    {items.map((item) => (
-      <div class="faq-item">
-        <dt>{item.question}</dt>
-        <dd>{item.answer}</dd>
-      </div>
-    ))}
-  </dl>
+<section class="section">
+  <div class="mx-auto w-full max-w-4xl">
+    <h2 class="text-2xl font-semibold">{title}</h2>
+    <div class="mt-4 space-y-3">
+      {items.map((item) => (
+        <details class="card p-4">
+          <summary class="cursor-pointer text-sm font-semibold">{item.question}</summary>
+          <p class="mt-2 text-sm text-ink/70">{item.answer}</p>
+        </details>
+      ))}
+    </div>
+  </div>
 </section>

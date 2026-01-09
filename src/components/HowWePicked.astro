@@ -1,12 +1,14 @@
 ---
-const { items } = Astro.props as { items: string[] };
+const { items, id } = Astro.props as { items: string[]; id?: string };
 ---
 
-<section>
-  <h2>How we picked</h2>
-  <ul>
-    {items.map((item) => (
-      <li>{item}</li>
-    ))}
-  </ul>
+<section class="section" id={id}>
+  <div class="mx-auto w-full max-w-4xl">
+    <h2 class="text-2xl font-semibold">How we picked</h2>
+    <ul class="mt-4 list-disc space-y-2 pl-6 text-sm text-ink/70">
+      {items.map((item) => (
+        <li>{item}</li>
+      ))}
+    </ul>
+  </div>
 </section>

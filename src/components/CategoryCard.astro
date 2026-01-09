@@ -17,15 +17,28 @@ const href = childsubcategory && parentSubcategory
 const title = childsubcategory?.name ?? subcategory?.name ?? category.name;
 const description = childsubcategory?.description ?? subcategory?.description ?? category.description;
 const image = category.image;
+const iconLetter = title.slice(0, 1).toUpperCase();
 ---
 
-<a class="card category-card" href={href}>
-  <img src={image} alt={title} loading="lazy" width="640" height="360" />
-  <div class="card-body">
-    <div class="card-title-row">
-      <h3>{title}</h3>
-      <span class="category-card__arrow" aria-hidden="true">→</span>
+<a class="card group flex h-full flex-col overflow-hidden" href={href}>
+  <div class="relative">
+    <img
+      class="h-44 w-full object-cover"
+      src={image}
+      alt={title}
+      loading="lazy"
+      width="640"
+      height="360"
+    />
+    <span class="absolute left-4 top-4 grid h-10 w-10 place-items-center rounded-xl bg-white/90 text-sm font-semibold text-ink">
+      {iconLetter}
+    </span>
+  </div>
+  <div class="flex flex-1 flex-col gap-2 p-4">
+    <div class="flex items-center justify-between">
+      <h3 class="text-lg font-semibold">{title}</h3>
+      <span class="text-lg text-accent">→</span>
     </div>
-    <p>{description}</p>
+    <p class="text-sm text-ink/70">{description}</p>
   </div>
 </a>

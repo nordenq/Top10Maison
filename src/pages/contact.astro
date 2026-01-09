@@ -9,76 +9,40 @@ const canonical = buildCanonical(site, "/contact/");
 ---
 
 <BaseLayout title={title} description={description} canonical={canonical}>
-  <section class="stack contact-section">
-    <div>
-      <h1>Contact</h1>
-      <p>
-        Have a question or a correction? Send a message using the form below or reach out by email.
-      </p>
-    </div>
+  <section class="section">
+    <div class="mx-auto w-full max-w-3xl space-y-6">
+      <div>
+        <h1 class="text-3xl font-semibold">Contact</h1>
+        <p class="mt-3 text-sm text-ink/70">
+          Have a question or a correction? Send a message using the form below or reach out by email.
+        </p>
+      </div>
 
-    <div class="card contact-card">
-      <form class="contact-form" action="#" method="post">
-        <label>
-          Name
-          <input type="text" name="name" placeholder="Your name" />
-        </label>
-        <label>
-          Email
-          <input type="email" name="email" placeholder="you@example.com" />
-        </label>
-        <label>
-          Message
-          <textarea name="message" rows="6" placeholder="How can we help?"></textarea>
-        </label>
-        <button type="submit">Send message</button>
-      </form>
-      <p class="contact-fallback">
-        Prefer email? <a href="mailto:contact@top10maison.com">contact@top10maison.com</a>
-      </p>
+      <div class="card p-6">
+        <form class="grid gap-4" action="#" method="post">
+          <label class="grid gap-2 text-sm font-semibold">
+            Name
+            <input class="rounded-xl border border-border px-3 py-2" type="text" name="name" placeholder="Your name" />
+          </label>
+          <label class="grid gap-2 text-sm font-semibold">
+            Email
+            <input class="rounded-xl border border-border px-3 py-2" type="email" name="email" placeholder="you@example.com" />
+          </label>
+          <label class="grid gap-2 text-sm font-semibold">
+            Message
+            <textarea
+              class="rounded-xl border border-border px-3 py-2"
+              name="message"
+              rows="6"
+              placeholder="How can we help?"
+            ></textarea>
+          </label>
+          <button type="submit" class="btn w-fit">Send message</button>
+        </form>
+        <p class="mt-4 text-sm text-ink/70">
+          Prefer email? <a href="mailto:contact@top10maison.com">contact@top10maison.com</a>
+        </p>
+      </div>
     </div>
   </section>
 </BaseLayout>
-
-<style>
-  .contact-section {
-    max-width: 760px;
-    margin: 0 auto;
-  }
-
-  .contact-form {
-    display: grid;
-    gap: 16px;
-  }
-
-  .contact-form label {
-    display: grid;
-    gap: 8px;
-    font-weight: 600;
-  }
-
-  .contact-form input,
-  .contact-form textarea {
-    width: 100%;
-    padding: 10px 12px;
-    border-radius: 12px;
-    border: 1px solid #d6d3d1;
-    font: inherit;
-    background: #fff;
-  }
-
-  .contact-form button {
-    justify-self: start;
-    padding: 12px 18px;
-    border-radius: 999px;
-    border: none;
-    background: var(--accent);
-    color: #fff;
-    font-weight: 600;
-    cursor: pointer;
-  }
-
-  .contact-fallback {
-    margin-top: 12px;
-  }
-</style>

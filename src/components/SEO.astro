@@ -1,0 +1,55 @@
+---
+const {
+  title,
+  description,
+  canonical,
+  schema = [],
+  ogImage
+} = Astro.props as {
+  title: string;
+  description: string;
+  canonical: string;
+  schema?: Array<Record<string, unknown>>;
+  ogImage?: string;
+};
+
+const resolvedOgImage = ogImage ? new URL(ogImage, canonical).toString() : null;
+const siteUrl = new URL("/", canonical).toString();
+const logoUrl = new URL("/logo.svg", canonical).toString();
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Top10Maison",
+  url: siteUrl,
+  logo: logoUrl,
+  contactPoint: {
+    "@type": "ContactPoint",
+    email: "contact@top10maison.com",
+    contactType: "Customer Support"
+  }
+};
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Top10Maison",
+  url: siteUrl
+};
+const mergedSchema = [organizationSchema, websiteSchema, ...schema];
+---
+
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+<meta name="robots" content="index,follow" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+{resolvedOgImage ? <meta property="og:image" content={resolvedOgImage} /> : null}
+<meta name="twitter:card" content={resolvedOgImage ? "summary_large_image" : "summary"} />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+{resolvedOgImage ? <meta name="twitter:image" content={resolvedOgImage} /> : null}
+{mergedSchema.map((entry) => (
+  <script type="application/ld+json">{JSON.stringify(entry)}</script>
+))}

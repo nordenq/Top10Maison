@@ -9,29 +9,31 @@ const canonical = buildCanonical(site, "/about/");
 ---
 
 <BaseLayout title={title} description={description} canonical={canonical}>
-  <section class="stack">
-    <div>
-      <h1>About Top10Maison</h1>
-      <p>
-        Top10Maison publishes concise, research-driven buying guides for home categories. The goal is to help
-        readers compare options quickly and choose products that fit real household needs.
-      </p>
-    </div>
+  <section class="section">
+    <div class="mx-auto w-full max-w-4xl space-y-6">
+      <div>
+        <h1 class="text-3xl font-semibold">About Top10Maison</h1>
+        <p class="mt-3 text-sm text-ink/70">
+          Top10Maison publishes concise, research-driven buying guides for home categories. The goal is to help
+          readers compare options quickly and choose products that fit real household needs.
+        </p>
+      </div>
 
-    <div class="card">
-      <h2>How rankings are chosen</h2>
-      <p>
-        Rankings are based on consistent criteria such as performance, usability, value, and customer feedback.
-        Each list uses a fixed rubric to keep comparisons fair and repeatable.
-      </p>
-    </div>
+      <div class="card p-6">
+        <h2 class="text-xl font-semibold">How rankings are chosen</h2>
+        <p class="mt-2 text-sm text-ink/70">
+          Rankings are based on consistent criteria such as performance, usability, value, and customer feedback.
+          Each list uses a fixed rubric to keep comparisons fair and repeatable.
+        </p>
+      </div>
 
-    <div class="card">
-      <h2>Affiliate disclosure</h2>
-      <p>
-        Some links may be affiliate links, which can result in a commission. This does not affect editorial
-        judgment, scoring, or placement.
-      </p>
+      <div class="card p-6">
+        <h2 class="text-xl font-semibold">Affiliate disclosure</h2>
+        <p class="mt-2 text-sm text-ink/70">
+          Some links may be affiliate links, which can result in a commission. This does not affect editorial
+          judgment, scoring, or placement.
+        </p>
+      </div>
     </div>
   </section>
 </BaseLayout>

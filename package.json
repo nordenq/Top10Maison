@@ -11,5 +11,10 @@
   },
   "dependencies": {
     "astro": "^4.11.0"
+  },
+  "devDependencies": {
+    "@astrojs/tailwind": "^6.0.2",
+    "autoprefixer": "^10.4.23",
+    "tailwindcss": "^4.1.18"
   }
 }

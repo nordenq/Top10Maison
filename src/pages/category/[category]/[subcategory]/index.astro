@@ -2,17 +2,13 @@
 import BaseLayout from "../../../../layouts/BaseLayout.astro";
 import Breadcrumbs from "../../../../components/Breadcrumbs.astro";
 import ChildSubcategoryGrid from "../../../../components/ChildSubcategoryGrid.astro";
-import FaqSection from "../../../../components/FaqSection.astro";
+import FAQAccordion from "../../../../components/FAQAccordion.astro";
 import IntentComparisonTable from "../../../../components/IntentComparisonTable.astro";
 import PageHero from "../../../../components/PageHero.astro";
 import { buildDataIndex } from "../../../../utils/data";
 import { categoryUrl, subcategoryUrl } from "../../../../utils/routes";
 import { buildCanonical, buildTitle, requireSite } from "../../../../utils/seo";
 import { buildBreadcrumbSchema, buildFaqSchema } from "../../../../utils/schema";
-
-// Routing explanation:
-// /category/[category]/[subcategory]/index.astro maps to /category/{category-slug}/{subcategory-slug}/.
-// getStaticPaths enumerates every subcategory from JSON so no runtime routing exists.
 
 export function getStaticPaths() {
   const { categories } = buildDataIndex();
@@ -67,5 +63,5 @@ const schema = [
 
   <IntentComparisonTable rows={subcategory.intentTable} />
 
-  <FaqSection items={subcategory.faq} />
+  <FAQAccordion items={subcategory.faq} />
 </BaseLayout>

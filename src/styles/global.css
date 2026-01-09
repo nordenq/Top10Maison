@@ -1,0 +1,116 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-ink font-sans antialiased;
+    font-size: 18px;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply tracking-tight text-ink;
+  }
+
+  p {
+    @apply text-ink/80;
+  }
+
+  a {
+    @apply text-ink hover:text-accent transition-colors;
+  }
+}
+
+@layer components {
+  .section {
+    @apply py-12 px-6;
+  }
+
+  .card {
+    @apply rounded-2xl bg-white shadow-card border border-border;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center rounded-xl px-4 py-2 font-medium text-white bg-accent hover:bg-accent-hover transition-colors;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center rounded-xl px-4 py-2 font-medium text-ink border border-border bg-white hover:border-accent hover:text-accent transition-colors;
+  }
+}
+
+@layer utilities {
+  .cookie-banner {
+    position: fixed;
+    left: 24px;
+    right: 24px;
+    bottom: 24px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 16px;
+    padding: 14px 18px;
+    background: #111827;
+    color: #fff;
+    border-radius: 16px;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25);
+    z-index: 50;
+  }
+
+  .cookie-banner__text {
+    margin: 0;
+    max-width: 56ch;
+    color: #f3f4f6;
+  }
+
+  .cookie-banner__text a {
+    color: #93c5fd;
+  }
+
+  .cookie-banner__actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .cookie-banner button {
+    border: none;
+    border-radius: 999px;
+    padding: 8px 14px;
+    background: #93c5fd;
+    color: #111827;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .cookie-banner__decline {
+    background: transparent;
+    color: #f8fafc;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+  }
+
+  @media (max-width: 720px) {
+    .cookie-banner {
+      left: 16px;
+      right: 16px;
+      bottom: 16px;
+      padding: 12px 14px;
+    }
+  }
+}
+
+header[data-scrolled="true"] {
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+}

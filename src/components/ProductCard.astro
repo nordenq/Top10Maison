@@ -58,25 +58,47 @@ const productSchema =
     : null;
 ---
 
-<article class="product-card">
-  <div class="product-meta">
-    {rank ? <span class="rank">#{rank}</span> : null}
-    {badge ? <span class="product-badge">{badge}</span> : null}
+<article class="card grid gap-6 p-6 md:grid-cols-[220px_1fr]">
+  <div class="relative">
+    {rank ? (
+      <span class="absolute left-3 top-3 rounded-full bg-ink px-3 py-1 text-xs font-semibold text-white">
+        #{rank}
+      </span>
+    ) : null}
+    {badge ? (
+      <span class="absolute right-3 top-3 rounded-full bg-success/10 px-3 py-1 text-xs font-semibold text-success">
+        {badge}
+      </span>
+    ) : null}
     <a href={productUrl(product.slug)}>
-      <img src={productImage} alt={productName} loading="lazy" width="640" height="360" />
+      <img
+        class="h-48 w-full rounded-xl object-cover"
+        src={productImage}
+        alt={productName}
+        loading="lazy"
+        width="640"
+        height="360"
+      />
     </a>
   </div>
-  <div class="product-body">
-    <h3>
-      <a href={productUrl(product.slug)}>{productName}</a>
-    </h3>
-    <p>{productDescription}</p>
-    <div class="product-actions">
-      {productPrice ? <span class="price">{productPrice}</span> : null}
-      {typeof rating === "number" ? <span class="rating">{rating.toFixed(1)}</span> : null}
+  <div class="flex flex-col gap-3">
+    <div>
+      <h3 class="text-xl font-semibold">
+        <a href={productUrl(product.slug)}>{productName}</a>
+      </h3>
+      <p class="mt-2 text-sm text-ink/70">{productDescription}</p>
+    </div>
+    <div class="flex flex-wrap items-center gap-3 text-sm text-ink/70">
+      {productPrice ? <span class="rounded-full bg-background px-3 py-1">{productPrice}</span> : null}
+      {typeof rating === "number" ? (
+        <span class="rounded-full bg-success/10 px-3 py-1 text-success">{rating.toFixed(1)} rating</span>
+      ) : null}
+    </div>
+    <div class="mt-auto flex flex-wrap items-center gap-3">
       {effectiveCtaUrl ? (
         <AffiliateButton url={effectiveCtaUrl} label={ctaLabel} productSlug={product.slug} />
       ) : null}
+      <a class="btn-ghost" href={productUrl(product.slug)}>Read review</a>
     </div>
   </div>
   {productSchema ? (

@@ -21,7 +21,15 @@ const {
 ---
 
 <BaseLayout title={title} description={description} canonical={canonical} schema={schema}>
-  <TableOfContents items={tocItems} />
-  {showAffiliateDisclosure ? <AffiliateDisclosure /> : null}
-  <slot />
+  <section class="section">
+    <div class="mx-auto w-full max-w-6xl gap-8 lg:grid lg:grid-cols-[260px_1fr]">
+      <aside class="mb-8 lg:mb-0">
+        <TableOfContents items={tocItems} />
+        {showAffiliateDisclosure ? <AffiliateDisclosure /> : null}
+      </aside>
+      <div class="space-y-10">
+        <slot />
+      </div>
+    </div>
+  </section>
 </BaseLayout>

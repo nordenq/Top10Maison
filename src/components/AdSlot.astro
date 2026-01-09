@@ -1,0 +1,23 @@
+---
+const { slot, label = "Advertisement", client = "ca-pub-3680083929895808" } = Astro.props as {
+  slot?: string;
+  label?: string;
+  client?: string;
+};
+---
+
+<div class="section">
+  <div class="mx-auto w-full max-w-5xl">
+    <div class="card flex min-h-[120px] items-center justify-center border-dashed border-border bg-white/60 p-6 text-xs uppercase tracking-[0.25em] text-ink/50">
+      {label} {slot ? `• ${slot}` : ""}
+    </div>
+    <ins
+      class="adsbygoogle block"
+      style="display:block"
+      data-ad-client={client}
+      data-ad-slot={slot}
+      data-ad-format="auto"
+      data-full-width-responsive="true"
+    ></ins>
+  </div>
+</div>

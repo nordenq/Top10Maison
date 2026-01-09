@@ -5,19 +5,22 @@ import { toplistUrl } from "../utils/routes";
 const { toplists, title } = Astro.props as { toplists: Toplist[]; title: string };
 ---
 
-<section>
-  <h2>{title}</h2>
-  <div class="grid">
-    {toplists.map((list) => (
-      <a
-        class="card"
-        href={toplistUrl(list.category, list.subcategory, list.childsubcategory, list.count, list.keywordSlug)}
-      >
-        <div class="card-body">
-          <h3>{list.title}</h3>
-          <p>{list.metaDescription}</p>
-        </div>
-      </a>
-    ))}
+<section class="section">
+  <div class="mx-auto w-full max-w-6xl">
+    <h2 class="text-2xl font-semibold">{title}</h2>
+    <div class="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {toplists.map((list) => (
+        <a
+          class="card flex h-full flex-col p-5"
+          href={toplistUrl(list.category, list.subcategory, list.childsubcategory, list.count, list.keywordSlug)}
+        >
+          <h3 class="text-lg font-semibold">{list.title}</h3>
+          <p class="mt-2 text-sm text-ink/70">{list.metaDescription}</p>
+          <span class="mt-4 text-xs font-semibold uppercase tracking-[0.2em] text-ink/50">
+            {list.count} picks
+          </span>
+        </a>
+      ))}
+    </div>
   </div>
 </section>

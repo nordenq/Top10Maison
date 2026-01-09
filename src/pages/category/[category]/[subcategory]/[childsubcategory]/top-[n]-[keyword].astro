@@ -1,18 +1,15 @@
 ---
 import Breadcrumbs from "../../../../../components/Breadcrumbs.astro";
 import ContentLayout from "../../../../../layouts/ContentLayout.astro";
-import FaqSection from "../../../../../components/FaqSection.astro";
+import FAQAccordion from "../../../../../components/FAQAccordion.astro";
 import HowWePicked from "../../../../../components/HowWePicked.astro";
 import ProductRankedCard from "../../../../../components/ProductRankedCard.astro";
+import ComparisonTable from "../../../../../components/ComparisonTable.astro";
+import AdSlot from "../../../../../components/AdSlot.astro";
 import { buildDataIndex } from "../../../../../utils/data";
-import { categoryUrl, childSubcategoryUrl, subcategoryUrl, toplistUrl } from "../../../../../utils/routes";
+import { categoryUrl, childSubcategoryUrl, subcategoryUrl, toplistUrl, productUrl } from "../../../../../utils/routes";
 import { buildCanonical, requireSite } from "../../../../../utils/seo";
-import { buildArticleSchema, buildBreadcrumbSchema, buildFaqSchema } from "../../../../../utils/schema";
-
-// Routing explanation:
-// /category/[category]/[subcategory]/[childsubcategory]/top-[n]-[keyword].astro maps to
-// /category/{category-slug}/{subcategory-slug}/{child-subcategory-slug}/top-{n}-{keyword-slug}/.
-// getStaticPaths uses JSON data to generate every top list at build time.
+import { buildArticleSchema, buildBreadcrumbSchema, buildFaqSchema, buildItemListSchema } from "../../../../../utils/schema";
 
 export function getStaticPaths() {
   const { toplists } = buildDataIndex();
@@ -86,6 +83,12 @@ const breadcrumbItems = [
     href: toplistUrl(list.category, list.subcategory, list.childsubcategory, list.count, list.keywordSlug)
   }
 ];
+const itemListSchema = buildItemListSchema(
+  products.map((product) => ({
+    name: product.name,
+    url: new URL(productUrl(product.slug), site).toString()
+  }))
+);
 const schema = [
   buildBreadcrumbSchema(site, [
     { name: "Home", path: "/" },
@@ -98,47 +101,21 @@ const schema = [
     }
   ]),
   buildArticleSchema(site, list),
+  itemListSchema,
   buildFaqSchema(list.faq)
 ];
 
 const tocItems = [
-  { label: "Verdict", href: "#verdict" },
+  { label: "Summary", href: "#summary" },
   { label: "Top picks", href: "#top-picks" },
+  { label: "Comparison", href: "#comparison" },
   { label: "How we picked", href: "#how-we-picked" },
+  { label: "Buying advice", href: "#buying-advice" },
   { label: "FAQ", href: "#faq" }
 ];
 
 const pageTitle = list.title?.trim();
-const intro =
-  childsubcategory?.name
-    ? `Choosing ${childsubcategory.name.toLowerCase()} can be overwhelming when every option looks similar on paper. This guide focuses on everyday needs and clear tradeoffs, highlighting factors like capacity, ease of use, cleanup, and reliable results for typical home cooking. It is meant for readers who want a focused shortlist and practical context, not a long catalog. Use the picks below to compare what matters most for your routines, then decide based on fit instead of hype.`
-    : "";
-const verdictFor = childsubcategory?.name
-  ? `For readers who want dependable ${childsubcategory.name.toLowerCase()} and clear differences across common features.`
-  : "";
-const verdictNotFor = childsubcategory?.name
-  ? `Not for shoppers who need commercial-grade gear or specialty features beyond everyday cooking.`
-  : "";
-const faqItems =
-  childsubcategory?.name
-    ? [
-        {
-          question: `What should I look for when choosing ${childsubcategory.name.toLowerCase()}?`,
-          answer:
-            "Focus on capacity, control simplicity, cleanup ease, and consistent results for the foods you cook most often."
-        },
-        {
-          question: "How do I decide the right size?",
-          answer:
-            "Match the basket size to your typical servings and counter space, leaving room for airflow and storage."
-        },
-        {
-          question: "Which features matter most for daily use?",
-          answer:
-            "Clear controls, even cooking performance, and easy-to-wash parts tend to matter more than extra presets."
-        }
-      ]
-    : [];
+const summary = list.metaDescription;
 ---
 
 <ContentLayout
@@ -151,36 +128,42 @@ const faqItems =
 >
   <Breadcrumbs items={breadcrumbItems} />
 
-  <section>
-    {pageTitle ? <h1>{pageTitle}</h1> : null}
-    {intro ? <p>{intro}</p> : null}
+  <section id="summary" class="space-y-4">
+    {pageTitle ? <h1 class="text-3xl font-semibold">{pageTitle}</h1> : null}
+    <p class="text-base text-ink/70">{summary}</p>
   </section>
 
-  {verdictFor && verdictNotFor ? (
-    <section id="verdict">
-      <div class="verdict">
-        <p><strong>For:</strong> {verdictFor}</p>
-        <p><strong>Not for:</strong> {verdictNotFor}</p>
-      </div>
-    </section>
-  ) : null}
+  <AdSlot slot="toplist-1" />
 
-  <section id="top-picks">
-    <h2>Top picks</h2>
-    <div class="stack">
+  <section id="top-picks" class="space-y-6">
+    <h2 class="text-2xl font-semibold">Top picks</h2>
+    <div class="space-y-6">
       {products.map((product, index) => (
         <ProductRankedCard product={product} rank={index + 1} />
       ))}
     </div>
   </section>
 
-  <section id="how-we-picked">
-    {list.howWePicked?.length ? <HowWePicked items={list.howWePicked} /> : null}
+  <AdSlot slot="toplist-2" />
+
+  {list.quickCompareCriteria?.length ? (
+    <ComparisonTable id="comparison" title="Quick comparison" products={products} criteria={list.quickCompareCriteria} />
+  ) : null}
+
+  {list.howWePicked?.length ? <HowWePicked id="how-we-picked" items={list.howWePicked} /> : null}
+
+  <section id="buying-advice" class="section">
+    <div class="mx-auto w-full max-w-4xl">
+      <h2 class="text-2xl font-semibold">Buying advice</h2>
+      <ul class="mt-4 list-disc space-y-2 pl-6 text-sm text-ink/70">
+        {list.whoShouldBuy.map((item) => (
+          <li>{item}</li>
+        ))}
+      </ul>
+    </div>
   </section>
 
-  {faqItems.length === 3 ? (
-    <section id="faq">
-      <FaqSection items={faqItems} />
-    </section>
-  ) : null}
+  <AdSlot slot="toplist-3" />
+
+  <FAQAccordion id="faq" items={list.faq} />
 </ContentLayout>

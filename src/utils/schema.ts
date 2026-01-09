@@ -36,6 +36,23 @@ export function buildProductSchema(site: URL, product: Product): SchemaGraph {
   };
 }
 
+export function buildReviewSchema(site: URL, product: Product): SchemaGraph {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Review",
+    itemReviewed: {
+      "@type": "Product",
+      name: product.name,
+      url: new URL(productUrl(product.slug), site).toString()
+    },
+    author: {
+      "@type": "Organization",
+      name: "Top10Maison"
+    },
+    reviewBody: product.description
+  };
+}
+
 export function buildArticleSchema(site: URL, toplist: Toplist): SchemaGraph {
   const pageUrl = new URL(
     toplistUrl(
@@ -93,6 +110,19 @@ export function buildFaqSchema(items: Array<{ question: string; answer: string }
         "@type": "Answer",
         text: item.answer
       }
+    }))
+  };
+}
+
+export function buildItemListSchema(items: Array<{ name: string; url: string }>): SchemaGraph {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      url: item.url
     }))
   };
 }
