@@ -80,49 +80,10 @@
     ]
   },
   {
-    "slug": "best-cookware-essentials-2026",
-    "category": "kitchen",
-    "subcategory": "cookware",
-    "childsubcategory": "cookware-essentials",
-    "title": "Best Cookware Essentials 2026",
-    "h1": "Best Cookware Essentials for Everyday Cooking (2026)",
-    "metaTitle": "Best Cookware Essentials 2026 | Top10Maison",
-    "metaDescription": "A starter lineup of reliable cookware picks for daily meals, balanced for value, durability, and easy cleanup.",
-    "count": 5,
-    "keywordSlug": "cookware-essentials-2026",
-    "products": [
-      "cosori-air-fryer",
-      "ninja-af101",
-      "instant-vortex-plus",
-      "chefman-turbofry-xl",
-      "dash-tasti-crisp"
-    ],
-    "affiliate": true,
-    "published": true,
-    "performanceScore": 87,
-    "quickCompareCriteria": ["Best for", "Key win", "Price range"],
-    "howWePicked": [
-      "Everyday usefulness across common meals",
-      "Easy cleanup and reliable performance",
-      "Overall value for most households"
-    ],
-    "whoShouldBuy": [
-      "You want a simple starter set of dependable cookware",
-      "You cook several times per week and need reliable basics",
-      "You want good value without specialty pieces"
-    ],
-    "faq": [
-      {
-        "question": "What cookware pieces are most essential?",
-        "answer": "A skillet, saucepan, and stockpot cover most daily cooking needs for typical households."
-      }
-    ]
-  },
-  {
     "slug": "best-nonstick-pans-2026",
     "category": "kitchen",
     "subcategory": "cookware",
-    "childsubcategory": "cookware-essentials",
+    "childsubcategory": "nonstick-pans",
     "title": "Best Nonstick Pans 2026",
     "h1": "Best Nonstick Pans for Everyday Cooking (2026)",
     "metaTitle": "Best Nonstick Pans 2026 | Top10Maison",

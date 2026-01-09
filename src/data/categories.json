@@ -108,7 +108,7 @@
         "name": "Cookware",
         "description": "Pots, pans, and tools for every recipe",
         "intentCopy": "Cookware choices should match your cooking style, heat source, and how often you cook. We focus on pieces that last and perform consistently.",
-        "published": true,
+        "published": false,
         "intentTable": [
           {
             "label": "Budget-first",
@@ -143,10 +143,10 @@
         ],
         "subcategories": [
           {
-            "slug": "cookware-essentials",
-            "name": "Cookware Essentials",
-            "description": "Everyday pots and pans for daily meals",
-            "intentCopy": "Cookware essentials should be versatile, durable, and easy to clean. We focus on pieces that perform well across common meals without specialty add-ons.",
+            "slug": "nonstick-pans",
+            "name": "Nonstick Pans",
+            "description": "Nonstick pans for easy daily cooking",
+            "intentCopy": "Nonstick pans should release food easily and clean up fast. We focus on reliable coatings, even heating, and everyday durability.",
             "published": true,
             "intentTable": [
               {
@@ -176,8 +176,8 @@
             ],
             "faq": [
               {
-                "question": "What cookware pieces are most essential?",
-                "answer": "A skillet, saucepan, and stockpot cover most daily cooking needs for typical households."
+                "question": "How long does a nonstick pan typically last?",
+                "answer": "With normal use and gentle cleaning, most nonstick pans last 2-4 years."
               }
             ]
           }
