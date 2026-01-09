@@ -1,0 +1,186 @@
+---
+import Breadcrumbs from "../../../../../components/Breadcrumbs.astro";
+import ContentLayout from "../../../../../layouts/ContentLayout.astro";
+import FaqSection from "../../../../../components/FaqSection.astro";
+import HowWePicked from "../../../../../components/HowWePicked.astro";
+import ProductRankedCard from "../../../../../components/ProductRankedCard.astro";
+import { buildDataIndex } from "../../../../../utils/data";
+import { categoryUrl, childSubcategoryUrl, subcategoryUrl, toplistUrl } from "../../../../../utils/routes";
+import { buildCanonical, requireSite } from "../../../../../utils/seo";
+import { buildArticleSchema, buildBreadcrumbSchema, buildFaqSchema } from "../../../../../utils/schema";
+
+// Routing explanation:
+// /category/[category]/[subcategory]/[childsubcategory]/top-[n]-[keyword].astro maps to
+// /category/{category-slug}/{subcategory-slug}/{child-subcategory-slug}/top-{n}-{keyword-slug}/.
+// getStaticPaths uses JSON data to generate every top list at build time.
+
+export function getStaticPaths() {
+  const { toplists } = buildDataIndex();
+  return toplists.map((list) => ({
+    params: {
+      category: list.category,
+      subcategory: list.subcategory,
+      childsubcategory: list.childsubcategory,
+      n: String(list.count),
+      keyword: list.keywordSlug
+    }
+  }));
+}
+
+const { categories, toplists, productMap } = buildDataIndex();
+const paramsCategory = Astro.params.category;
+const paramsSubcategory = Astro.params.subcategory;
+const paramsChildSubcategory = Astro.params.childsubcategory;
+const paramsN = Astro.params.n;
+const paramsKeyword = Astro.params.keyword;
+
+const list = toplists.find((item) =>
+  item.category === paramsCategory &&
+  item.subcategory === paramsSubcategory &&
+  item.childsubcategory === paramsChildSubcategory &&
+  String(item.count) === paramsN &&
+  item.keywordSlug === paramsKeyword
+);
+
+if (!list) {
+  throw new Error(
+    `Missing toplist data for route: ${paramsCategory}/${paramsSubcategory}/${paramsChildSubcategory}/top-${paramsN}-${paramsKeyword}`
+  );
+}
+
+const category = categories.find((item) => item.slug === list.category);
+if (!category) {
+  throw new Error(`Missing category data for toplist: ${list.slug}`);
+}
+
+const subcategory = category.subcategories.find((item) => item.slug === list.subcategory);
+if (!subcategory) {
+  throw new Error(`Missing subcategory data for toplist: ${list.slug}`);
+}
+
+const childsubcategory = subcategory.subcategories.find((item) => item.slug === list.childsubcategory);
+if (!childsubcategory) {
+  throw new Error(`Missing child subcategory data for toplist: ${list.slug}`);
+}
+
+const products = list.products.map((slug) => {
+  const product = productMap.get(slug);
+  if (!product) {
+    throw new Error(`Missing product data for slug: ${slug}`);
+  }
+  return product;
+});
+
+const site = requireSite(Astro.site);
+const canonical = buildCanonical(
+  site,
+  toplistUrl(list.category, list.subcategory, list.childsubcategory, list.count, list.keywordSlug)
+);
+const breadcrumbItems = [
+  { name: "Home", href: "/" },
+  { name: category.name, href: categoryUrl(category.slug) },
+  { name: subcategory.name, href: subcategoryUrl(category.slug, subcategory.slug) },
+  { name: childsubcategory.name, href: childSubcategoryUrl(category.slug, subcategory.slug, childsubcategory.slug) },
+  {
+    name: list.title,
+    href: toplistUrl(list.category, list.subcategory, list.childsubcategory, list.count, list.keywordSlug)
+  }
+];
+const schema = [
+  buildBreadcrumbSchema(site, [
+    { name: "Home", path: "/" },
+    { name: category.name, path: categoryUrl(category.slug) },
+    { name: subcategory.name, path: subcategoryUrl(category.slug, subcategory.slug) },
+    { name: childsubcategory.name, path: childSubcategoryUrl(category.slug, subcategory.slug, childsubcategory.slug) },
+    {
+      name: list.title,
+      path: toplistUrl(list.category, list.subcategory, list.childsubcategory, list.count, list.keywordSlug)
+    }
+  ]),
+  buildArticleSchema(site, list),
+  buildFaqSchema(list.faq)
+];
+
+const tocItems = [
+  { label: "Verdict", href: "#verdict" },
+  { label: "Top picks", href: "#top-picks" },
+  { label: "How we picked", href: "#how-we-picked" },
+  { label: "FAQ", href: "#faq" }
+];
+
+const pageTitle = list.title?.trim();
+const intro =
+  childsubcategory?.name
+    ? `Choosing ${childsubcategory.name.toLowerCase()} can be overwhelming when every option looks similar on paper. This guide focuses on everyday needs and clear tradeoffs, highlighting factors like capacity, ease of use, cleanup, and reliable results for typical home cooking. It is meant for readers who want a focused shortlist and practical context, not a long catalog. Use the picks below to compare what matters most for your routines, then decide based on fit instead of hype.`
+    : "";
+const verdictFor = childsubcategory?.name
+  ? `For readers who want dependable ${childsubcategory.name.toLowerCase()} and clear differences across common features.`
+  : "";
+const verdictNotFor = childsubcategory?.name
+  ? `Not for shoppers who need commercial-grade gear or specialty features beyond everyday cooking.`
+  : "";
+const faqItems =
+  childsubcategory?.name
+    ? [
+        {
+          question: `What should I look for when choosing ${childsubcategory.name.toLowerCase()}?`,
+          answer:
+            "Focus on capacity, control simplicity, cleanup ease, and consistent results for the foods you cook most often."
+        },
+        {
+          question: "How do I decide the right size?",
+          answer:
+            "Match the basket size to your typical servings and counter space, leaving room for airflow and storage."
+        },
+        {
+          question: "Which features matter most for daily use?",
+          answer:
+            "Clear controls, even cooking performance, and easy-to-wash parts tend to matter more than extra presets."
+        }
+      ]
+    : [];
+---
+
+<ContentLayout
+  title={list.metaTitle}
+  description={list.metaDescription}
+  canonical={canonical}
+  schema={schema}
+  tocItems={tocItems}
+  showAffiliateDisclosure={list.affiliate}
+>
+  <Breadcrumbs items={breadcrumbItems} />
+
+  <section>
+    {pageTitle ? <h1>{pageTitle}</h1> : null}
+    {intro ? <p>{intro}</p> : null}
+  </section>
+
+  {verdictFor && verdictNotFor ? (
+    <section id="verdict">
+      <div class="verdict">
+        <p><strong>For:</strong> {verdictFor}</p>
+        <p><strong>Not for:</strong> {verdictNotFor}</p>
+      </div>
+    </section>
+  ) : null}
+
+  <section id="top-picks">
+    <h2>Top picks</h2>
+    <div class="stack">
+      {products.map((product, index) => (
+        <ProductRankedCard product={product} rank={index + 1} />
+      ))}
+    </div>
+  </section>
+
+  <section id="how-we-picked">
+    {list.howWePicked?.length ? <HowWePicked items={list.howWePicked} /> : null}
+  </section>
+
+  {faqItems.length === 3 ? (
+    <section id="faq">
+      <FaqSection items={faqItems} />
+    </section>
+  ) : null}
+</ContentLayout>

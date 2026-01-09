@@ -3,24 +3,83 @@ import type { Product } from "../utils/data";
 import { productUrl } from "../utils/routes";
 import AffiliateButton from "./AffiliateButton.astro";
 
-const { product, rank } = Astro.props as { product: Product; rank?: number };
+const {
+  product,
+  rank,
+  badge,
+  rating,
+  brand,
+  ctaLabel = "Check price",
+  ctaUrl
+} = Astro.props as {
+  product: Product;
+  rank?: number;
+  badge?: string;
+  rating?: number;
+  brand?: string;
+  ctaLabel?: string;
+  ctaUrl?: string;
+};
+
+const productName = product.name;
+const productImage = product.image;
+const productDescription = product.description;
+const productPrice = product.price;
+const effectiveCtaUrl = ctaUrl ?? product.affiliateUrl;
+const priceValue = productPrice ? productPrice.replace(/[^0-9.]/g, "") : "";
+const offers =
+  priceValue || effectiveCtaUrl
+    ? {
+        "@type": "Offer",
+        ...(priceValue ? { price: priceValue, priceCurrency: "USD" } : {}),
+        ...(effectiveCtaUrl ? { url: effectiveCtaUrl } : {})
+      }
+    : undefined;
+const aggregateRating =
+  typeof rating === "number"
+    ? {
+        "@type": "AggregateRating",
+        ratingValue: rating,
+        reviewCount: 1
+      }
+    : undefined;
+const productSchema =
+  productName && productImage
+    ? {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        name: productName,
+        image: productImage,
+        description: productDescription,
+        ...(brand ? { brand: { "@type": "Brand", name: brand } } : {}),
+        ...(offers ? { offers } : {}),
+        ...(aggregateRating ? { aggregateRating } : {})
+      }
+    : null;
 ---
 
 <article class="product-card">
   <div class="product-meta">
     {rank ? <span class="rank">#{rank}</span> : null}
+    {badge ? <span class="product-badge">{badge}</span> : null}
     <a href={productUrl(product.slug)}>
-      <img src={product.image} alt={product.name} loading="lazy" width="640" height="360" />
+      <img src={productImage} alt={productName} loading="lazy" width="640" height="360" />
     </a>
   </div>
   <div class="product-body">
     <h3>
-      <a href={productUrl(product.slug)}>{product.name}</a>
+      <a href={productUrl(product.slug)}>{productName}</a>
     </h3>
-    <p>{product.description}</p>
+    <p>{productDescription}</p>
     <div class="product-actions">
-      <span class="price">{product.price}</span>
-      <AffiliateButton url={product.affiliateUrl} label="Check price" productSlug={product.slug} />
+      {productPrice ? <span class="price">{productPrice}</span> : null}
+      {typeof rating === "number" ? <span class="rating">{rating.toFixed(1)}</span> : null}
+      {effectiveCtaUrl ? (
+        <AffiliateButton url={effectiveCtaUrl} label={ctaLabel} productSlug={product.slug} />
+      ) : null}
     </div>
   </div>
+  {productSchema ? (
+    <script type="application/ld+json">{JSON.stringify(productSchema)}</script>
+  ) : null}
 </article>

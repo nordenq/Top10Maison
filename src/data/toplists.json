@@ -3,6 +3,7 @@
     "slug": "best-air-fryers-2026",
     "category": "kitchen",
     "subcategory": "appliances",
+    "childsubcategory": "air-fryers",
     "title": "Best Air Fryers 2026",
     "h1": "Best Air Fryers for Home Use (2026)",
     "metaTitle": "Best Air Fryers 2026 | Top10Maison",
@@ -36,9 +37,92 @@
     ]
   },
   {
+    "slug": "best-air-fryers-under-200",
+    "category": "kitchen",
+    "subcategory": "appliances",
+    "childsubcategory": "air-fryers",
+    "title": "Best Air Fryers Under $200",
+    "h1": "Best Air Fryers Under $200",
+    "metaTitle": "Best Air Fryers Under $200 | Top10Maison",
+    "metaDescription": "Affordable air fryers that deliver strong performance, fast cooking, and reliable results without breaking the budget.",
+    "count": 5,
+    "keywordSlug": "air-fryers-under-200",
+    "products": [
+      "cosori-air-fryer",
+      "ninja-af101",
+      "instant-vortex-plus",
+      "chefman-turbofry-xl",
+      "dash-tasti-crisp"
+    ],
+    "affiliate": true,
+    "published": true,
+    "performanceScore": 89,
+    "quickCompareCriteria": ["Best for", "Key win", "Price range"],
+    "howWePicked": [
+      "Performance on common foods like fries, wings, and vegetables",
+      "Speed to crisp and ease of daily cleanup",
+      "Value versus capacity and feature set under $200"
+    ],
+    "whoShouldBuy": [
+      "You want reliable results without spending premium prices",
+      "You cook quick meals and want less oil and mess",
+      "You need a compact appliance that still handles family portions"
+    ],
+    "faq": [
+      {
+        "question": "What size air fryer works best under $200?",
+        "answer": "A 4-6 quart air fryer offers the best balance of capacity, counter space, and price in this range."
+      },
+      {
+        "question": "Are budget air fryers slower than premium models?",
+        "answer": "Not always. Many mid-priced models heat quickly, but may trade off advanced presets or build materials."
+      }
+    ]
+  },
+  {
+    "slug": "best-cookware-essentials-2026",
+    "category": "kitchen",
+    "subcategory": "cookware",
+    "childsubcategory": "cookware-essentials",
+    "title": "Best Cookware Essentials 2026",
+    "h1": "Best Cookware Essentials for Everyday Cooking (2026)",
+    "metaTitle": "Best Cookware Essentials 2026 | Top10Maison",
+    "metaDescription": "A starter lineup of reliable cookware picks for daily meals, balanced for value, durability, and easy cleanup.",
+    "count": 5,
+    "keywordSlug": "cookware-essentials-2026",
+    "products": [
+      "cosori-air-fryer",
+      "ninja-af101",
+      "instant-vortex-plus",
+      "chefman-turbofry-xl",
+      "dash-tasti-crisp"
+    ],
+    "affiliate": true,
+    "published": true,
+    "performanceScore": 87,
+    "quickCompareCriteria": ["Best for", "Key win", "Price range"],
+    "howWePicked": [
+      "Everyday usefulness across common meals",
+      "Easy cleanup and reliable performance",
+      "Overall value for most households"
+    ],
+    "whoShouldBuy": [
+      "You want a simple starter set of dependable cookware",
+      "You cook several times per week and need reliable basics",
+      "You want good value without specialty pieces"
+    ],
+    "faq": [
+      {
+        "question": "What cookware pieces are most essential?",
+        "answer": "A skillet, saucepan, and stockpot cover most daily cooking needs for typical households."
+      }
+    ]
+  },
+  {
     "slug": "best-nonstick-pans-2026",
     "category": "kitchen",
     "subcategory": "cookware",
+    "childsubcategory": "cookware-essentials",
     "title": "Best Nonstick Pans 2026",
     "h1": "Best Nonstick Pans for Everyday Cooking (2026)",
     "metaTitle": "Best Nonstick Pans 2026 | Top10Maison",
@@ -47,7 +131,7 @@
     "keywordSlug": "nonstick-pans-2026",
     "products": ["greenpan-lima", "tramontina-fry-pan"],
     "affiliate": true,
-    "published": true,
+    "published": false,
     "performanceScore": 88,
     "quickCompareCriteria": ["Best for", "Key win", "Price range"],
     "howWePicked": [
@@ -71,6 +155,7 @@
     "slug": "best-cotton-sheets-2026",
     "category": "bedroom",
     "subcategory": "bedding",
+    "childsubcategory": "bedding-essentials",
     "title": "Best Cotton Sheets 2026",
     "h1": "Best Cotton Sheets for Comfortable Sleep (2026)",
     "metaTitle": "Best Cotton Sheets 2026 | Top10Maison",
@@ -79,7 +164,7 @@
     "keywordSlug": "cotton-sheets-2026",
     "products": ["brooklinen-core-sheet-set", "mellanni-sheet-set"],
     "affiliate": true,
-    "published": true,
+    "published": false,
     "performanceScore": 90,
     "quickCompareCriteria": ["Best for", "Key win", "Price range"],
     "howWePicked": [

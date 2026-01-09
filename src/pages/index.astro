@@ -18,9 +18,10 @@ const schema = [
 
 <BaseLayout title={title} description={description} canonical={canonical} schema={schema}>
   <section class="hero">
-    <div>
+    <div class="hero-text">
       <h1>Top10Maison</h1>
-      <p>Data-driven rankings for the home products that matter most.</p>
+      <p class="hero-subtitle">Data-driven rankings for the home products that matter most.</p>
+      <a class="hero-cta" href="#top-categories">Browse top categories</a>
     </div>
     <div class="card">
       <h2>Start browsing</h2>
@@ -28,7 +29,7 @@ const schema = [
     </div>
   </section>
 
-  <section>
+  <section id="top-categories">
     <h2>Top categories</h2>
     <div class="grid">
       {categories.map((category) => (

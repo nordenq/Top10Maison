@@ -1,0 +1,19 @@
+---
+import type { Category, Subcategory } from "../utils/data";
+import CategoryCard from "./CategoryCard.astro";
+
+const { category, subcategory } = Astro.props as { category: Category; subcategory: Subcategory };
+---
+
+<section>
+  <h2>Explore subcategories</h2>
+  <div class="grid">
+    {subcategory.subcategories.map((childsubcategory) => (
+      <CategoryCard
+        category={category}
+        parentSubcategory={subcategory}
+        childsubcategory={childsubcategory}
+      />
+    ))}
+  </div>
+</section>

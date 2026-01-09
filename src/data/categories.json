@@ -60,6 +60,47 @@
             "question": "What is the best appliance for most homes?",
             "answer": "Pick a model that balances performance, size, and easy cleanup over extra features."
           }
+        ],
+        "subcategories": [
+          {
+            "slug": "air-fryers",
+            "name": "Air Fryers",
+            "description": "Air fryers for fast, lower-oil cooking",
+            "intentCopy": "Air fryers should deliver crisp results quickly without taking over your counter. We prioritize even cooking, easy cleanup, and value at common price points.",
+            "published": true,
+            "intentTable": [
+              {
+                "label": "Budget-first",
+                "audience": "Small households",
+                "priority": "Low cost",
+                "priceBand": "$60-$120"
+              },
+              {
+                "label": "Best overall value",
+                "audience": "Most homes",
+                "priority": "Balanced performance",
+                "priceBand": "$120-$200"
+              },
+              {
+                "label": "Premium build",
+                "audience": "Frequent cooks",
+                "priority": "Durability and capacity",
+                "priceBand": "$200-$300"
+              },
+              {
+                "label": "Small-space friendly",
+                "audience": "Apartments",
+                "priority": "Compact footprint",
+                "priceBand": "$70-$150"
+              }
+            ],
+            "faq": [
+              {
+                "question": "What size air fryer is best for two people?",
+                "answer": "A 3-5 quart air fryer is usually enough for two people while staying compact."
+              }
+            ]
+          }
         ]
       },
       {
@@ -99,6 +140,47 @@
             "question": "Is nonstick cookware worth it?",
             "answer": "Nonstick is convenient for low-oil cooking but should be replaced more frequently than stainless or cast iron."
           }
+        ],
+        "subcategories": [
+          {
+            "slug": "cookware-essentials",
+            "name": "Cookware Essentials",
+            "description": "Everyday pots and pans for daily meals",
+            "intentCopy": "Cookware essentials should be versatile, durable, and easy to clean. We focus on pieces that perform well across common meals without specialty add-ons.",
+            "published": true,
+            "intentTable": [
+              {
+                "label": "Budget-first",
+                "audience": "Occasional cooks",
+                "priority": "Low cost",
+                "priceBand": "$40-$100"
+              },
+              {
+                "label": "Best overall value",
+                "audience": "Most homes",
+                "priority": "Balanced set",
+                "priceBand": "$100-$220"
+              },
+              {
+                "label": "Premium build",
+                "audience": "Daily cooks",
+                "priority": "Long-term durability",
+                "priceBand": "$220-$450"
+              },
+              {
+                "label": "Small-space friendly",
+                "audience": "Compact kitchens",
+                "priority": "Space-saving pieces",
+                "priceBand": "$70-$160"
+              }
+            ],
+            "faq": [
+              {
+                "question": "What cookware pieces are most essential?",
+                "answer": "A skillet, saucepan, and stockpot cover most daily cooking needs for typical households."
+              }
+            ]
+          }
         ]
       }
     ]
@@ -109,7 +191,7 @@
     "description": "Comfort-first bedroom essentials",
     "intro": "Bedroom essentials need to feel good night after night, not just on day one. This guide highlights bedding and sleep products that balance comfort, breathability, and long-term value. We focus on materials that age well, easy-care fabrics, and fits that actually stay put. Use these comparisons to make a smart, lasting choice.",
     "image": "/images/categories/bedroom.svg",
-    "published": true,
+    "published": false,
     "selectionFactors": ["comfort", "breathability", "care needs"],
     "howToChoose": [
       "Choose materials that match your sleep temperature.",
@@ -128,7 +210,7 @@
         "name": "Bedding",
         "description": "Sheets, duvets, and pillows",
         "intentCopy": "Bedding buyers want comfort and temperature control. We focus on sets that stay soft, wash well, and last through daily use.",
-        "published": true,
+        "published": false,
         "intentTable": [
           {
             "label": "Budget-first",

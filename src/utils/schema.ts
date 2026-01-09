@@ -1,5 +1,5 @@
 import type { Product, Toplist } from "./data";
-import { categoryUrl, productUrl, subcategoryUrl, toplistUrl } from "./routes";
+import { categoryUrl, childSubcategoryUrl, productUrl, subcategoryUrl, toplistUrl } from "./routes";
 
 export type SchemaGraph = Record<string, unknown>;
 
@@ -43,7 +43,13 @@ export function buildArticleSchema(site: URL, toplist: Toplist): SchemaGraph {
     headline: toplist.title,
     description: toplist.metaDescription,
     mainEntityOfPage: new URL(
-      toplistUrl(toplist.category, toplist.subcategory, toplist.count, toplist.keywordSlug),
+      toplistUrl(
+        toplist.category,
+        toplist.subcategory,
+        toplist.childsubcategory,
+        toplist.count,
+        toplist.keywordSlug
+      ),
       site
     ).toString(),
     author: {
@@ -72,6 +78,7 @@ export function buildToplistBreadcrumb(
   site: URL,
   categoryName: string,
   subcategoryName: string,
+  childSubcategoryName: string,
   toplist: Toplist
 ): SchemaGraph {
   return buildBreadcrumbSchema(site, [
@@ -79,8 +86,18 @@ export function buildToplistBreadcrumb(
     { name: categoryName, path: categoryUrl(toplist.category) },
     { name: subcategoryName, path: subcategoryUrl(toplist.category, toplist.subcategory) },
     {
+      name: childSubcategoryName,
+      path: childSubcategoryUrl(toplist.category, toplist.subcategory, toplist.childsubcategory)
+    },
+    {
       name: toplist.title,
-      path: toplistUrl(toplist.category, toplist.subcategory, toplist.count, toplist.keywordSlug)
+      path: toplistUrl(
+        toplist.category,
+        toplist.subcategory,
+        toplist.childsubcategory,
+        toplist.count,
+        toplist.keywordSlug
+      )
     }
   ]);
 }

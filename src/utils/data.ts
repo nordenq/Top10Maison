@@ -2,7 +2,7 @@ import categoriesData from "../data/categories.json";
 import productsData from "../data/products.json";
 import toplistsData from "../data/toplists.json";
 
-export type Subcategory = {
+export type ChildSubcategory = {
   slug: string;
   name: string;
   description: string;
@@ -15,6 +15,10 @@ export type Subcategory = {
   }>;
   faq: FaqItem[];
   published: boolean;
+};
+
+export type Subcategory = ChildSubcategory & {
+  subcategories: ChildSubcategory[];
 };
 
 export type Category = {
@@ -52,6 +56,7 @@ export type Toplist = {
   slug: string;
   category: string;
   subcategory: string;
+  childsubcategory: string;
   title: string;
   h1: string;
   metaTitle: string;
@@ -120,10 +125,10 @@ export function getCategories(): Category[] {
     assertNonEmpty(category.description, `Category ${category.slug} description`);
     assertNonEmpty(category.intro, `Category ${category.slug} intro`);
     assertNonEmpty(category.image, `Category ${category.slug} image`);
-    assertNonEmptyArray(category.selectionFactors, `Category ${category.slug} selectionFactors`);
-    assertNonEmptyArray(category.howToChoose, `Category ${category.slug} howToChoose`);
-    assertFaq(category.faq, `Category ${category.slug}`);
-    assert(Array.isArray(category.subcategories) && category.subcategories.length > 0, `Category ${category.slug} must have subcategories.`);
+  assertNonEmptyArray(category.selectionFactors, `Category ${category.slug} selectionFactors`);
+  assertNonEmptyArray(category.howToChoose, `Category ${category.slug} howToChoose`);
+  assertFaq(category.faq, `Category ${category.slug}`);
+  assert(Array.isArray(category.subcategories) && category.subcategories.length > 0, `Category ${category.slug} must have subcategories.`);
     assert(!slugs.has(category.slug), `Duplicate category slug: ${category.slug}`);
     slugs.add(category.slug);
 
@@ -145,8 +150,31 @@ export function getCategories(): Category[] {
         assertNonEmpty(row.priceBand, `Subcategory ${subcategory.slug} intentTable priceBand`);
       }
       assertFaq(subcategory.faq, `Subcategory ${subcategory.slug}`);
+      assert(Array.isArray(subcategory.subcategories) && subcategory.subcategories.length > 0, `Subcategory ${subcategory.slug} must have subcategories.`);
       assert(!subSlugs.has(subcategory.slug), `Duplicate subcategory slug in ${category.slug}: ${subcategory.slug}`);
       subSlugs.add(subcategory.slug);
+
+      const childSlugs = new Set<string>();
+      const publishedChildren = subcategory.subcategories.filter((child) => child.published);
+      assert(publishedChildren.length > 0, `Subcategory ${subcategory.slug} must have published subcategories.`);
+      subcategory.subcategories = publishedChildren;
+      for (const childsubcategory of subcategory.subcategories) {
+        assertNonEmpty(childsubcategory.slug, `Child subcategory slug in ${subcategory.slug}`);
+        assert(typeof childsubcategory.published === "boolean", `Child subcategory ${childsubcategory.slug} published must be boolean.`);
+        assertNonEmpty(childsubcategory.name, `Child subcategory ${childsubcategory.slug} name`);
+        assertNonEmpty(childsubcategory.description, `Child subcategory ${childsubcategory.slug} description`);
+        assertNonEmpty(childsubcategory.intentCopy, `Child subcategory ${childsubcategory.slug} intentCopy`);
+        assert(Array.isArray(childsubcategory.intentTable) && childsubcategory.intentTable.length > 0, `Child subcategory ${childsubcategory.slug} intentTable must not be empty.`);
+        for (const row of childsubcategory.intentTable) {
+          assertNonEmpty(row.label, `Child subcategory ${childsubcategory.slug} intentTable label`);
+          assertNonEmpty(row.audience, `Child subcategory ${childsubcategory.slug} intentTable audience`);
+          assertNonEmpty(row.priority, `Child subcategory ${childsubcategory.slug} intentTable priority`);
+          assertNonEmpty(row.priceBand, `Child subcategory ${childsubcategory.slug} intentTable priceBand`);
+        }
+        assertFaq(childsubcategory.faq, `Child subcategory ${childsubcategory.slug}`);
+        assert(!childSlugs.has(childsubcategory.slug), `Duplicate child subcategory slug in ${subcategory.slug}: ${childsubcategory.slug}`);
+        childSlugs.add(childsubcategory.slug);
+      }
     }
   }
 
@@ -191,6 +219,7 @@ export function getToplists(): Toplist[] {
     assert(typeof toplist.published === "boolean", `Toplist ${toplist.slug} published must be boolean.`);
     assertNonEmpty(toplist.category, `Toplist ${toplist.slug} category`);
     assertNonEmpty(toplist.subcategory, `Toplist ${toplist.slug} subcategory`);
+    assertNonEmpty(toplist.childsubcategory, `Toplist ${toplist.slug} childsubcategory`);
     assertNonEmpty(toplist.title, `Toplist ${toplist.slug} title`);
     assertNonEmpty(toplist.h1, `Toplist ${toplist.slug} h1`);
     assertNonEmpty(toplist.metaTitle, `Toplist ${toplist.slug} metaTitle`);
@@ -220,10 +249,14 @@ export function buildDataIndex() {
 
   const categoryMap = new Map<string, Category>();
   const subcategoryMap = new Map<string, Subcategory>();
+  const childSubcategoryMap = new Map<string, ChildSubcategory>();
   for (const category of categories) {
     categoryMap.set(category.slug, category);
     for (const subcategory of category.subcategories) {
       subcategoryMap.set(`${category.slug}:${subcategory.slug}`, subcategory);
+      for (const childsubcategory of subcategory.subcategories) {
+        childSubcategoryMap.set(`${category.slug}:${subcategory.slug}:${childsubcategory.slug}`, childsubcategory);
+      }
     }
   }
 
@@ -235,8 +268,10 @@ export function buildDataIndex() {
   for (const toplist of toplists) {
     const categoryKey = toplist.category;
     const subcategoryKey = `${toplist.category}:${toplist.subcategory}`;
+    const childSubcategoryKey = `${toplist.category}:${toplist.subcategory}:${toplist.childsubcategory}`;
     assert(categoryMap.has(categoryKey), `Toplist ${toplist.slug} references missing category: ${categoryKey}`);
     assert(subcategoryMap.has(subcategoryKey), `Toplist ${toplist.slug} references missing subcategory: ${subcategoryKey}`);
+    assert(childSubcategoryMap.has(childSubcategoryKey), `Toplist ${toplist.slug} references missing child subcategory: ${childSubcategoryKey}`);
 
     for (const productSlug of toplist.products) {
       assert(productMap.has(productSlug), `Toplist ${toplist.slug} references missing product: ${productSlug}`);
@@ -256,6 +291,7 @@ export function buildDataIndex() {
     toplists,
     categoryMap,
     subcategoryMap,
+    childSubcategoryMap,
     productMap
   };
 }

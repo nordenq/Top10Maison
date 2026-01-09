@@ -1,24 +1,31 @@
 ---
-import type { Category, Subcategory } from "../utils/data";
-import { categoryUrl, subcategoryUrl } from "../utils/routes";
+import type { Category, ChildSubcategory, Subcategory } from "../utils/data";
+import { categoryUrl, childSubcategoryUrl, subcategoryUrl } from "../utils/routes";
 
-const { category, subcategory } = Astro.props as {
+const { category, subcategory, childsubcategory, parentSubcategory } = Astro.props as {
   category: Category;
   subcategory?: Subcategory;
+  childsubcategory?: ChildSubcategory;
+  parentSubcategory?: Subcategory;
 };
 
-const href = subcategory
-  ? subcategoryUrl(category.slug, subcategory.slug)
-  : categoryUrl(category.slug);
-const title = subcategory ? subcategory.name : category.name;
-const description = subcategory ? subcategory.description : category.description;
+const href = childsubcategory && parentSubcategory
+  ? childSubcategoryUrl(category.slug, parentSubcategory.slug, childsubcategory.slug)
+  : subcategory
+    ? subcategoryUrl(category.slug, subcategory.slug)
+    : categoryUrl(category.slug);
+const title = childsubcategory?.name ?? subcategory?.name ?? category.name;
+const description = childsubcategory?.description ?? subcategory?.description ?? category.description;
 const image = category.image;
 ---
 
-<a class="card" href={href}>
+<a class="card category-card" href={href}>
   <img src={image} alt={title} loading="lazy" width="640" height="360" />
   <div class="card-body">
-    <h3>{title}</h3>
+    <div class="card-title-row">
+      <h3>{title}</h3>
+      <span class="category-card__arrow" aria-hidden="true">→</span>
+    </div>
     <p>{description}</p>
   </div>
 </a>
