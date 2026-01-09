@@ -175,7 +175,7 @@ const mergedSchema = [organizationSchema, websiteSchema, ...schema];
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 1.25rem 2rem;
+        padding: 0.9rem 1.5rem;
         background: #fffaf2;
       }
 
@@ -190,7 +190,7 @@ const mergedSchema = [organizationSchema, websiteSchema, ...schema];
 
       .footer-links {
         display: flex;
-        gap: 16px;
+        gap: 12px;
         flex-wrap: wrap;
       }
 
@@ -201,6 +201,12 @@ const mergedSchema = [organizationSchema, websiteSchema, ...schema];
 
       .footer-links a:hover {
         color: var(--ink);
+      }
+
+      .footer-meta {
+        margin: 0;
+        font-size: 0.85rem;
+        color: var(--muted);
       }
 
       .nav a {
@@ -542,7 +548,8 @@ const mergedSchema = [organizationSchema, websiteSchema, ...schema];
         .site-header,
         .site-footer {
           flex-direction: column;
-          gap: 12px;
+          gap: 8px;
+          text-align: center;
         }
 
         .product-card {
