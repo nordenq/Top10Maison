@@ -17,6 +17,27 @@ const {
 };
 
 const resolvedOgImage = ogImage ? new URL(ogImage, canonical).toString() : null;
+const siteUrl = new URL("/", canonical).toString();
+const logoUrl = new URL("/logo.svg", canonical).toString();
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Top10Maison",
+  url: siteUrl,
+  logo: logoUrl,
+  contactPoint: {
+    "@type": "ContactPoint",
+    email: "contact@top10maison.com",
+    contactType: "Customer Support"
+  }
+};
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Top10Maison",
+  url: siteUrl
+};
+const mergedSchema = [organizationSchema, websiteSchema, ...schema];
 ---
 
 <!doctype html>
@@ -32,6 +53,35 @@ const resolvedOgImage = ogImage ? new URL(ogImage, canonical).toString() : null;
     <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
     <link rel="robots" href="/robots.txt" />
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3680083929895808" crossorigin="anonymous"></script>
+    <script>
+      window.addEventListener('DOMContentLoaded', function () {
+        if (!localStorage.getItem('cookieConsent')) {
+          const banner = document.createElement('div');
+          banner.className = 'cookie-banner';
+          banner.innerHTML = `
+            <p>
+              This site uses cookies to improve performance and serve personalized ads.
+              <a href="/privacy-policy/">Learn more</a>.
+            </p>
+            <div class="cookie-banner__actions">
+              <button type="button" data-consent="accept">Got it!</button>
+              <button type="button" data-consent="decline" class="cookie-banner__decline">Decline</button>
+            </div>
+          `;
+          const btn = banner.querySelector('[data-consent="accept"]');
+          const declineBtn = banner.querySelector('[data-consent="decline"]');
+          btn.addEventListener('click', function () {
+            localStorage.setItem('cookieConsent', 'true');
+            banner.remove();
+          });
+          declineBtn.addEventListener('click', function () {
+            localStorage.setItem('cookieConsent', 'false');
+            banner.remove();
+          });
+          document.body.appendChild(banner);
+        }
+      });
+    </script>
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -42,7 +92,7 @@ const resolvedOgImage = ogImage ? new URL(ogImage, canonical).toString() : null;
     <meta name="twitter:description" content={description} />
     {resolvedOgImage ? <meta name="twitter:image" content={resolvedOgImage} /> : null}
     <meta name="robots" content="index,follow" />
-    {schema.map((entry) => (
+    {mergedSchema.map((entry) => (
       <script type="application/ld+json">{JSON.stringify(entry)}</script>
     ))}
     <style>
@@ -427,6 +477,65 @@ const resolvedOgImage = ogImage ? new URL(ogImage, canonical).toString() : null;
       .ad-slot--footer {
         margin-top: 0;
         margin-bottom: 32px;
+      }
+
+      .cookie-banner {
+        position: fixed;
+        inset: auto 24px 24px 24px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px 16px;
+        align-items: center;
+        justify-content: space-between;
+        background: #1f2937;
+        color: #fff;
+        padding: 14px 18px;
+        border-radius: 16px;
+        box-shadow: 0 14px 40px rgba(0, 0, 0, 0.25);
+        z-index: 9999;
+      }
+
+      .cookie-banner p {
+        margin: 0;
+        max-width: 56ch;
+      }
+
+      .cookie-banner a {
+        color: #9dd1ff;
+      }
+
+      .cookie-banner__actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .cookie-banner button {
+        border: none;
+        border-radius: 999px;
+        padding: 10px 16px;
+        background: #9dd1ff;
+        color: #1f2937;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .cookie-banner__decline {
+        background: transparent;
+        color: #f8fafc;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+      }
+
+      @media (max-width: 720px) {
+        .cookie-banner {
+          inset: auto 16px 16px 16px;
+          align-items: flex-start;
+          padding: 12px 14px;
+        }
+
+        .cookie-banner button {
+          padding: 8px 14px;
+        }
       }
 
       @media (max-width: 720px) {

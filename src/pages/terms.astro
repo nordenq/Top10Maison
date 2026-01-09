@@ -1,0 +1,73 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { buildCanonical, buildTitle, requireSite } from "../utils/seo";
+
+const site = requireSite(Astro.site);
+const title = buildTitle("Terms of Service", "Top10Maison");
+const description = "Terms of Service for using Top10Maison.";
+const canonical = buildCanonical(site, "/terms/");
+---
+
+<BaseLayout title={title} description={description} canonical={canonical}>
+  <section class="stack">
+    <div>
+      <h1>Terms of Service</h1>
+      <p>Effective Date: January 2026</p>
+      <p>By using Top10Maison.com, you agree to the following terms:</p>
+    </div>
+
+    <div class="card">
+      <h2>1. Use of Content</h2>
+      <p>
+        All content on this site is for informational purposes only. We make no warranties regarding accuracy
+        or completeness.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>2. Affiliate Links & Advertising</h2>
+      <p>
+        We may earn commissions from affiliate links at no extra cost to you. Third-party ads (e.g., Google
+        AdSense) may use cookies to personalize content and measure performance.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>3. Intellectual Property</h2>
+      <p>
+        All content, trademarks, and images on this site are owned by Top10Maison or credited sources. You may
+        not copy or reuse without written permission.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>4. External Links</h2>
+      <p>
+        We link to third-party sites for reference. We are not responsible for their content or privacy
+        practices.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>5. Limitation of Liability</h2>
+      <p>
+        Top10Maison is not liable for any direct or indirect damages resulting from site usage.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>6. Changes to Terms</h2>
+      <p>
+        We may update these terms at any time. Continued use means you accept any changes.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>7. Contact</h2>
+      <p>
+        For legal inquiries or questions, email
+        <a href="mailto:contact@top10maison.com">contact@top10maison.com</a>.
+      </p>
+    </div>
+  </section>
+</BaseLayout>
