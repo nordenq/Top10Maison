@@ -37,26 +37,49 @@ export function buildProductSchema(site: URL, product: Product): SchemaGraph {
 }
 
 export function buildArticleSchema(site: URL, toplist: Toplist): SchemaGraph {
-  return {
+  const pageUrl = new URL(
+    toplistUrl(
+      toplist.category,
+      toplist.subcategory,
+      toplist.childsubcategory,
+      toplist.count,
+      toplist.keywordSlug
+    ),
+    site
+  ).toString();
+
+  const schema: SchemaGraph = {
     "@context": "https://schema.org",
     "@type": "Article",
-    headline: toplist.title,
+    headline: toplist.schemaHeadline ?? toplist.title,
     description: toplist.metaDescription,
-    mainEntityOfPage: new URL(
-      toplistUrl(
-        toplist.category,
-        toplist.subcategory,
-        toplist.childsubcategory,
-        toplist.count,
-        toplist.keywordSlug
-      ),
-      site
-    ).toString(),
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": pageUrl
+    },
     author: {
       "@type": "Organization",
       name: "Top10Maison"
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "Top10Maison",
+      logo: {
+        "@type": "ImageObject",
+        url: "https://www.top10maison.com/logo.png"
+      }
     }
   };
+
+  if (toplist.schemaDatePublished) {
+    schema.datePublished = toplist.schemaDatePublished;
+  }
+
+  if (toplist.schemaImage) {
+    schema.image = toplist.schemaImage;
+  }
+
+  return schema;
 }
 
 export function buildFaqSchema(items: Array<{ question: string; answer: string }>): SchemaGraph {
