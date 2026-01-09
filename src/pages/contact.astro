@@ -1,0 +1,84 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { buildCanonical, buildTitle, requireSite } from "../utils/seo";
+
+const site = requireSite(Astro.site);
+const title = buildTitle("Contact", "Top10Maison");
+const description = "Contact Top10Maison for questions, feedback, or privacy requests.";
+const canonical = buildCanonical(site, "/contact/");
+---
+
+<BaseLayout title={title} description={description} canonical={canonical}>
+  <section class="stack contact-section">
+    <div>
+      <h1>Contact</h1>
+      <p>
+        Have a question or a correction? Send a message using the form below or reach out by email.
+      </p>
+    </div>
+
+    <div class="card contact-card">
+      <form class="contact-form" action="#" method="post">
+        <label>
+          Name
+          <input type="text" name="name" placeholder="Your name" />
+        </label>
+        <label>
+          Email
+          <input type="email" name="email" placeholder="you@example.com" />
+        </label>
+        <label>
+          Message
+          <textarea name="message" rows="6" placeholder="How can we help?"></textarea>
+        </label>
+        <button type="submit">Send message</button>
+      </form>
+      <p class="contact-fallback">
+        Prefer email? <a href="mailto:hello@top10maison.com">hello@top10maison.com</a>
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .contact-section {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  .contact-form {
+    display: grid;
+    gap: 16px;
+  }
+
+  .contact-form label {
+    display: grid;
+    gap: 8px;
+    font-weight: 600;
+  }
+
+  .contact-form input,
+  .contact-form textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid #d6d3d1;
+    font: inherit;
+    background: #fff;
+  }
+
+  .contact-form button {
+    justify-self: start;
+    padding: 12px 18px;
+    border-radius: 999px;
+    border: none;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .contact-fallback {
+    margin-top: 12px;
+  }
+</style>

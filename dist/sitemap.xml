@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://www.top10maison.com/</loc></url>
-  <url><loc>https://www.top10maison.com/category/kitchen/</loc></url>
-  <url><loc>https://www.top10maison.com/category/kitchen/appliances/</loc></url>
-  <url><loc>https://www.top10maison.com/category/kitchen/appliances/air-fryers/</loc></url>
-  <url><loc>https://www.top10maison.com/category/kitchen/appliances/air-fryers/top-10-air-fryers-2026/</loc></url>
-  <url><loc>https://www.top10maison.com/category/kitchen/appliances/air-fryers/top-5-air-fryers-under-200/</loc></url>
-  <url><loc>https://www.top10maison.com/product/cosori-air-fryer/</loc></url>
-  <url><loc>https://www.top10maison.com/product/ninja-af101/</loc></url>
-  <url><loc>https://www.top10maison.com/product/instant-vortex-plus/</loc></url>
-  <url><loc>https://www.top10maison.com/product/chefman-turbofry-xl/</loc></url>
-  <url><loc>https://www.top10maison.com/product/dash-tasti-crisp/</loc></url>
+  <url><loc>https://www.top10maison.com/</loc><priority>0.5</priority></url>
+  <url><loc>https://www.top10maison.com/about</loc><priority>0.5</priority></url>
+  <url><loc>https://www.top10maison.com/contact</loc><priority>0.5</priority></url>
+  <url><loc>https://www.top10maison.com/privacy-policy</loc><priority>0.5</priority></url>
+  <url><loc>https://www.top10maison.com/category/kitchen/</loc><priority>0.8</priority></url>
+  <url><loc>https://www.top10maison.com/category/kitchen/appliances/</loc><priority>0.7</priority></url>
+  <url><loc>https://www.top10maison.com/category/kitchen/appliances/air-fryers/</loc><priority>0.6</priority></url>
+  <url><loc>https://www.top10maison.com/category/kitchen/appliances/air-fryers/top-10-air-fryers-2026/</loc><priority>0.6</priority></url>
+  <url><loc>https://www.top10maison.com/category/kitchen/appliances/air-fryers/top-5-air-fryers-under-200/</loc><priority>0.6</priority></url>
+  <url><loc>https://www.top10maison.com/product/cosori-air-fryer/</loc><priority>0.4</priority></url>
+  <url><loc>https://www.top10maison.com/product/ninja-af101/</loc><priority>0.4</priority></url>
+  <url><loc>https://www.top10maison.com/product/instant-vortex-plus/</loc><priority>0.4</priority></url>
+  <url><loc>https://www.top10maison.com/product/chefman-turbofry-xl/</loc><priority>0.4</priority></url>
+  <url><loc>https://www.top10maison.com/product/dash-tasti-crisp/</loc><priority>0.4</priority></url>
 </urlset>

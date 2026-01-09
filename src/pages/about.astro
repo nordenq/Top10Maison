@@ -1,0 +1,37 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { buildCanonical, buildTitle, requireSite } from "../utils/seo";
+
+const site = requireSite(Astro.site);
+const title = buildTitle("About", "Top10Maison");
+const description = "What Top10Maison does and how product rankings are selected.";
+const canonical = buildCanonical(site, "/about/");
+---
+
+<BaseLayout title={title} description={description} canonical={canonical}>
+  <section class="stack">
+    <div>
+      <h1>About Top10Maison</h1>
+      <p>
+        Top10Maison publishes concise, research-driven buying guides for home categories. The goal is to help
+        readers compare options quickly and choose products that fit real household needs.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>How rankings are chosen</h2>
+      <p>
+        Rankings are based on consistent criteria such as performance, usability, value, and customer feedback.
+        Each list uses a fixed rubric to keep comparisons fair and repeatable.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>Affiliate disclosure</h2>
+      <p>
+        Some links may be affiliate links, which can result in a commission. This does not affect editorial
+        judgment, scoring, or placement.
+      </p>
+    </div>
+  </section>
+</BaseLayout>

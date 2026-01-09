@@ -1,0 +1,61 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { buildCanonical, buildTitle, requireSite } from "../utils/seo";
+
+const site = requireSite(Astro.site);
+const title = buildTitle("Privacy Policy", "Top10Maison");
+const description = "How Top10Maison collects, uses, and protects your data.";
+const canonical = buildCanonical(site, "/privacy-policy/");
+---
+
+<BaseLayout title={title} description={description} canonical={canonical}>
+  <section class="stack">
+    <div>
+      <h1>Privacy Policy</h1>
+      <p>
+        This policy explains what data is collected, how it is used, and the choices available to you.
+        Top10Maison is committed to keeping this information clear and minimal.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>Information collected</h2>
+      <p>Information may be collected through analytics tools and advertising partners.</p>
+      <ul>
+        <li>Device and browser data (e.g., page views, session duration).</li>
+        <li>Basic usage metrics for performance and content improvement.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>Cookies</h2>
+      <p>
+        Cookies help measure traffic and support advertising. You can control cookies through your browser
+        settings and platform consent tools.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>Advertising</h2>
+      <p>
+        Ads may be served by third-party partners. These partners may use cookies or similar technologies
+        to personalize ads and measure performance.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>Affiliate links</h2>
+      <p>
+        Some links may be affiliate links. This means Top10Maison may earn a commission if a purchase is made.
+        This does not affect how products are ranked or reviewed.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>Contact</h2>
+      <p>
+        For privacy requests, contact: <a href="mailto:hello@top10maison.com">hello@top10maison.com</a>.
+      </p>
+    </div>
+  </section>
+</BaseLayout>
