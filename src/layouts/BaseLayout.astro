@@ -138,6 +138,21 @@ const resolvedOgImage = ogImage ? new URL(ogImage, canonical).toString() : null;
         letter-spacing: 0.04em;
       }
 
+      .footer-links {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+
+      .footer-links a {
+        font-size: 0.9rem;
+        color: var(--muted);
+      }
+
+      .footer-links a:hover {
+        color: var(--ink);
+      }
+
       .nav a {
         margin-left: 1rem;
         font-size: 0.9rem;
