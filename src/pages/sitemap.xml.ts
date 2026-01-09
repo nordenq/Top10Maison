@@ -15,6 +15,7 @@ export const GET: APIRoute = ({ site }) => {
     return new Response("Missing site URL", { status: 500 });
   }
 
+  const lastmod = new Date().toISOString().split("T")[0];
   const { categories, toplists, products } = buildDataIndex();
   const urls = new Map<string, number>();
 
@@ -70,7 +71,9 @@ export const GET: APIRoute = ({ site }) => {
     `<urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">\n` +
     [...urls.entries()]
       .map(([loc, priority]) =>
-        `  <url><loc>${loc}</loc>${priority ? `<priority>${priority.toFixed(1)}</priority>` : ""}</url>`
+        `  <url><loc>${loc}</loc><lastmod>${lastmod}</lastmod>${
+          priority ? `<priority>${priority.toFixed(1)}</priority>` : ""
+        }</url>`
       )
       .join("\n") +
     `\n</urlset>`;
