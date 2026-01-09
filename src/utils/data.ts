@@ -61,6 +61,9 @@ export type Toplist = {
   h1: string;
   metaTitle: string;
   metaDescription: string;
+  schemaHeadline?: string;
+  schemaDatePublished?: string;
+  schemaImage?: string;
   count: number;
   keywordSlug: string;
   products: string[];
@@ -224,6 +227,15 @@ export function getToplists(): Toplist[] {
     assertNonEmpty(toplist.h1, `Toplist ${toplist.slug} h1`);
     assertNonEmpty(toplist.metaTitle, `Toplist ${toplist.slug} metaTitle`);
     assertNonEmpty(toplist.metaDescription, `Toplist ${toplist.slug} metaDescription`);
+    if (toplist.schemaHeadline) {
+      assertNonEmpty(toplist.schemaHeadline, `Toplist ${toplist.slug} schemaHeadline`);
+    }
+    if (toplist.schemaDatePublished) {
+      assertNonEmpty(toplist.schemaDatePublished, `Toplist ${toplist.slug} schemaDatePublished`);
+    }
+    if (toplist.schemaImage) {
+      assertNonEmpty(toplist.schemaImage, `Toplist ${toplist.slug} schemaImage`);
+    }
     assertMaxLength(toplist.metaTitle, 60, `Toplist ${toplist.slug} metaTitle`);
     assertMaxLength(toplist.metaDescription, 155, `Toplist ${toplist.slug} metaDescription`);
     assertNonEmpty(toplist.keywordSlug, `Toplist ${toplist.slug} keywordSlug`);
