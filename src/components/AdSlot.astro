@@ -6,6 +6,18 @@ const { slot, label = "Advertisement", client = "ca-pub-3680083929895808" } = As
 };
 ---
 
+<script is:inline>
+  const adsenseClient = "{client}";
+  if (!window.__adsbygoogleLoaded) {
+    window.__adsbygoogleLoaded = true;
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClient}`;
+    script.crossOrigin = "anonymous";
+    document.head.appendChild(script);
+  }
+</script>
+
 <div class="section">
   <div class="page-container">
     <div class="card flex min-h-[120px] items-center justify-center border-dashed border-border bg-white/60 p-6 text-xs uppercase tracking-[0.25em] text-ink/50">

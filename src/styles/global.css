@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+@import "./inter.css";
 
 @tailwind base;
 @tailwind components;
@@ -12,6 +12,7 @@
   body {
     @apply bg-background text-ink font-sans antialiased;
     font-size: 18px;
+    font-size-adjust: 0.52;
   }
 
   h1,
@@ -80,7 +81,9 @@
   }
 
   .cookie-banner__text a {
-    color: #93c5fd;
+    color: #bfdbfe;
+    text-decoration: underline;
+    text-underline-offset: 2px;
   }
 
   .cookie-banner__actions {
