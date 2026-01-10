@@ -186,7 +186,8 @@
           }
         ]
       }
-    ]
+    ],
+    "image": "/images/categories/kitchen.svg"
   },
   {
     "slug": "bedroom",
@@ -250,6 +251,7 @@
           }
         ]
       }
-    ]
+    ],
+    "image": "/images/categories/bedroom.svg"
   }
 ]
