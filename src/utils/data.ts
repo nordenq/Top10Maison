@@ -12,6 +12,7 @@ export type ChildSubcategory = {
     priceBand: string;
   }>;
   faq: FaqItem[];
+  image?: string;
   published: boolean;
 };
 
@@ -168,6 +169,9 @@ export function getCategories(): Category[] {
       assertNonEmpty(subcategory.name, `Subcategory ${subcategory.slug} name`);
       assertNonEmpty(subcategory.description, `Subcategory ${subcategory.slug} description`);
       assertNonEmpty(subcategory.intentCopy, `Subcategory ${subcategory.slug} intentCopy`);
+      if (subcategory.image) {
+        assertNonEmpty(subcategory.image, `Subcategory ${subcategory.slug} image`);
+      }
       assert(Array.isArray(subcategory.intentTable) && subcategory.intentTable.length > 0, `Subcategory ${subcategory.slug} intentTable must not be empty.`);
       for (const row of subcategory.intentTable) {
         assertNonEmpty(row.label, `Subcategory ${subcategory.slug} intentTable label`);
@@ -190,6 +194,9 @@ export function getCategories(): Category[] {
         assertNonEmpty(childsubcategory.name, `Child subcategory ${childsubcategory.slug} name`);
         assertNonEmpty(childsubcategory.description, `Child subcategory ${childsubcategory.slug} description`);
         assertNonEmpty(childsubcategory.intentCopy, `Child subcategory ${childsubcategory.slug} intentCopy`);
+        if (childsubcategory.image) {
+          assertNonEmpty(childsubcategory.image, `Child subcategory ${childsubcategory.slug} image`);
+        }
         assert(Array.isArray(childsubcategory.intentTable) && childsubcategory.intentTable.length > 0, `Child subcategory ${childsubcategory.slug} intentTable must not be empty.`);
         for (const row of childsubcategory.intentTable) {
           assertNonEmpty(row.label, `Child subcategory ${childsubcategory.slug} intentTable label`);
