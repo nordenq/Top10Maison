@@ -377,7 +377,7 @@ async function generateToplistArticle({ title, intro, products, keywords }) {
     prompt
   ]);
 
-  return content.trim();
+  return content.replace(/<\/?body[^>]*>/gi, "").trim();
 }
 
 function toProductEntry({ base, ai, slug, affiliateUrl }) {
