@@ -2,6 +2,7 @@
 import Layout from "../../../../../layouts/BaseLayout.astro";
 import { buildDataIndex } from "../../../../../utils/data";
 import { subcategoryToplistUrl } from "../../../../../utils/routes";
+import { buildCanonical, requireSite } from "../../../../../utils/seo";
 
 export function getStaticPaths() {
   const { toplists } = buildDataIndex();
@@ -17,7 +18,8 @@ export function getStaticPaths() {
 }
 
 const { category, subcategory, childsubcategory, n, keyword } = Astro.params;
-const redirectUrl = subcategoryToplistUrl(category, subcategory, Number(n), keyword);
+const site = requireSite(Astro.site);
+const redirectUrl = buildCanonical(site, subcategoryToplistUrl(category, subcategory, Number(n), keyword));
 const description = `This guide now lives at ${redirectUrl}. You are being redirected.`;
 ---
 
