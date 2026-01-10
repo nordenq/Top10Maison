@@ -16,7 +16,7 @@ const href = childsubcategory && parentSubcategory
     : categoryUrl(category.slug);
 const title = childsubcategory?.name ?? subcategory?.name ?? category.name;
 const description = childsubcategory?.description ?? subcategory?.description ?? category.description;
-const image = childsubcategory?.image ?? subcategory?.image ?? category.image;
+const image = category.image;
 const iconLetter = title.slice(0, 1).toUpperCase();
 ---
 

@@ -274,28 +274,6 @@ async function updatePexelsImages({ categories, toplists, refresh, concurrency }
       query: `${category.name} home`,
       target: category
     });
-
-    for (const subcategory of category.subcategories || []) {
-      if (!subcategory.published) continue;
-      const needsSubUpdate = refresh || !subcategory.image;
-      if (!needsSubUpdate) continue;
-      tasks.push({
-        kind: "category",
-        query: `${subcategory.name} ${category.name}`,
-        target: subcategory
-      });
-
-      for (const child of subcategory.subcategories || []) {
-        if (!child.published) continue;
-        const needsChildUpdate = refresh || !child.image;
-        if (!needsChildUpdate) continue;
-        tasks.push({
-          kind: "category",
-          query: `${child.name} ${category.name}`,
-          target: child
-        });
-      }
-    }
   }
 
   for (const list of toplists) {
