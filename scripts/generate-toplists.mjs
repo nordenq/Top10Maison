@@ -410,9 +410,14 @@ async function main() {
   await loadEnv();
   const hasOpenAI = Boolean(process.env.OPENAI_API_KEY);
   const hasScraper = Boolean(process.env.SCRAPERAPI_KEY);
+  const skipGeneration = String(process.env.SKIP_AI_GENERATION || "").toLowerCase() === "1";
 
-  if (!hasOpenAI || !hasScraper) {
-    console.log("Skipping AI/product generation: missing OPENAI_API_KEY or SCRAPERAPI_KEY.");
+  if (skipGeneration || !hasOpenAI || !hasScraper) {
+    if (skipGeneration) {
+      console.log("Skipping AI/product generation: SKIP_AI_GENERATION=1.");
+    } else {
+      console.log("Skipping AI/product generation: missing OPENAI_API_KEY or SCRAPERAPI_KEY.");
+    }
     return;
   }
 
