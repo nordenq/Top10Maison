@@ -44,7 +44,8 @@
         "question": "Are air fryers cheaper to run than ovens?",
         "answer": "Yes, they typically use less energy because they heat quickly and cook in smaller chambers."
       }
-    ]
+    ],
+    "image": "/images/og/toplist-default.jpg"
   },
   {
     "slug": "best-air-fryers-under-200",
@@ -94,7 +95,8 @@
         "question": "Are budget air fryers slower than premium models?",
         "answer": "Not always. Many mid-priced models heat quickly, but may trade off advanced presets or build materials."
       }
-    ]
+    ],
+    "image": "/images/og/toplist-default.jpg"
   },
   {
     "slug": "best-nonstick-pans-2026",
@@ -136,7 +138,8 @@
       }
     ],
     "schemaHeadline": "Best Nonstick Pans 2026",
-    "schemaDatePublished": "2026-01-01"
+    "schemaDatePublished": "2026-01-01",
+    "image": "/images/og/toplist-default.jpg"
   },
   {
     "slug": "best-cotton-sheets-2026",
@@ -178,6 +181,7 @@
       }
     ],
     "schemaHeadline": "Best Cotton Sheets 2026",
-    "schemaDatePublished": "2026-01-01"
+    "schemaDatePublished": "2026-01-01",
+    "image": "/images/og/toplist-default.jpg"
   }
 ]

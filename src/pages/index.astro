@@ -1,8 +1,9 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import CategoryNav from "../components/CategoryNav.astro";
 import { buildDataIndex } from "../utils/data";
 import { subcategoryToplistUrl, categoryUrl } from "../utils/routes";
-import { buildCanonical, buildTitle, requireSite } from "../utils/seo";
+import { buildCanonical, requireSite } from "../utils/seo";
 import { buildBreadcrumbSchema } from "../utils/schema";
 
 const { categories, toplists } = buildDataIndex();
@@ -23,8 +24,8 @@ const schema = [buildBreadcrumbSchema(site, [{ name: "Home", path: "/" }])];
   schema={schema}
   ogImage="/og-image.jpg"
 >
-  <section class="section">
-    <div class="mx-auto grid w-full max-w-6xl items-center gap-10 md:grid-cols-2">
+  <section class="section bg-white/70">
+    <div class="page-container grid items-center gap-10 md:grid-cols-2">
       <div>
         <p class="text-xs font-semibold uppercase tracking-[0.3em] text-ink/50">Top10Maison</p>
         <h1 class="mt-3 text-4xl font-semibold md:text-5xl">Clear rankings for smarter home buys.</h1>
@@ -47,7 +48,13 @@ const schema = [buildBreadcrumbSchema(site, [{ name: "Home", path: "/" }])];
     </div>
   </section>
 
-  <section id="top-categories" class="section">
+  <section class="section">
+    <div class="page-container">
+      <CategoryNav categories={categories} className="pb-2" />
+    </div>
+  </section>
+
+  <section id="top-categories" class="section bg-white/70">
     <div class="page-container">
       <div class="flex flex-wrap items-end justify-between gap-4">
         <div>
@@ -99,6 +106,17 @@ const schema = [buildBreadcrumbSchema(site, [{ name: "Home", path: "/" }])];
           );
         })}
       </div>
+    </div>
+  </section>
+
+  <section class="section bg-white/70">
+    <div class="page-container">
+      <h2 class="text-2xl font-semibold">What is Top10Maison?</h2>
+      <p class="mt-3 text-sm text-ink/70">
+        Top10Maison is a home-focused review site that ranks products using consistent criteria, transparent
+        scoring, and real-world use cases. Our goal is to help you choose faster with shortlists that reflect
+        everyday needs, not marketing hype.
+      </p>
     </div>
   </section>
 </BaseLayout>

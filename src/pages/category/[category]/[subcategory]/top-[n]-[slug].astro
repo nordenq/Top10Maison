@@ -25,6 +25,7 @@ const toplist = getTopListData(category, subcategory, n, slug);
 
 const site = requireSite(Astro.site);
 const canonical = buildCanonical(site, subcategoryToplistUrl(category, subcategory, Number(n), slug));
+const ogImage = toplist.list.image ?? toplist.category.image ?? "/og-image.jpg";
 const breadcrumbItems = [
   { name: "Home", path: "/" },
   { name: toplist.category.name, path: categoryUrl(toplist.category.slug) },
@@ -38,6 +39,9 @@ const breadcrumbLinks = [
   { name: toplist.subcategory.name, href: subcategoryUrl(toplist.category.slug, toplist.subcategory.slug) },
   { name: toplist.title, href: subcategoryToplistUrl(category, subcategory, Number(n), slug) }
 ];
+const verdict = toplist.childsubcategory
+  ? `Best for shoppers comparing ${toplist.childsubcategory.name.toLowerCase()} with a focus on real-world performance.`
+  : `Best for shoppers comparing ${toplist.subcategory.name.toLowerCase()} with a focus on real-world performance.`;
 const schema = [
   buildBreadcrumbSchema(site, breadcrumbItems),
   buildArticleSchema(site, toplist.list, canonical),
@@ -57,6 +61,7 @@ const schema = [
   description={toplist.list.metaDescription || toplist.description}
   canonical={canonical}
   schema={schema}
+  ogImage={ogImage}
 >
   <section class="section">
     <div class="page-container">
@@ -66,7 +71,14 @@ const schema = [
   <section class="section">
     <div class="page-container">
       <h1 class="text-3xl font-semibold">{toplist.title}</h1>
-      <p class="mt-3 text-lg text-ink/70">{toplist.intro}</p>
+      {toplist.intro ? <p class="mt-3 text-lg text-ink/70">{toplist.intro}</p> : null}
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="page-container">
+      <h2 class="text-2xl font-semibold">Verdict</h2>
+      <p class="mt-3 text-sm text-ink/70">{verdict}</p>
     </div>
   </section>
 
@@ -84,8 +96,8 @@ const schema = [
   {toplist.selectionCriteria.length ? (
     <section class="section">
       <div class="page-container">
-        <h2 class="text-xl font-semibold">How We Chose</h2>
-        <ul class="mt-4 list-disc list-inside space-y-2 text-ink/70">
+        <h2 class="text-2xl font-semibold">How We Picked</h2>
+        <ul class="mt-4 list-disc list-inside space-y-2 text-sm text-ink/70">
           {toplist.selectionCriteria.map((item) => (
             <li>{item}</li>
           ))}

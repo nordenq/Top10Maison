@@ -65,6 +65,7 @@ export type Toplist = {
   h1: string;
   metaTitle: string;
   metaDescription: string;
+  image?: string;
   schemaHeadline?: string;
   schemaDatePublished?: string;
   schemaImage?: string;

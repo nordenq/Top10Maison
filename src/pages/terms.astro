@@ -1,0 +1,63 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { buildCanonical, buildTitle, requireSite } from "../utils/seo";
+import { buildBreadcrumbSchema } from "../utils/schema";
+
+const site = requireSite(Astro.site);
+const title = buildTitle("Terms of Service", "Top10Maison");
+const description = "Terms of service for Top10Maison.";
+const canonical = buildCanonical(site, "/terms/");
+const schema = [
+  buildBreadcrumbSchema(site, [
+    { name: "Home", path: "/" },
+    { name: "Terms of Service", path: "/terms/" }
+  ]),
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: "Terms of Service",
+    url: canonical
+  }
+];
+---
+
+<BaseLayout title={title} description={description} canonical={canonical} schema={schema}>
+  <section class="section">
+    <div class="page-container space-y-6">
+      <h1 class="text-3xl font-semibold">Terms of Service</h1>
+      <p class="text-sm text-ink/70">
+        By using Top10Maison.com, you agree to the following terms.
+      </p>
+      <div class="card p-6">
+        <h2 class="text-xl font-semibold">Use of content</h2>
+        <p class="mt-2 text-sm text-ink/70">
+          All content is provided for informational purposes only and may change at any time.
+        </p>
+      </div>
+      <div class="card p-6">
+        <h2 class="text-xl font-semibold">No warranties</h2>
+        <p class="mt-2 text-sm text-ink/70">
+          We make no warranties regarding accuracy, completeness, or suitability of the information provided.
+        </p>
+      </div>
+      <div class="card p-6">
+        <h2 class="text-xl font-semibold">Third-party links</h2>
+        <p class="mt-2 text-sm text-ink/70">
+          We are not responsible for third-party sites linked from this site.
+        </p>
+      </div>
+      <div class="card p-6">
+        <h2 class="text-xl font-semibold">Limitation of liability</h2>
+        <p class="mt-2 text-sm text-ink/70">
+          Top10Maison is not liable for any direct or indirect damages resulting from site usage.
+        </p>
+      </div>
+      <div class="card p-6">
+        <h2 class="text-xl font-semibold">Contact</h2>
+        <p class="mt-2 text-sm text-ink/70">
+          For legal questions, email <a href="mailto:contact@top10maison.com">contact@top10maison.com</a>.
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

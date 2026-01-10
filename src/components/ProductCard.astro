@@ -8,12 +8,14 @@ export interface Props {
     brand?: string;
     affiliateUrl: string;
     badge?: string;
+    slug?: string;
   };
   rank: number;
   schema?: boolean;
 }
 
 const { product, rank, schema = false } = Astro.props as Props;
+const productLink = product.slug ? `/product/${product.slug}/` : null;
 const priceValue = product.price ? product.price.replace(/[^0-9.]/g, "") : "";
 const productSchema =
   schema && product.name && product.image
@@ -65,21 +67,24 @@ const productSchema =
 
   <div class="flex-1">
     <h3 class="mb-1 text-lg font-semibold">
-      #{rank} – {product.name}
+      #{rank} – {productLink ? <a href={productLink}>{product.name}</a> : product.name}
     </h3>
     {product.brand ? <p class="text-sm text-slate-500">By {product.brand}</p> : null}
     <p class="mt-2 text-sm text-slate-700">Price: {product.price}</p>
     {product.rating ? (
       <p class="mt-1 text-sm text-yellow-500">Rating: {product.rating} ★</p>
     ) : null}
-    <a
-      href={product.affiliateUrl}
-      target="_blank"
-      rel="nofollow sponsored noopener"
-      class="mt-4 inline-block rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90"
-    >
-      View on Amazon
-    </a>
+    <div class="mt-4 flex flex-wrap items-center gap-3">
+      <a
+        href={product.affiliateUrl}
+        target="_blank"
+        rel="nofollow sponsored noopener"
+        class="btn text-sm"
+      >
+        View on Amazon
+      </a>
+      {productLink ? <a class="btn-ghost text-sm" href={productLink}>Read review</a> : null}
+    </div>
   </div>
   {productSchema ? (
     <script type="application/ld+json" is:inline>
