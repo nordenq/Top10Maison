@@ -11,8 +11,8 @@ const latestToplists = [...toplists].sort((a, b) => b.performanceScore - a.perfo
 const categoryMap = new Map(categories.map((category) => [category.slug, category]));
 
 const site = requireSite(Astro.site);
-const title = "Top10Maison | Data-Driven Product Rankings";
-const description = "Unbiased product rankings and comparisons to help you choose the best for your home.";
+const title = "Top10Maison — Trending Product Rankings for Every Room";
+const description = "Compare the best home products, track what’s trending, and shop smarter with our expert-built top 10 lists for kitchens, appliances, and more.";
 const canonical = buildCanonical(site, "/");
 const schema = [buildBreadcrumbSchema(site, [{ name: "Home", path: "/" }])];
 ---
