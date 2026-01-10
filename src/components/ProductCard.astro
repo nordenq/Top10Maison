@@ -10,17 +10,18 @@ export interface Props {
     badge?: string;
   };
   rank: number;
-  includeSchema?: boolean;
+  schema?: boolean;
 }
 
-const { product, rank, includeSchema = true } = Astro.props as Props;
+const { product, rank, schema = false } = Astro.props as Props;
 const priceValue = product.price ? product.price.replace(/[^0-9.]/g, "") : "";
 const productSchema =
-  includeSchema && product.name && product.image
+  schema && product.name && product.image
     ? {
         "@context": "https://schema.org",
         "@type": "Product",
         name: product.name,
+        url: product.affiliateUrl,
         image: product.image,
         ...(product.brand ? { brand: { "@type": "Brand", name: product.brand } } : {}),
         ...(product.rating
@@ -81,6 +82,8 @@ const productSchema =
     </a>
   </div>
   {productSchema ? (
-    <script type="application/ld+json">{JSON.stringify(productSchema)}</script>
+    <script type="application/ld+json" is:inline>
+      {JSON.stringify(productSchema, null, 2)}
+    </script>
   ) : null}
 </article>
