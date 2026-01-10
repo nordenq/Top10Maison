@@ -52,14 +52,14 @@ const schema = [
   schema={schema}
 >
   <section class="section">
-    <div class="mx-auto w-full max-w-5xl">
+    <div class="mx-auto w-full max-w-6xl">
       <h1 class="text-3xl font-semibold">{toplist.title}</h1>
       <p class="mt-3 text-lg text-ink/70">{toplist.intro}</p>
     </div>
   </section>
 
   <section class="section">
-    <div class="mx-auto w-full max-w-5xl">
+    <div class="mx-auto w-full max-w-6xl">
       <h2 class="text-2xl font-semibold">Top Picks</h2>
       <div class="mt-6 grid gap-6">
         {toplist.products.map((product, index) => (
@@ -71,7 +71,7 @@ const schema = [
 
   {toplist.selectionCriteria.length ? (
     <section class="section">
-      <div class="mx-auto w-full max-w-4xl">
+      <div class="mx-auto w-full max-w-6xl">
         <h2 class="text-xl font-semibold">How We Chose</h2>
         <ul class="mt-4 list-disc list-inside space-y-2 text-ink/70">
           {toplist.selectionCriteria.map((item) => (
