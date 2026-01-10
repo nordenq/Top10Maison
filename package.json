@@ -5,11 +5,11 @@
   "private": true,
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "node scripts/generate-toplists.mjs && astro build",
     "preview": "astro preview",
     "astro": "astro",
     "check:google-fonts": "node scripts/check-google-fonts.js",
-    "build:ci": "astro build && npm run check:google-fonts",
+    "build:ci": "node scripts/generate-toplists.mjs && astro build && npm run check:google-fonts",
     "postbuild": "node scripts/inline-critical.js"
   },
   "dependencies": {

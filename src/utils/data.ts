@@ -1,5 +1,4 @@
 import categoriesData from "../data/categories.json";
-import productsData from "../data/products.json";
 import toplistsData from "../data/toplists.json";
 
 export type ChildSubcategory = {
@@ -36,6 +35,7 @@ export type Category = {
 
 export type Product = {
   slug: string;
+  asin?: string;
   name: string;
   description: string;
   image: string;
@@ -69,6 +69,7 @@ export type Toplist = {
   schemaHeadline?: string;
   schemaDatePublished?: string;
   schemaImage?: string;
+  articleHtml?: string;
   count: number;
   keywordSlug: string;
   products: string[];
@@ -85,6 +86,15 @@ export type FaqItem = {
   question: string;
   answer: string;
 };
+
+const productModules = import.meta.glob("../data/products/*.json", { eager: true }) as Record<
+  string,
+  { default: Product[] }
+>;
+
+function getProductsData(): Product[] {
+  return Object.values(productModules).flatMap((module) => module.default ?? []);
+}
 
 function assert(condition: boolean, message: string): asserts condition {
   if (!condition) {
@@ -190,8 +200,11 @@ export function getCategories(): Category[] {
 }
 
 export function getProducts(): Product[] {
-  const products = (productsData as Product[]).filter((product) => product.published);
-  assert(Array.isArray(products) && products.length > 0, "products.json must contain at least one published product.");
+  const products = getProductsData().filter((product) => product.published);
+  assert(
+    Array.isArray(products) && products.length > 0,
+    "products data must contain at least one published product."
+  );
 
   const slugs = new Set<string>();
   for (const product of products) {
@@ -252,6 +265,9 @@ export function getToplists(): Toplist[] {
     }
     if (toplist.schemaImage) {
       assertNonEmpty(toplist.schemaImage, `Toplist ${toplist.slug} schemaImage`);
+    }
+    if (toplist.articleHtml) {
+      assertNonEmpty(toplist.articleHtml, `Toplist ${toplist.slug} articleHtml`);
     }
     assertMaxLength(toplist.metaTitle, 60, `Toplist ${toplist.slug} metaTitle`);
     assertMaxLength(toplist.metaDescription, 155, `Toplist ${toplist.slug} metaDescription`);

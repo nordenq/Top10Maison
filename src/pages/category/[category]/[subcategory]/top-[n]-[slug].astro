@@ -92,6 +92,14 @@ const schema = [
     </div>
   </section>
 
+  {toplist.list.articleHtml ? (
+    <section class="section">
+      <div class="page-container">
+        <div class="article-content" set:html={toplist.list.articleHtml} />
+      </div>
+    </section>
+  ) : null}
+
   <section class="section">
     <div class="page-container">
       <h2 class="text-2xl font-semibold">Verdict</h2>
