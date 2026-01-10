@@ -1,5 +1,4 @@
 import categoriesData from "../data/categories.json";
-import toplistsData from "../data/toplists.json";
 
 export type ChildSubcategory = {
   slug: string;
@@ -91,11 +90,20 @@ const productModules = import.meta.glob("../data/products/*.json", { eager: true
   string,
   { default: Product[] }
 >;
+const toplistModules = import.meta.glob("../data/toplists/*.json", { eager: true }) as Record<
+  string,
+  { default: Toplist }
+>;
 
 function getProductsData(): Product[] {
   return Object.values(productModules).flatMap((module) => module.default ?? []);
 }
 
+function getToplistsData(): Toplist[] {
+  return Object.values(toplistModules)
+    .map((module) => module.default)
+    .filter(Boolean);
+}
 function assert(condition: boolean, message: string): asserts condition {
   if (!condition) {
     throw new Error(message);
@@ -243,8 +251,8 @@ export function getProducts(): Product[] {
 }
 
 export function getToplists(): Toplist[] {
-  const toplists = (toplistsData as Toplist[]).filter((toplist) => toplist.published);
-  assert(Array.isArray(toplists) && toplists.length > 0, "toplists.json must contain at least one published toplist.");
+  const toplists = getToplistsData().filter((toplist) => toplist.published);
+  assert(Array.isArray(toplists) && toplists.length > 0, "toplists data must contain at least one published toplist.");
 
   const slugs = new Set<string>();
   for (const toplist of toplists) {

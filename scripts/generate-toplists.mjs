@@ -4,6 +4,7 @@ import path from "path";
 const ROOT = process.cwd();
 const DATA_DIR = path.join(ROOT, "src", "data");
 const PRODUCTS_DIR = path.join(DATA_DIR, "products");
+const TOPLISTS_DIR = path.join(DATA_DIR, "toplists");
 const TOPLISTS_PATH = path.join(DATA_DIR, "toplists.json");
 const CATEGORIES_PATH = path.join(DATA_DIR, "categories.json");
 
@@ -11,6 +12,9 @@ const TARGET_CHILD_SUBCATEGORIES = ["air-fryers"];
 const SEARCH_RESULTS_LIMIT = 50;
 const MAX_PRODUCTS = 10;
 const ARTICLE_WORD_TARGET = { min: 1500, max: 1800 };
+const DEFAULT_SCRAPER_CONCURRENCY = 5;
+const DEFAULT_OPENAI_CONCURRENCY = 3;
+const DEFAULT_ASIN_FETCH_LIMIT = 30;
 
 async function loadEnv() {
   const envPath = path.join(ROOT, ".env");
@@ -176,6 +180,53 @@ async function fetchAmazonSearchAsins(query) {
     throw new Error(`No ASINs found for query: ${query}`);
   }
   return asins;
+}
+
+async function loadToplists() {
+  const entries = await fs.readdir(TOPLISTS_DIR).catch(() => null);
+  if (entries && entries.length) {
+    const files = entries.filter((entry) => entry.endsWith(".json")).sort();
+    const lists = await Promise.all(
+      files.map((file) => fs.readFile(path.join(TOPLISTS_DIR, file), "utf8").then((data) => JSON.parse(data)))
+    );
+    return lists;
+  }
+  const raw = await fs.readFile(TOPLISTS_PATH, "utf8");
+  return JSON.parse(raw);
+}
+
+async function saveToplists(toplists) {
+  await fs.mkdir(TOPLISTS_DIR, { recursive: true });
+  const keep = new Set(toplists.map((list) => `${list.slug}.json`));
+  const existing = await fs.readdir(TOPLISTS_DIR).catch(() => []);
+  await Promise.all(
+    existing
+      .filter((entry) => entry.endsWith(".json") && !keep.has(entry))
+      .map((entry) => fs.unlink(path.join(TOPLISTS_DIR, entry)))
+  );
+  await Promise.all(
+    toplists.map((list) =>
+      fs.writeFile(path.join(TOPLISTS_DIR, `${list.slug}.json`), `${JSON.stringify(list, null, 2)}\n`)
+    )
+  );
+}
+
+async function runWithConcurrency(items, limit, worker) {
+  const results = new Array(items.length);
+  let index = 0;
+  const workers = Array.from({ length: Math.min(limit, items.length) }, async () => {
+    while (index < items.length) {
+      const current = index;
+      index += 1;
+      try {
+        results[current] = await worker(items[current], current);
+      } catch (error) {
+        results[current] = null;
+      }
+    }
+  });
+  await Promise.all(workers);
+  return results;
 }
 
 async function fetchAmazonProduct(asin) {
@@ -413,6 +464,9 @@ async function main() {
   const skipGeneration = String(process.env.SKIP_AI_GENERATION || "").toLowerCase() === "1";
   const isCloudflarePages = Boolean(process.env.CF_PAGES);
   const forceGeneration = String(process.env.FORCE_AI_GENERATION || "").toLowerCase() === "1";
+  const scraperConcurrency = Number(process.env.SCRAPER_CONCURRENCY || DEFAULT_SCRAPER_CONCURRENCY);
+  const openAiConcurrency = Number(process.env.OPENAI_CONCURRENCY || DEFAULT_OPENAI_CONCURRENCY);
+  const asinFetchLimit = Number(process.env.ASIN_FETCH_LIMIT || DEFAULT_ASIN_FETCH_LIMIT);
 
   if (skipGeneration || (isCloudflarePages && !forceGeneration) || !hasOpenAI || !hasScraper) {
     if (skipGeneration) {
@@ -425,12 +479,11 @@ async function main() {
     return;
   }
 
-  const [categoriesRaw, toplistsRaw] = await Promise.all([
+  const [categoriesRaw, toplists] = await Promise.all([
     fs.readFile(CATEGORIES_PATH, "utf8"),
-    fs.readFile(TOPLISTS_PATH, "utf8")
+    loadToplists()
   ]);
   const categories = JSON.parse(categoriesRaw);
-  const toplists = JSON.parse(toplistsRaw);
 
   const productsByType = new Map();
 
@@ -457,15 +510,12 @@ async function main() {
       const query = `best ${childName}`;
       const asins = await fetchAmazonSearchAsins(query);
 
-      const rawProducts = [];
-      for (const asin of asins) {
-        try {
-          const item = await fetchAmazonProduct(asin);
-          rawProducts.push(item);
-        } catch (error) {
-          continue;
-        }
-      }
+      const targetCount = Math.min(list.count || MAX_PRODUCTS, MAX_PRODUCTS);
+      const fetchCount = Math.max(targetCount * 3, 15);
+      const limitedAsins = asins.slice(0, Math.min(asinFetchLimit, fetchCount));
+      const rawProducts = (
+        await runWithConcurrency(limitedAsins, scraperConcurrency, (asin) => fetchAmazonProduct(asin))
+      ).filter(Boolean);
 
       const priceLimit = extractPriceLimit(list.keywordSlug) || extractPriceLimit(list.title);
 
@@ -494,6 +544,7 @@ async function main() {
     const finalProducts = [];
 
     if (scored.length > 0) {
+      const newProducts = [];
       for (const product of scored) {
         const existing = existingByAsin.get(product.asin);
         if (existing) {
@@ -504,10 +555,21 @@ async function main() {
           existing.ratingCount = product.reviewCount || existing.ratingCount;
           existing.brand = product.brand || existing.brand;
           finalProducts.push(existing);
-          continue;
+        } else {
+          newProducts.push(product);
         }
+      }
 
-        const ai = await generateProductCopy(product, childName);
+      const aiPayloads = await runWithConcurrency(
+        newProducts,
+        openAiConcurrency,
+        (product) => generateProductCopy(product, childName)
+      );
+
+      for (let i = 0; i < newProducts.length; i += 1) {
+        const product = newProducts[i];
+        const ai = aiPayloads[i];
+        if (!ai) continue;
         const baseSlug = slugify(product.title || `${childName}-${product.asin}`);
         let slug = baseSlug || product.asin.toLowerCase();
         let counter = 2;
@@ -560,7 +622,7 @@ async function main() {
     await fs.writeFile(outputPath, `${JSON.stringify(products, null, 2)}\n`);
   }
 
-  await fs.writeFile(TOPLISTS_PATH, `${JSON.stringify(toplists, null, 2)}\n`);
+  await saveToplists(toplists);
 }
 
 main().catch((error) => {
