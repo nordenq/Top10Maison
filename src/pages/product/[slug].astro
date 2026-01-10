@@ -102,12 +102,18 @@ const schema = [
           <p class="mt-2 text-sm text-ink/70">
             <a
               class="text-accent"
-              href={subcategoryToplistUrl(
-                relatedToplist.category,
-                relatedToplist.subcategory,
-                relatedToplist.count,
-                relatedToplist.keywordSlug
-              )}
+              href={relatedChildsubcategory
+                ? childSubcategoryUrl(
+                    relatedToplist.category,
+                    relatedToplist.subcategory,
+                    relatedToplist.childsubcategory
+                  )
+                : subcategoryToplistUrl(
+                    relatedToplist.category,
+                    relatedToplist.subcategory,
+                    relatedToplist.count,
+                    relatedToplist.keywordSlug
+                  )}
             >
               {relatedToplist.title}
             </a>

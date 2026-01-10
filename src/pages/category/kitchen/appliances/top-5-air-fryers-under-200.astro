@@ -1,10 +1,10 @@
 ---
 import Layout from "../../../../layouts/BaseLayout.astro";
 import { buildCanonical, requireSite } from "../../../../utils/seo";
-import { subcategoryToplistUrl } from "../../../../utils/routes";
+import { childSubcategoryUrl } from "../../../../utils/routes";
 
 const site = requireSite(Astro.site);
-const redirectUrl = buildCanonical(site, subcategoryToplistUrl("kitchen", "appliances", 10, "air-fryers-2026"));
+const redirectUrl = buildCanonical(site, childSubcategoryUrl("kitchen", "appliances", "air-fryers"));
 const description = `This guide now lives at ${redirectUrl}. You are being redirected.`;
 ---
 
