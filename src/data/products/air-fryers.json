@@ -22,7 +22,7 @@
     "specs": {
       "Capacity": "5.8 qt",
       "Power": "1700 W",
-      "Temperature range": "170\u2013400\u00b0F",
+      "Temperature range": "170–400°F",
       "Basket type": "Nonstick, square",
       "Controls": "Digital presets",
       "Dishwasher safe parts": "Yes",
@@ -38,7 +38,8 @@
     ],
     "alternatives": [
       "ninja-af101",
-      "instant-vortex-plus"
+      "instant-vortex-plus",
+      "chefman-turbofry-xl"
     ],
     "brand": "Cosori",
     "rating": 4.6,
@@ -68,7 +69,7 @@
     "specs": {
       "Capacity": "4 qt",
       "Power": "1550 W",
-      "Temperature range": "105\u2013400\u00b0F",
+      "Temperature range": "105–400°F",
       "Basket type": "Nonstick, round",
       "Controls": "Digital",
       "Dishwasher safe parts": "Yes",
@@ -84,7 +85,8 @@
     ],
     "alternatives": [
       "cosori-air-fryer",
-      "dash-tasti-crisp"
+      "instant-vortex-plus",
+      "chefman-turbofry-xl"
     ],
     "brand": "Ninja",
     "rating": 4.5,
@@ -115,7 +117,7 @@
     "specs": {
       "Capacity": "6 qt",
       "Power": "1700 W",
-      "Temperature range": "120\u2013400\u00b0F",
+      "Temperature range": "120–400°F",
       "Basket type": "Nonstick, square",
       "Controls": "Digital touch panel",
       "Dishwasher safe parts": "Yes",
@@ -130,6 +132,7 @@
     ],
     "alternatives": [
       "cosori-air-fryer",
+      "ninja-af101",
       "chefman-turbofry-xl"
     ],
     "brand": "Instant",
@@ -161,7 +164,7 @@
     "specs": {
       "Capacity": "8 qt",
       "Power": "1700 W",
-      "Temperature range": "200\u2013400\u00b0F",
+      "Temperature range": "200–400°F",
       "Basket type": "Nonstick, rectangular",
       "Controls": "Manual dial",
       "Dishwasher safe parts": "Yes",
@@ -175,6 +178,8 @@
       }
     ],
     "alternatives": [
+      "cosori-air-fryer",
+      "ninja-af101",
       "instant-vortex-plus"
     ],
     "brand": "Chefman",
@@ -206,7 +211,7 @@
     "specs": {
       "Capacity": "2.6 qt",
       "Power": "1000 W",
-      "Temperature range": "200\u2013400\u00b0F",
+      "Temperature range": "200–400°F",
       "Basket type": "Nonstick, round",
       "Controls": "Manual dial",
       "Dishwasher safe parts": "Yes",
@@ -220,7 +225,9 @@
       }
     ],
     "alternatives": [
-      "ninja-af101"
+      "cosori-air-fryer",
+      "ninja-af101",
+      "instant-vortex-plus"
     ],
     "brand": "Dash",
     "rating": 4.3,
