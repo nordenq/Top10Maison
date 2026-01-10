@@ -15,7 +15,10 @@
     "keywordSlug": "air-fryers-2026",
     "products": [
       "cosori-air-fryer",
-      "ninja-af101"
+      "ninja-af101",
+      "instant-vortex-plus",
+      "chefman-turbofry-xl",
+      "dash-tasti-crisp"
     ],
     "affiliate": true,
     "published": true,
@@ -43,57 +46,6 @@
       {
         "question": "Are air fryers cheaper to run than ovens?",
         "answer": "Yes, they typically use less energy because they heat quickly and cook in smaller chambers."
-      }
-    ],
-    "image": "/images/og/toplist-default.jpg"
-  },
-  {
-    "slug": "best-air-fryers-under-200",
-    "category": "kitchen",
-    "subcategory": "appliances",
-    "childsubcategory": "air-fryers",
-    "title": "Best Air Fryers Under $200",
-    "h1": "Best Air Fryers Under $200",
-    "metaTitle": "Best Air Fryers Under $200 | Top10Maison",
-    "metaDescription": "Affordable air fryers that deliver strong performance, fast cooking, and reliable results without breaking the budget.",
-    "schemaHeadline": "Top 5 Air Fryers Under $200",
-    "schemaDatePublished": "2026-01-07",
-    "schemaImage": "https://www.top10maison.com/images/airfryer-200.jpg",
-    "count": 5,
-    "keywordSlug": "air-fryers-under-200",
-    "products": [
-      "cosori-air-fryer",
-      "ninja-af101",
-      "instant-vortex-plus",
-      "chefman-turbofry-xl",
-      "dash-tasti-crisp"
-    ],
-    "affiliate": true,
-    "published": true,
-    "performanceScore": 89,
-    "quickCompareCriteria": [
-      "Best for",
-      "Key win",
-      "Price range"
-    ],
-    "howWePicked": [
-      "Performance on common foods like fries, wings, and vegetables",
-      "Speed to crisp and ease of daily cleanup",
-      "Value versus capacity and feature set under $200"
-    ],
-    "whoShouldBuy": [
-      "You want reliable results without spending premium prices",
-      "You cook quick meals and want less oil and mess",
-      "You need a compact appliance that still handles family portions"
-    ],
-    "faq": [
-      {
-        "question": "What size air fryer works best under $200?",
-        "answer": "A 4-6 quart air fryer offers the best balance of capacity, counter space, and price in this range."
-      },
-      {
-        "question": "Are budget air fryers slower than premium models?",
-        "answer": "Not always. Many mid-priced models heat quickly, but may trade off advanced presets or build materials."
       }
     ],
     "image": "/images/og/toplist-default.jpg"

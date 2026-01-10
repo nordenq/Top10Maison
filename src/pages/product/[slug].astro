@@ -4,7 +4,7 @@ import Breadcrumbs from "../../components/Breadcrumbs.astro";
 import { buildDataIndex, getProductData } from "../../utils/data";
 import { buildCanonical, requireSite } from "../../utils/seo";
 import { buildBreadcrumbSchema, buildFaqSchema, buildProductSchema, buildReviewSchema } from "../../utils/schema";
-import { productUrl, subcategoryToplistUrl } from "../../utils/routes";
+import { categoryUrl, childSubcategoryUrl, productUrl, subcategoryToplistUrl, subcategoryUrl } from "../../utils/routes";
 import AffiliateButton from "../../components/AffiliateButton.astro";
 import FAQAccordion from "../../components/FAQAccordion.astro";
 
@@ -17,8 +17,17 @@ export function getStaticPaths() {
 
 const { slug } = Astro.params;
 const product = getProductData(slug);
-const { toplists, productMap } = buildDataIndex();
+const { toplists, productMap, categoryMap, subcategoryMap, childSubcategoryMap } = buildDataIndex();
 const relatedToplist = toplists.find((list) => list.products.includes(product.slug));
+const relatedCategory = relatedToplist ? categoryMap.get(relatedToplist.category) : null;
+const relatedSubcategory = relatedToplist
+  ? subcategoryMap.get(`${relatedToplist.category}:${relatedToplist.subcategory}`)
+  : null;
+const relatedChildsubcategory = relatedToplist
+  ? childSubcategoryMap.get(
+      `${relatedToplist.category}:${relatedToplist.subcategory}:${relatedToplist.childsubcategory}`
+    )
+  : null;
 const relatedProducts = relatedToplist
   ? relatedToplist.products
       .filter((productSlug) => productSlug !== product.slug)
@@ -28,15 +37,30 @@ const relatedProducts = relatedToplist
 
 const site = requireSite(Astro.site);
 const canonical = buildCanonical(site, productUrl(product.slug));
-const breadcrumbItems = [
-  { name: "Home", href: "/" },
-  { name: product.name, href: productUrl(product.slug) }
-];
+const breadcrumbItems =
+  relatedCategory && relatedSubcategory && relatedChildsubcategory
+    ? [
+        { name: "Home", href: "/" },
+        { name: relatedCategory.name, href: categoryUrl(relatedCategory.slug) },
+        {
+          name: relatedSubcategory.name,
+          href: subcategoryUrl(relatedCategory.slug, relatedSubcategory.slug)
+        },
+        {
+          name: relatedChildsubcategory.name,
+          href: childSubcategoryUrl(relatedCategory.slug, relatedSubcategory.slug, relatedChildsubcategory.slug)
+        },
+        { name: product.name, href: productUrl(product.slug) }
+      ]
+    : [
+        { name: "Home", href: "/" },
+        { name: product.name, href: productUrl(product.slug) }
+      ];
 const schema = [
-  buildBreadcrumbSchema(site, [
-    { name: "Home", path: "/" },
-    { name: product.name, path: productUrl(product.slug) }
-  ]),
+  buildBreadcrumbSchema(
+    site,
+    breadcrumbItems.map((item) => ({ name: item.name, path: item.href }))
+  ),
   buildProductSchema(site, product),
   buildReviewSchema(site, product),
   buildFaqSchema(product.faq)
