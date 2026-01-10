@@ -17,6 +17,7 @@ const DEFAULT_SCRAPER_CONCURRENCY = 5;
 const DEFAULT_OPENAI_CONCURRENCY = 3;
 const DEFAULT_ASIN_FETCH_LIMIT = 30;
 const DEFAULT_OPENAI_IMAGE_CONCURRENCY = 2;
+const DEFAULT_OPENAI_IMAGE_MODEL = "dall-e-3";
 
 async function loadEnv() {
   const envPath = path.join(ROOT, ".env");
@@ -280,7 +281,8 @@ async function uploadToR2({ client, bucket, key, body, contentType }) {
   await client.send(command);
 }
 
-async function generateOpenAiImage(prompt) {
+async function generateOpenAiImage(prompt, { model }) {
+  const wantsB64 = model.startsWith("dall-e");
   const response = await fetch("https://api.openai.com/v1/images/generations", {
     method: "POST",
     headers: {
@@ -288,10 +290,10 @@ async function generateOpenAiImage(prompt) {
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      model: "gpt-image-1",
+      model,
       prompt,
       size: "1024x1024",
-      response_format: "b64_json"
+      ...(wantsB64 ? { response_format: "b64_json" } : {})
     })
   });
 
@@ -302,10 +304,19 @@ async function generateOpenAiImage(prompt) {
 
   const data = await response.json();
   const base64 = data?.data?.[0]?.b64_json;
-  if (!base64) {
-    throw new Error("OpenAI image response missing base64 payload.");
+  if (base64) {
+    return Buffer.from(base64, "base64");
   }
-  return Buffer.from(base64, "base64");
+  const url = data?.data?.[0]?.url;
+  if (!url) {
+    throw new Error("OpenAI image response missing image data.");
+  }
+  const imageResponse = await fetch(url);
+  if (!imageResponse.ok) {
+    throw new Error(`Failed to download OpenAI image: ${imageResponse.status}`);
+  }
+  const arrayBuffer = await imageResponse.arrayBuffer();
+  return Buffer.from(arrayBuffer);
 }
 
 function buildImagePrompt({ title, context }) {
@@ -335,6 +346,7 @@ async function updateOpenAiImages({ categories, toplists, refresh, concurrency }
     return { categoriesUpdated: false, toplistsUpdated: false };
   }
 
+  const imageModel = process.env.OPENAI_IMAGE_MODEL || DEFAULT_OPENAI_IMAGE_MODEL;
   const r2Config = getR2Config();
   assertR2Config(r2Config);
   const client = createR2Client(r2Config);
@@ -395,7 +407,7 @@ async function updateOpenAiImages({ categories, toplists, refresh, concurrency }
 
   const results = await runWithConcurrency(tasks, concurrency, async (task) => {
     const prompt = buildImagePrompt({ title: task.title, context: task.context });
-    const buffer = await generateOpenAiImage(prompt);
+    const buffer = await generateOpenAiImage(prompt, { model: imageModel });
     await uploadToR2({
       client,
       bucket: r2Config.bucket,
