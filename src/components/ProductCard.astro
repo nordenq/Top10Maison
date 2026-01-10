@@ -87,8 +87,6 @@ const productSchema =
     </div>
   </div>
   {productSchema ? (
-    <script type="application/ld+json" is:inline>
-      {JSON.stringify(productSchema, null, 2)}
-    </script>
+    <script type="application/ld+json" set:html={JSON.stringify(productSchema)} />
   ) : null}
 </article>
