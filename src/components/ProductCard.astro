@@ -1,105 +1,84 @@
 ---
-import type { Product } from "../utils/data";
-import { productUrl } from "../utils/routes";
-import AffiliateButton from "./AffiliateButton.astro";
+export interface Props {
+  product: {
+    name: string;
+    image: string;
+    price: string;
+    rating?: number;
+    brand?: string;
+    affiliateUrl: string;
+    badge?: string;
+  };
+  rank: number;
+  includeSchema?: boolean;
+}
 
-const {
-  product,
-  rank,
-  badge,
-  rating,
-  brand,
-  ctaLabel = "Check price",
-  ctaUrl
-} = Astro.props as {
-  product: Product;
-  rank?: number;
-  badge?: string;
-  rating?: number;
-  brand?: string;
-  ctaLabel?: string;
-  ctaUrl?: string;
-};
-
-const productName = product.name;
-const productImage = product.image;
-const productDescription = product.description;
-const productPrice = product.price;
-const effectiveCtaUrl = ctaUrl ?? product.affiliateUrl;
-const priceValue = productPrice ? productPrice.replace(/[^0-9.]/g, "") : "";
-const offers =
-  priceValue || effectiveCtaUrl
-    ? {
-        "@type": "Offer",
-        ...(priceValue ? { price: priceValue, priceCurrency: "USD" } : {}),
-        ...(effectiveCtaUrl ? { url: effectiveCtaUrl } : {})
-      }
-    : undefined;
-const aggregateRating =
-  typeof rating === "number"
-    ? {
-        "@type": "AggregateRating",
-        ratingValue: rating,
-        reviewCount: 1
-      }
-    : undefined;
+const { product, rank, includeSchema = true } = Astro.props as Props;
+const priceValue = product.price ? product.price.replace(/[^0-9.]/g, "") : "";
 const productSchema =
-  productName && productImage
+  includeSchema && product.name && product.image
     ? {
         "@context": "https://schema.org",
         "@type": "Product",
-        name: productName,
-        image: productImage,
-        description: productDescription,
-        ...(brand ? { brand: { "@type": "Brand", name: brand } } : {}),
-        ...(offers ? { offers } : {}),
-        ...(aggregateRating ? { aggregateRating } : {})
+        name: product.name,
+        image: product.image,
+        ...(product.brand ? { brand: { "@type": "Brand", name: product.brand } } : {}),
+        ...(product.rating
+          ? {
+              aggregateRating: {
+                "@type": "AggregateRating",
+                ratingValue: product.rating,
+                reviewCount: 1
+              }
+            }
+          : {}),
+        ...(priceValue || product.affiliateUrl
+          ? {
+              offers: {
+                "@type": "Offer",
+                ...(priceValue ? { price: priceValue, priceCurrency: "USD" } : {}),
+                ...(product.affiliateUrl ? { url: product.affiliateUrl } : {})
+              }
+            }
+          : {})
       }
     : null;
 ---
 
-<article class="card grid gap-6 p-6 md:grid-cols-[220px_1fr]">
+<article class="flex flex-col items-center gap-6 rounded-2xl bg-white p-6 shadow-sm transition hover:shadow-md sm:flex-row">
   <div class="relative">
-    {rank ? (
-      <span class="absolute left-3 top-3 rounded-full bg-ink px-3 py-1 text-xs font-semibold text-white">
-        #{rank}
+    <img
+      src={product.image}
+      alt={product.name}
+      class="h-32 w-32 rounded-xl object-contain"
+      loading="lazy"
+      width="128"
+      height="128"
+    />
+    {product.badge ? (
+      <span class="absolute left-2 top-2 rounded-md bg-accent px-2 py-0.5 text-xs font-semibold text-white">
+        {product.badge}
       </span>
     ) : null}
-    {badge ? (
-      <span class="absolute right-3 top-3 rounded-full bg-success/10 px-3 py-1 text-xs font-semibold text-success">
-        {badge}
-      </span>
-    ) : null}
-    <a href={productUrl(product.slug)}>
-      <img
-        class="h-48 w-full rounded-xl object-cover"
-        src={productImage}
-        alt={productName}
-        loading="lazy"
-        width="640"
-        height="360"
-      />
-    </a>
   </div>
-  <div class="flex flex-col gap-3">
-    <div>
-      <h3 class="text-xl font-semibold">
-        <a href={productUrl(product.slug)}>{productName}</a>
-      </h3>
-      <p class="mt-2 text-sm text-ink/70">{productDescription}</p>
-    </div>
-    <div class="flex flex-wrap items-center gap-3 text-sm text-ink/70">
-      {productPrice ? <span class="rounded-full bg-background px-3 py-1">{productPrice}</span> : null}
-      {typeof rating === "number" ? (
-        <span class="rounded-full bg-success/10 px-3 py-1 text-success">{rating.toFixed(1)} rating</span>
-      ) : null}
-    </div>
-    <div class="mt-auto flex flex-wrap items-center gap-3">
-      {effectiveCtaUrl ? (
-        <AffiliateButton url={effectiveCtaUrl} label={ctaLabel} productSlug={product.slug} />
-      ) : null}
-      <a class="btn-ghost" href={productUrl(product.slug)}>Read review</a>
-    </div>
+
+  <div class="flex-1">
+    <h3 class="mb-1 text-lg font-semibold">
+      #{rank} – {product.name}
+    </h3>
+    {product.brand ? <p class="text-sm text-slate-500">By {product.brand}</p> : null}
+    <p class="mt-2 text-sm text-slate-700">Price: {product.price}</p>
+    {product.rating ? (
+      <p class="mt-1 text-sm text-yellow-500">Rating: {product.rating} ★</p>
+    ) : null}
+    <a
+      href={product.affiliateUrl}
+      target="_blank"
+      rel="nofollow sponsored noopener"
+      class="mt-4 inline-block rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90"
+    >
+      View on Amazon
+    </a>
   </div>
   {productSchema ? (
     <script type="application/ld+json">{JSON.stringify(productSchema)}</script>
