@@ -7,11 +7,11 @@ const { categories } = buildDataIndex();
 
 <header
   id="site-header"
-  class="sticky top-0 z-20 border-b border-border bg-white/90 backdrop-blur"
+  class="sticky top-0 z-20 border-b border-border bg-white/95 backdrop-blur transition-shadow"
 >
   <div class="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4">
     <a class="text-lg font-semibold tracking-tight" href={homeUrl()}>Top10Maison</a>
-    <nav class="hidden items-center gap-6 text-sm font-medium md:flex">
+    <nav class="hidden items-center gap-6 text-sm font-medium md:flex" aria-label="Primary">
       <a href={homeUrl()}>Home</a>
       <a href="/#top-categories">Categories</a>
       <a href="/about/">About</a>
@@ -23,12 +23,25 @@ const { categories } = buildDataIndex();
       type="button"
       aria-expanded="false"
       aria-controls="mobile-menu"
+      aria-label="Toggle menu"
     >
       Menu
     </button>
   </div>
+  <nav class="hidden border-t border-border bg-white md:block" aria-label="Categories">
+    <div class="mx-auto flex w-full max-w-6xl gap-3 overflow-x-auto px-6 py-3 text-sm">
+      {categories.map((category) => (
+        <a
+          class="whitespace-nowrap rounded-full border border-border px-4 py-1 text-ink/70 hover:border-accent hover:text-accent"
+          href={categoryUrl(category.slug)}
+        >
+          {category.name}
+        </a>
+      ))}
+    </div>
+  </nav>
   <div id="mobile-menu" class="hidden border-t border-border bg-white md:hidden">
-    <div class="space-y-4 px-6 py-4 text-sm">
+    <nav class="space-y-4 px-6 py-4 text-sm" aria-label="Mobile">
       <a class="block font-medium" href={homeUrl()}>Home</a>
       <a class="block font-medium" href="/about/">About</a>
       <a class="block font-medium" href="/contact/">Contact</a>
@@ -42,7 +55,7 @@ const { categories } = buildDataIndex();
           ))}
         </div>
       </details>
-    </div>
+    </nav>
   </div>
 </header>
 

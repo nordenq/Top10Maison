@@ -37,6 +37,10 @@
     @apply py-12 px-6;
   }
 
+  .page-container {
+    @apply mx-auto w-full max-w-6xl;
+  }
+
   .card {
     @apply rounded-2xl bg-white shadow-card border border-border;
   }

@@ -26,6 +26,16 @@ export function buildProductSchema(site: URL, product: Product): SchemaGraph {
     name: product.name,
     description: product.description,
     image: new URL(product.image, site).toString(),
+    ...(product.brand ? { brand: { "@type": "Brand", name: product.brand } } : {}),
+    ...(typeof product.rating === "number"
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: product.rating,
+            reviewCount: product.ratingCount ?? 1
+          }
+        }
+      : {}),
     offers: {
       "@type": "Offer",
       url: new URL(productUrl(product.slug), site).toString(),
@@ -49,7 +59,17 @@ export function buildReviewSchema(site: URL, product: Product): SchemaGraph {
       "@type": "Organization",
       name: "Top10Maison"
     },
-    reviewBody: product.description
+    ...(typeof product.rating === "number"
+      ? {
+          reviewRating: {
+            "@type": "Rating",
+            ratingValue: product.rating,
+            bestRating: 5,
+            worstRating: 1
+          }
+        }
+      : {}),
+    reviewBody: product.reviewSnippet ?? product.description
   };
 }
 

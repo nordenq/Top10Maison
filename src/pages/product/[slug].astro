@@ -1,5 +1,6 @@
 ---
 import Layout from "../../layouts/BaseLayout.astro";
+import Breadcrumbs from "../../components/Breadcrumbs.astro";
 import { buildDataIndex, getProductData } from "../../utils/data";
 import { buildCanonical, requireSite } from "../../utils/seo";
 import { buildBreadcrumbSchema, buildFaqSchema, buildProductSchema, buildReviewSchema } from "../../utils/schema";
@@ -19,6 +20,10 @@ const product = getProductData(slug);
 
 const site = requireSite(Astro.site);
 const canonical = buildCanonical(site, productUrl(product.slug));
+const breadcrumbItems = [
+  { name: "Home", href: "/" },
+  { name: product.name, href: productUrl(product.slug) }
+];
 const schema = [
   buildBreadcrumbSchema(site, [
     { name: "Home", path: "/" },
@@ -37,7 +42,11 @@ const schema = [
   schema={schema}
 >
   <section class="section">
-    <article class="mx-auto w-full max-w-6xl">
+    <article class="page-container">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <Breadcrumbs items={breadcrumbItems} />
+        <a id="smart-back" class="btn-ghost hidden" href="/">Back</a>
+      </div>
       <h1 class="text-3xl font-semibold">{product.name}</h1>
       <img class="mt-6 rounded-xl" src={product.image} alt={product.name} loading="lazy" width="800" height="500" />
       <p class="mt-4 text-lg text-ink/70">{product.description}</p>
@@ -55,9 +64,21 @@ const schema = [
         </ul>
       </section>
 
-      {product.faq?.length ? (
-        <FAQAccordion items={product.faq} />
-      ) : null}
+      {product.faq?.length ? <FAQAccordion items={product.faq} /> : null}
     </article>
   </section>
 </Layout>
+
+<script>
+  const backLink = document.getElementById('smart-back');
+  if (backLink) {
+    const referrer = document.referrer;
+    const sameOrigin = referrer && referrer.startsWith(window.location.origin);
+    if (sameOrigin && referrer.includes('/category/')) {
+      backLink.setAttribute('href', referrer);
+    } else {
+      backLink.setAttribute('href', '/');
+    }
+    backLink.classList.remove('hidden');
+  }
+</script>

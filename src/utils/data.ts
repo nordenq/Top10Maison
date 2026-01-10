@@ -40,6 +40,10 @@ export type Product = {
   description: string;
   image: string;
   price: string;
+  brand?: string;
+  rating?: number;
+  ratingCount?: number;
+  reviewSnippet?: string;
   affiliateUrl: string;
   pros: string[];
   cons: string[];
@@ -197,6 +201,18 @@ export function getProducts(): Product[] {
     assertNonEmpty(product.image, `Product ${product.slug} image`);
     assertNonEmpty(product.price, `Product ${product.slug} price`);
     assertNonEmpty(product.affiliateUrl, `Product ${product.slug} affiliateUrl`);
+    if (product.brand) {
+      assertNonEmpty(product.brand, `Product ${product.slug} brand`);
+    }
+    if (typeof product.rating !== "undefined") {
+      assert(typeof product.rating === "number", `Product ${product.slug} rating must be a number.`);
+    }
+    if (typeof product.ratingCount !== "undefined") {
+      assert(Number.isInteger(product.ratingCount), `Product ${product.slug} ratingCount must be an integer.`);
+    }
+    if (product.reviewSnippet) {
+      assertNonEmpty(product.reviewSnippet, `Product ${product.slug} reviewSnippet`);
+    }
     assertNonEmptyArray(product.pros, `Product ${product.slug} pros`);
     assertNonEmptyArray(product.cons, `Product ${product.slug} cons`);
     assertNonEmpty(product.bestFor, `Product ${product.slug} bestFor`);

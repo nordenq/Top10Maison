@@ -22,7 +22,7 @@
     "specs": {
       "Capacity": "5.8 qt",
       "Power": "1700 W",
-      "Temperature range": "170–400°F",
+      "Temperature range": "170\u2013400\u00b0F",
       "Basket type": "Nonstick, square",
       "Controls": "Digital presets",
       "Dishwasher safe parts": "Yes",
@@ -36,7 +36,14 @@
         "answer": "Yes, the basket is nonstick and the removable parts are dishwasher safe."
       }
     ],
-    "alternatives": ["ninja-af101", "instant-vortex-plus"]
+    "alternatives": [
+      "ninja-af101",
+      "instant-vortex-plus"
+    ],
+    "brand": "Cosori",
+    "rating": 4.6,
+    "ratingCount": 1280,
+    "reviewSnippet": "Fast, even results in a compact basket."
   },
   {
     "slug": "ninja-af101",
@@ -61,7 +68,7 @@
     "specs": {
       "Capacity": "4 qt",
       "Power": "1550 W",
-      "Temperature range": "105–400°F",
+      "Temperature range": "105\u2013400\u00b0F",
       "Basket type": "Nonstick, round",
       "Controls": "Digital",
       "Dishwasher safe parts": "Yes",
@@ -75,7 +82,14 @@
         "answer": "Yes, it delivers consistent crisping when food is placed in a single layer."
       }
     ],
-    "alternatives": ["cosori-air-fryer", "dash-tasti-crisp"]
+    "alternatives": [
+      "cosori-air-fryer",
+      "dash-tasti-crisp"
+    ],
+    "brand": "Ninja",
+    "rating": 4.5,
+    "ratingCount": 980,
+    "reviewSnippet": "Crisp performance with simple controls and easy cleanup."
   },
   {
     "slug": "instant-vortex-plus",
@@ -101,7 +115,7 @@
     "specs": {
       "Capacity": "6 qt",
       "Power": "1700 W",
-      "Temperature range": "120–400°F",
+      "Temperature range": "120\u2013400\u00b0F",
       "Basket type": "Nonstick, square",
       "Controls": "Digital touch panel",
       "Dishwasher safe parts": "Yes",
@@ -114,7 +128,14 @@
         "answer": "It works well for small meals and reheating but is best used alongside a traditional oven."
       }
     ],
-    "alternatives": ["cosori-air-fryer", "chefman-turbofry-xl"]
+    "alternatives": [
+      "cosori-air-fryer",
+      "chefman-turbofry-xl"
+    ],
+    "brand": "Instant",
+    "rating": 4.7,
+    "ratingCount": 860,
+    "reviewSnippet": "Large capacity with versatile cooking modes for families."
   },
   {
     "slug": "chefman-turbofry-xl",
@@ -140,7 +161,7 @@
     "specs": {
       "Capacity": "8 qt",
       "Power": "1700 W",
-      "Temperature range": "200–400°F",
+      "Temperature range": "200\u2013400\u00b0F",
       "Basket type": "Nonstick, rectangular",
       "Controls": "Manual dial",
       "Dishwasher safe parts": "Yes",
@@ -153,7 +174,13 @@
         "answer": "Yes, its manual controls make it very straightforward, especially for beginners."
       }
     ],
-    "alternatives": ["instant-vortex-plus"]
+    "alternatives": [
+      "instant-vortex-plus"
+    ],
+    "brand": "Chefman",
+    "rating": 4.4,
+    "ratingCount": 740,
+    "reviewSnippet": "Big basket and straightforward controls for batch cooking."
   },
   {
     "slug": "dash-tasti-crisp",
@@ -179,7 +206,7 @@
     "specs": {
       "Capacity": "2.6 qt",
       "Power": "1000 W",
-      "Temperature range": "200–400°F",
+      "Temperature range": "200\u2013400\u00b0F",
       "Basket type": "Nonstick, round",
       "Controls": "Manual dial",
       "Dishwasher safe parts": "Yes",
@@ -192,6 +219,12 @@
         "answer": "Yes, it is powerful enough for small portions like fries, nuggets, and vegetables."
       }
     ],
-    "alternatives": ["ninja-af101"]
+    "alternatives": [
+      "ninja-af101"
+    ],
+    "brand": "Dash",
+    "rating": 4.3,
+    "ratingCount": 560,
+    "reviewSnippet": "Compact, quick, and ideal for small servings."
   }
 ]
