@@ -2,7 +2,8 @@
 import Layout from "../../../layouts/BaseLayout.astro";
 import Breadcrumbs from "../../../components/Breadcrumbs.astro";
 import CategoryCard from "../../../components/CategoryCard.astro";
-import { buildDataIndex, getCategoryData } from "../../../utils/data";
+import ProductCard from "../../../components/ProductCard.astro";
+import { buildDataIndex, getBestToplistForChild, getCategoryData } from "../../../utils/data";
 import { buildCanonical, requireSite } from "../../../utils/seo";
 import { buildBreadcrumbSchema } from "../../../utils/schema";
 import { categoryUrl, subcategoryUrl, childSubcategoryUrl, subcategoryToplistUrl } from "../../../utils/routes";
@@ -56,11 +57,22 @@ const title = data.childsubcategory?.name ?? data.subcategory?.name ?? data.cate
 const description = data.childsubcategory?.description ?? data.subcategory?.description ?? data.category.description;
 const showSubcategories = !data.subcategory;
 const showChildSubcategories = Boolean(data.subcategory && !data.childsubcategory);
+const bestToplist = data.childsubcategory
+  ? getBestToplistForChild(data.category.slug, data.subcategory.slug, data.childsubcategory.slug)
+  : null;
+const bestToplistProducts = bestToplist
+  ? bestToplist.products
+      .map((productSlug) => buildDataIndex().productMap.get(productSlug))
+      .filter((item): item is NonNullable<typeof item> => Boolean(item))
+  : [];
 const toplists = data.toplists.map((list) => ({
   title: list.title,
   description: list.metaDescription,
   url: subcategoryToplistUrl(list.category, list.subcategory, list.count, list.keywordSlug)
 }));
+const otherToplists = bestToplist
+  ? toplists.filter((list) => list.title !== bestToplist.title)
+  : toplists;
 const absoluteUrl = new URL(basePath, site).toString();
 const breadcrumbSchema = {
   "@context": "https://schema.org",
@@ -126,12 +138,26 @@ const collectionSchema = {
     </section>
   ) : null}
 
-  {toplists.length ? (
+  {bestToplist ? (
+    <section class="section">
+      <div class="page-container">
+        <h2 class="text-2xl font-semibold">Best overall {data.childsubcategory.name}</h2>
+        {bestToplist.intro ? <p class="mt-3 text-sm text-ink/70">{bestToplist.intro}</p> : null}
+        <div class="mt-6 grid gap-6">
+          {bestToplistProducts.map((product, index) => (
+            <ProductCard product={product} rank={index + 1} schema />
+          ))}
+        </div>
+      </div>
+    </section>
+  ) : null}
+
+  {otherToplists.length ? (
     <section class="section">
       <div class="page-container">
         <h2 class="text-2xl font-semibold">Top Lists in {title}</h2>
         <div class="mt-6 grid gap-6">
-          {toplists.map((list) => (
+          {otherToplists.map((list) => (
             <a href={list.url} class="card p-5 hover:shadow-card">
               <h3 class="text-xl font-semibold">{list.title}</h3>
               <p class="mt-2 text-sm text-ink/70">{list.description}</p>

@@ -383,6 +383,31 @@ export function getTopListData(
   };
 }
 
+export function getBestToplistForChild(
+  categorySlug: string,
+  subcategorySlug: string,
+  childSlug: string
+) {
+  const { toplists } = buildDataIndex();
+  const candidates = toplists.filter(
+    (list) =>
+      list.category === categorySlug &&
+      list.subcategory === subcategorySlug &&
+      list.childsubcategory === childSlug
+  );
+  if (candidates.length === 0) {
+    return null;
+  }
+  return candidates
+    .slice()
+    .sort((a, b) => {
+      if (b.performanceScore !== a.performanceScore) {
+        return b.performanceScore - a.performanceScore;
+      }
+      return b.count - a.count;
+    })[0];
+}
+
 export function getCategoryData(slugPath: string | string[]) {
   const { categories, toplists } = buildDataIndex();
   const segments = Array.isArray(slugPath) ? slugPath : slugPath.split("/").filter(Boolean);
