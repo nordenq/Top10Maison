@@ -15,6 +15,7 @@ const ARTICLE_WORD_TARGET = { min: 1500, max: 1800 };
 const DEFAULT_SCRAPER_CONCURRENCY = 5;
 const DEFAULT_OPENAI_CONCURRENCY = 3;
 const DEFAULT_ASIN_FETCH_LIMIT = 30;
+const DEFAULT_PEXELS_CONCURRENCY = 3;
 
 async function loadEnv() {
   const envPath = path.join(ROOT, ".env");
@@ -92,6 +93,32 @@ async function fetchScraperApi(url, { autoparse = false } = {}) {
     throw new Error(`ScraperAPI failed (${response.status}) for ${url}`);
   }
   return response.text();
+}
+
+async function fetchPexelsPhoto(query) {
+  const apiKey = process.env.PEXELS_API_KEY;
+  const apiUrl = new URL("https://api.pexels.com/v1/search");
+  apiUrl.searchParams.set("query", query);
+  apiUrl.searchParams.set("per_page", "10");
+  apiUrl.searchParams.set("orientation", "landscape");
+
+  const response = await fetch(apiUrl.toString(), {
+    headers: {
+      Authorization: apiKey
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error(`Pexels request failed (${response.status}) for ${query}`);
+  }
+
+  const data = await response.json();
+  const photos = Array.isArray(data?.photos) ? data.photos : [];
+  if (!photos.length) {
+    return null;
+  }
+  const picked = photos[Math.floor(Math.random() * photos.length)];
+  return picked?.src?.large || picked?.src?.original || null;
 }
 
 function parseJsonLd(html) {
@@ -227,6 +254,62 @@ async function runWithConcurrency(items, limit, worker) {
   });
   await Promise.all(workers);
   return results;
+}
+
+async function updatePexelsImages({ categories, toplists, refresh, concurrency }) {
+  if (!process.env.PEXELS_API_KEY) {
+    if (refresh) {
+      console.log("Skipping Pexels updates: missing PEXELS_API_KEY.");
+    }
+    return { categoriesUpdated: false, toplistsUpdated: false };
+  }
+
+  const tasks = [];
+  for (const category of categories) {
+    if (!category.published) continue;
+    const needsUpdate = refresh || !category.image;
+    if (!needsUpdate) continue;
+    tasks.push({
+      kind: "category",
+      query: `${category.name} home`,
+      target: category
+    });
+  }
+
+  for (const list of toplists) {
+    if (!list.published) continue;
+    const needsUpdate = refresh || !list.image;
+    if (!needsUpdate) continue;
+    tasks.push({
+      kind: "toplist",
+      query: list.title,
+      target: list
+    });
+  }
+
+  if (!tasks.length) {
+    return { categoriesUpdated: false, toplistsUpdated: false };
+  }
+
+  const results = await runWithConcurrency(tasks, concurrency, async (task) => {
+    const image = await fetchPexelsPhoto(task.query);
+    if (!image) return false;
+    task.target.image = image;
+    return true;
+  });
+
+  let categoriesUpdated = false;
+  let toplistsUpdated = false;
+  results.forEach((updated, index) => {
+    if (!updated) return;
+    if (tasks[index].kind === "category") {
+      categoriesUpdated = true;
+    } else {
+      toplistsUpdated = true;
+    }
+  });
+
+  return { categoriesUpdated, toplistsUpdated };
 }
 
 async function fetchAmazonProduct(asin) {
@@ -461,11 +544,13 @@ async function main() {
   await loadEnv();
   const hasOpenAI = Boolean(process.env.OPENAI_API_KEY);
   const hasScraper = Boolean(process.env.SCRAPERAPI_KEY);
+  const refreshPexels = String(process.env.REFRESH_PEXELS || "").toLowerCase() === "1";
   const skipGeneration = String(process.env.SKIP_AI_GENERATION || "").toLowerCase() === "1";
   const isCloudflarePages = Boolean(process.env.CF_PAGES);
   const forceGeneration = String(process.env.FORCE_AI_GENERATION || "").toLowerCase() === "1";
   const scraperConcurrency = Number(process.env.SCRAPER_CONCURRENCY || DEFAULT_SCRAPER_CONCURRENCY);
   const openAiConcurrency = Number(process.env.OPENAI_CONCURRENCY || DEFAULT_OPENAI_CONCURRENCY);
+  const pexelsConcurrency = Number(process.env.PEXELS_CONCURRENCY || DEFAULT_PEXELS_CONCURRENCY);
   const asinFetchLimit = Number(process.env.ASIN_FETCH_LIMIT || DEFAULT_ASIN_FETCH_LIMIT);
 
   if (skipGeneration || (isCloudflarePages && !forceGeneration) || !hasOpenAI || !hasScraper) {
@@ -475,6 +560,23 @@ async function main() {
       console.log("Skipping AI/product generation: running on Cloudflare Pages.");
     } else {
       console.log("Skipping AI/product generation: missing OPENAI_API_KEY or SCRAPERAPI_KEY.");
+    }
+    const [categoriesRaw, toplists] = await Promise.all([
+      fs.readFile(CATEGORIES_PATH, "utf8"),
+      loadToplists()
+    ]);
+    const categories = JSON.parse(categoriesRaw);
+    const { categoriesUpdated, toplistsUpdated } = await updatePexelsImages({
+      categories,
+      toplists,
+      refresh: refreshPexels,
+      concurrency: pexelsConcurrency
+    });
+    if (categoriesUpdated) {
+      await fs.writeFile(CATEGORIES_PATH, `${JSON.stringify(categories, null, 2)}\n`);
+    }
+    if (toplistsUpdated) {
+      await saveToplists(toplists);
     }
     return;
   }
@@ -622,6 +724,15 @@ async function main() {
     await fs.writeFile(outputPath, `${JSON.stringify(products, null, 2)}\n`);
   }
 
+  const { categoriesUpdated, toplistsUpdated } = await updatePexelsImages({
+    categories,
+    toplists,
+    refresh: refreshPexels,
+    concurrency: pexelsConcurrency
+  });
+  if (categoriesUpdated) {
+    await fs.writeFile(CATEGORIES_PATH, `${JSON.stringify(categories, null, 2)}\n`);
+  }
   await saveToplists(toplists);
 }
 
