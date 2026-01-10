@@ -10,11 +10,11 @@ export function getStaticPaths() {
   const { categories } = buildDataIndex();
   const paths = [];
   for (const category of categories) {
-    paths.push({ params: { slugs: [category.slug] } });
+    paths.push({ params: { slugs: category.slug } });
     for (const subcategory of category.subcategories) {
-      paths.push({ params: { slugs: [category.slug, subcategory.slug] } });
+      paths.push({ params: { slugs: `${category.slug}/${subcategory.slug}` } });
       for (const child of subcategory.subcategories) {
-        paths.push({ params: { slugs: [category.slug, subcategory.slug, child.slug] } });
+        paths.push({ params: { slugs: `${category.slug}/${subcategory.slug}/${child.slug}` } });
       }
     }
   }
