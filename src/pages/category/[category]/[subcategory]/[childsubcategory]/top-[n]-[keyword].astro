@@ -1,6 +1,20 @@
 ---
 import Layout from "../../../../../layouts/BaseLayout.astro";
+import { buildDataIndex } from "../../../../../utils/data";
 import { subcategoryToplistUrl } from "../../../../../utils/routes";
+
+export function getStaticPaths() {
+  const { toplists } = buildDataIndex();
+  return toplists.map((list) => ({
+    params: {
+      category: list.category,
+      subcategory: list.subcategory,
+      childsubcategory: list.childsubcategory,
+      n: String(list.count),
+      keyword: list.keywordSlug
+    }
+  }));
+}
 
 const { category, subcategory, childsubcategory, n, keyword } = Astro.params;
 const redirectUrl = subcategoryToplistUrl(category, subcategory, Number(n), keyword);
