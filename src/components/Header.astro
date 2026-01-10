@@ -10,7 +10,7 @@ const { categories } = buildDataIndex();
   id="site-header"
   class="sticky top-0 z-20 border-b border-border bg-white/95 backdrop-blur transition-shadow"
 >
-  <div class="page-container flex w-full items-center justify-between px-6 py-4">
+  <div class="page-container flex w-full items-center justify-between py-4">
     <a class="text-lg font-semibold tracking-tight" href={homeUrl()}>Top10Maison</a>
     <nav class="hidden items-center gap-6 text-sm font-medium md:flex" aria-label="Primary">
       <a href={homeUrl()}>Home</a>
@@ -30,7 +30,7 @@ const { categories } = buildDataIndex();
     </button>
   </div>
   <div class="hidden border-t border-border bg-white md:block">
-    <div class="page-container px-6 py-3">
+    <div class="page-container py-3">
       <CategoryNav categories={categories} />
     </div>
   </div>
