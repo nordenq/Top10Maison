@@ -411,10 +411,14 @@ async function main() {
   const hasOpenAI = Boolean(process.env.OPENAI_API_KEY);
   const hasScraper = Boolean(process.env.SCRAPERAPI_KEY);
   const skipGeneration = String(process.env.SKIP_AI_GENERATION || "").toLowerCase() === "1";
+  const isCloudflarePages = Boolean(process.env.CF_PAGES);
+  const forceGeneration = String(process.env.FORCE_AI_GENERATION || "").toLowerCase() === "1";
 
-  if (skipGeneration || !hasOpenAI || !hasScraper) {
+  if (skipGeneration || (isCloudflarePages && !forceGeneration) || !hasOpenAI || !hasScraper) {
     if (skipGeneration) {
       console.log("Skipping AI/product generation: SKIP_AI_GENERATION=1.");
+    } else if (isCloudflarePages && !forceGeneration) {
+      console.log("Skipping AI/product generation: running on Cloudflare Pages.");
     } else {
       console.log("Skipping AI/product generation: missing OPENAI_API_KEY or SCRAPERAPI_KEY.");
     }

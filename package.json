@@ -6,10 +6,11 @@
   "scripts": {
     "dev": "astro dev",
     "build": "node scripts/generate-toplists.mjs && astro build",
+    "generate": "node scripts/generate-toplists.mjs",
+    "build:ci": "SKIP_AI_GENERATION=1 node scripts/generate-toplists.mjs && astro build && npm run check:google-fonts",
     "preview": "astro preview",
     "astro": "astro",
     "check:google-fonts": "node scripts/check-google-fonts.js",
-    "build:ci": "node scripts/generate-toplists.mjs && astro build && npm run check:google-fonts",
     "postbuild": "node scripts/inline-critical.js"
   },
   "dependencies": {
