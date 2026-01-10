@@ -408,8 +408,13 @@ function toProductEntry({ base, ai, slug, affiliateUrl }) {
 
 async function main() {
   await loadEnv();
-  assertEnv("OPENAI_API_KEY");
-  assertEnv("SCRAPERAPI_KEY");
+  const hasOpenAI = Boolean(process.env.OPENAI_API_KEY);
+  const hasScraper = Boolean(process.env.SCRAPERAPI_KEY);
+
+  if (!hasOpenAI || !hasScraper) {
+    console.log("Skipping AI/product generation: missing OPENAI_API_KEY or SCRAPERAPI_KEY.");
+    return;
+  }
 
   const [categoriesRaw, toplistsRaw] = await Promise.all([
     fs.readFile(CATEGORIES_PATH, "utf8"),
