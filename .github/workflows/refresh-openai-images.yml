@@ -1,0 +1,52 @@
+name: Refresh OpenAI Images
+
+on:
+  schedule:
+    - cron: "0 5 1 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Refresh OpenAI images
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
+          R2_PUBLIC_BASE_URL: ${{ secrets.R2_PUBLIC_BASE_URL }}
+          ENABLE_OPENAI_IMAGES: "1"
+          REFRESH_OPENAI_IMAGES: "1"
+          SKIP_AI_GENERATION: "1"
+        run: npm run generate
+
+      - name: Commit changes
+        run: |
+          if git diff --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git config user.name "openai-images-bot"
+          git config user.email "openai-images-bot@users.noreply.github.com"
+          git add src/data/categories.json src/data/toplists
+          git commit -m "chore: refresh openai images"
+          git push origin HEAD:main
