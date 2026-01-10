@@ -1,5 +1,6 @@
 import fs from "fs/promises";
 import path from "path";
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 
 const ROOT = process.cwd();
 const DATA_DIR = path.join(ROOT, "src", "data");
@@ -15,7 +16,7 @@ const ARTICLE_WORD_TARGET = { min: 1500, max: 1800 };
 const DEFAULT_SCRAPER_CONCURRENCY = 5;
 const DEFAULT_OPENAI_CONCURRENCY = 3;
 const DEFAULT_ASIN_FETCH_LIMIT = 30;
-const DEFAULT_PEXELS_CONCURRENCY = 3;
+const DEFAULT_OPENAI_IMAGE_CONCURRENCY = 2;
 
 async function loadEnv() {
   const envPath = path.join(ROOT, ".env");
@@ -93,32 +94,6 @@ async function fetchScraperApi(url, { autoparse = false } = {}) {
     throw new Error(`ScraperAPI failed (${response.status}) for ${url}`);
   }
   return response.text();
-}
-
-async function fetchPexelsPhoto(query) {
-  const apiKey = process.env.PEXELS_API_KEY;
-  const apiUrl = new URL("https://api.pexels.com/v1/search");
-  apiUrl.searchParams.set("query", query);
-  apiUrl.searchParams.set("per_page", "10");
-  apiUrl.searchParams.set("orientation", "landscape");
-
-  const response = await fetch(apiUrl.toString(), {
-    headers: {
-      Authorization: apiKey
-    }
-  });
-
-  if (!response.ok) {
-    throw new Error(`Pexels request failed (${response.status}) for ${query}`);
-  }
-
-  const data = await response.json();
-  const photos = Array.isArray(data?.photos) ? data.photos : [];
-  if (!photos.length) {
-    return null;
-  }
-  const picked = photos[Math.floor(Math.random() * photos.length)];
-  return picked?.src?.large || picked?.src?.original || null;
 }
 
 function parseJsonLd(html) {
@@ -256,33 +231,160 @@ async function runWithConcurrency(items, limit, worker) {
   return results;
 }
 
-async function updatePexelsImages({ categories, toplists, refresh, concurrency }) {
-  if (!process.env.PEXELS_API_KEY) {
+function getR2Config() {
+  return {
+    endpoint: process.env.R2_ENDPOINT,
+    bucket: process.env.R2_BUCKET,
+    accessKeyId: process.env.R2_ACCESS_KEY_ID,
+    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
+    publicBaseUrl: process.env.R2_PUBLIC_BASE_URL
+  };
+}
+
+function assertR2Config(config) {
+  const required = {
+    R2_ENDPOINT: config.endpoint,
+    R2_BUCKET: config.bucket,
+    R2_ACCESS_KEY_ID: config.accessKeyId,
+    R2_SECRET_ACCESS_KEY: config.secretAccessKey,
+    R2_PUBLIC_BASE_URL: config.publicBaseUrl
+  };
+  for (const [key, value] of Object.entries(required)) {
+    if (!value) {
+      throw new Error(`Missing required env var: ${key}`);
+    }
+  }
+}
+
+function getPublicUrl(baseUrl, key) {
+  const normalizedBase = baseUrl.replace(/\/$/, "");
+  return `${normalizedBase}/${key}`;
+}
+
+function createR2Client({ endpoint, accessKeyId, secretAccessKey }) {
+  return new S3Client({
+    region: "auto",
+    endpoint,
+    credentials: { accessKeyId, secretAccessKey }
+  });
+}
+
+async function uploadToR2({ client, bucket, key, body, contentType }) {
+  const command = new PutObjectCommand({
+    Bucket: bucket,
+    Key: key,
+    Body: body,
+    ContentType: contentType,
+    CacheControl: "public, max-age=31536000, immutable"
+  });
+  await client.send(command);
+}
+
+async function generateOpenAiImage(prompt) {
+  const response = await fetch("https://api.openai.com/v1/images/generations", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      model: "gpt-image-1",
+      prompt,
+      size: "1024x1024",
+      response_format: "b64_json"
+    })
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`OpenAI image request failed: ${errorText}`);
+  }
+
+  const data = await response.json();
+  const base64 = data?.data?.[0]?.b64_json;
+  if (!base64) {
+    throw new Error("OpenAI image response missing base64 payload.");
+  }
+  return Buffer.from(base64, "base64");
+}
+
+function buildImagePrompt({ title, context }) {
+  return [
+    "High-quality, realistic product lifestyle photo.",
+    "No text, no logos, no watermarks.",
+    "Clean, modern lighting, natural colors.",
+    `Subject: ${title}.`,
+    context ? `Context: ${context}.` : null
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
+function shouldReplaceImage(value, { refresh, allowDefault }) {
+  if (refresh) return true;
+  if (!value) return true;
+  if (allowDefault && value.startsWith("/images/")) return true;
+  return false;
+}
+
+async function updateOpenAiImages({ categories, toplists, refresh, concurrency }) {
+  if (!process.env.OPENAI_API_KEY) {
     if (refresh) {
-      console.log("Skipping Pexels updates: missing PEXELS_API_KEY.");
+      console.log("Skipping OpenAI image generation: missing OPENAI_API_KEY.");
     }
     return { categoriesUpdated: false, toplistsUpdated: false };
   }
 
+  const r2Config = getR2Config();
+  assertR2Config(r2Config);
+  const client = createR2Client(r2Config);
+
   const tasks = [];
   for (const category of categories) {
     if (!category.published) continue;
-    const needsUpdate = refresh || !category.image;
-    if (!needsUpdate) continue;
+    if (!shouldReplaceImage(category.image, { refresh, allowDefault: true })) continue;
     tasks.push({
       kind: "category",
-      query: `${category.name} home`,
+      key: `openai/categories/${category.slug}.png`,
+      title: category.name,
+      context: "Interior room scene",
       target: category
     });
+
+    for (const subcategory of category.subcategories || []) {
+      if (!subcategory.published) continue;
+      if (!shouldReplaceImage(subcategory.image, { refresh, allowDefault: false })) continue;
+      tasks.push({
+        kind: "category",
+        key: `openai/subcategories/${category.slug}/${subcategory.slug}.png`,
+        title: subcategory.name,
+        context: `${category.name} products`,
+        target: subcategory
+      });
+
+      for (const child of subcategory.subcategories || []) {
+        if (!child.published) continue;
+        if (!shouldReplaceImage(child.image, { refresh, allowDefault: false })) continue;
+        tasks.push({
+          kind: "category",
+          key: `openai/childsubcategories/${category.slug}/${subcategory.slug}/${child.slug}.png`,
+          title: child.name,
+          context: `${category.name} product close-up`,
+          target: child
+        });
+      }
+    }
   }
 
   for (const list of toplists) {
     if (!list.published) continue;
-    const needsUpdate = refresh || !list.image;
-    if (!needsUpdate) continue;
+    const isDefault = list.image === "/images/og/toplist-default.jpg";
+    if (!refresh && list.image && !isDefault) continue;
     tasks.push({
       kind: "toplist",
-      query: list.title,
+      key: `openai/toplists/${list.slug}.png`,
+      title: list.title,
+      context: "Product hero shot on clean background",
       target: list
     });
   }
@@ -292,20 +394,28 @@ async function updatePexelsImages({ categories, toplists, refresh, concurrency }
   }
 
   const results = await runWithConcurrency(tasks, concurrency, async (task) => {
-    const image = await fetchPexelsPhoto(task.query);
-    if (!image) return false;
-    task.target.image = image;
-    return true;
+    const prompt = buildImagePrompt({ title: task.title, context: task.context });
+    const buffer = await generateOpenAiImage(prompt);
+    await uploadToR2({
+      client,
+      bucket: r2Config.bucket,
+      key: task.key,
+      body: buffer,
+      contentType: "image/png"
+    });
+    return getPublicUrl(r2Config.publicBaseUrl, task.key);
   });
 
   let categoriesUpdated = false;
   let toplistsUpdated = false;
-  results.forEach((updated, index) => {
-    if (!updated) return;
-    if (tasks[index].kind === "category") {
-      categoriesUpdated = true;
-    } else {
+  results.forEach((url, index) => {
+    if (!url) return;
+    const task = tasks[index];
+    task.target.image = url;
+    if (task.kind === "toplist") {
       toplistsUpdated = true;
+    } else {
+      categoriesUpdated = true;
     }
   });
 
@@ -544,13 +654,16 @@ async function main() {
   await loadEnv();
   const hasOpenAI = Boolean(process.env.OPENAI_API_KEY);
   const hasScraper = Boolean(process.env.SCRAPERAPI_KEY);
-  const refreshPexels = String(process.env.REFRESH_PEXELS || "").toLowerCase() === "1";
+  const enableImageGeneration = String(process.env.ENABLE_OPENAI_IMAGES || "").toLowerCase() === "1";
+  const refreshImages = String(process.env.REFRESH_OPENAI_IMAGES || "").toLowerCase() === "1";
   const skipGeneration = String(process.env.SKIP_AI_GENERATION || "").toLowerCase() === "1";
   const isCloudflarePages = Boolean(process.env.CF_PAGES);
   const forceGeneration = String(process.env.FORCE_AI_GENERATION || "").toLowerCase() === "1";
   const scraperConcurrency = Number(process.env.SCRAPER_CONCURRENCY || DEFAULT_SCRAPER_CONCURRENCY);
   const openAiConcurrency = Number(process.env.OPENAI_CONCURRENCY || DEFAULT_OPENAI_CONCURRENCY);
-  const pexelsConcurrency = Number(process.env.PEXELS_CONCURRENCY || DEFAULT_PEXELS_CONCURRENCY);
+  const openAiImageConcurrency = Number(
+    process.env.OPENAI_IMAGE_CONCURRENCY || DEFAULT_OPENAI_IMAGE_CONCURRENCY
+  );
   const asinFetchLimit = Number(process.env.ASIN_FETCH_LIMIT || DEFAULT_ASIN_FETCH_LIMIT);
 
   if (skipGeneration || (isCloudflarePages && !forceGeneration) || !hasOpenAI || !hasScraper) {
@@ -561,22 +674,24 @@ async function main() {
     } else {
       console.log("Skipping AI/product generation: missing OPENAI_API_KEY or SCRAPERAPI_KEY.");
     }
-    const [categoriesRaw, toplists] = await Promise.all([
-      fs.readFile(CATEGORIES_PATH, "utf8"),
-      loadToplists()
-    ]);
-    const categories = JSON.parse(categoriesRaw);
-    const { categoriesUpdated, toplistsUpdated } = await updatePexelsImages({
-      categories,
-      toplists,
-      refresh: refreshPexels,
-      concurrency: pexelsConcurrency
-    });
-    if (categoriesUpdated) {
-      await fs.writeFile(CATEGORIES_PATH, `${JSON.stringify(categories, null, 2)}\n`);
-    }
-    if (toplistsUpdated) {
-      await saveToplists(toplists);
+    if (enableImageGeneration || refreshImages) {
+      const [categoriesRaw, toplists] = await Promise.all([
+        fs.readFile(CATEGORIES_PATH, "utf8"),
+        loadToplists()
+      ]);
+      const categories = JSON.parse(categoriesRaw);
+      const { categoriesUpdated, toplistsUpdated } = await updateOpenAiImages({
+        categories,
+        toplists,
+        refresh: refreshImages,
+        concurrency: openAiImageConcurrency
+      });
+      if (categoriesUpdated) {
+        await fs.writeFile(CATEGORIES_PATH, `${JSON.stringify(categories, null, 2)}\n`);
+      }
+      if (toplistsUpdated) {
+        await saveToplists(toplists);
+      }
     }
     return;
   }
@@ -724,14 +839,19 @@ async function main() {
     await fs.writeFile(outputPath, `${JSON.stringify(products, null, 2)}\n`);
   }
 
-  const { categoriesUpdated, toplistsUpdated } = await updatePexelsImages({
-    categories,
-    toplists,
-    refresh: refreshPexels,
-    concurrency: pexelsConcurrency
-  });
-  if (categoriesUpdated) {
-    await fs.writeFile(CATEGORIES_PATH, `${JSON.stringify(categories, null, 2)}\n`);
+  if (enableImageGeneration || refreshImages) {
+    const { categoriesUpdated, toplistsUpdated } = await updateOpenAiImages({
+      categories,
+      toplists,
+      refresh: refreshImages,
+      concurrency: openAiImageConcurrency
+    });
+    if (categoriesUpdated) {
+      await fs.writeFile(CATEGORIES_PATH, `${JSON.stringify(categories, null, 2)}\n`);
+    }
+    if (toplistsUpdated) {
+      await saveToplists(toplists);
+    }
   }
   await saveToplists(toplists);
 }
