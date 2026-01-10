@@ -59,13 +59,32 @@ const toplists = data.toplists.map((list) => ({
   description: list.metaDescription,
   url: subcategoryToplistUrl(list.category, list.subcategory, list.count, list.keywordSlug)
 }));
+const absoluteUrl = new URL(basePath, site).toString();
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: breadcrumbItems.map((item, index) => ({
+    "@type": "ListItem",
+    position: index + 1,
+    name: item.name,
+    item: new URL(item.path, site).toString()
+  }))
+};
+const collectionSchema = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  name: title,
+  description,
+  url: absoluteUrl,
+  breadcrumb: breadcrumbSchema
+};
 ---
 
 <Layout
   title={title}
   description={description}
   canonical={canonical}
-  schema={schema}
+  schema={[...schema, collectionSchema]}
 >
   <section class="section">
     <div class="mx-auto w-full max-w-5xl">

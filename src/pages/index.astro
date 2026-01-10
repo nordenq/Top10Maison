@@ -10,13 +10,19 @@ const latestToplists = [...toplists].sort((a, b) => b.performanceScore - a.perfo
 const categoryMap = new Map(categories.map((category) => [category.slug, category]));
 
 const site = requireSite(Astro.site);
-const title = buildTitle("Top10Maison", "Top10Maison");
-const description = "Top10Maison ranks the best home products across every category.";
+const title = "Top10Maison | Data-Driven Product Rankings";
+const description = "Unbiased product rankings and comparisons to help you choose the best for your home.";
 const canonical = buildCanonical(site, "/");
 const schema = [buildBreadcrumbSchema(site, [{ name: "Home", path: "/" }])];
 ---
 
-<BaseLayout title={title} description={description} canonical={canonical} schema={schema}>
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={canonical}
+  schema={schema}
+  ogImage="/og-image.jpg"
+>
   <section class="section">
     <div class="mx-auto grid w-full max-w-6xl items-center gap-10 md:grid-cols-2">
       <div>
