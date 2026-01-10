@@ -76,7 +76,7 @@ function extractPriceLimit(text) {
 
 async function fetchScraperApi(url, { autoparse = false } = {}) {
   const apiKey = process.env.SCRAPERAPI_KEY;
-  const apiUrl = new URL("http://api.scraperapi.com/");
+  const apiUrl = new URL("https://api.scraperapi.com/");
   apiUrl.searchParams.set("api_key", apiKey);
   apiUrl.searchParams.set("url", url);
   apiUrl.searchParams.set("country_code", "us");
@@ -183,7 +183,7 @@ async function fetchAmazonProduct(asin) {
   const raw = await fetchScraperApi(url, { autoparse: true });
   try {
     const parsed = JSON.parse(raw);
-    return {
+    const data = {
       asin,
       title: parsed.title || parsed.product_title || null,
       brand: parsed.brand || null,
@@ -194,8 +194,15 @@ async function fetchAmazonProduct(asin) {
       bullets: parsed.feature_bullets || [],
       url: parsed.url || url
     };
+    if (!data.title || !data.rating || !data.reviewCount) {
+      throw new Error("Missing fields from autoparse.");
+    }
+    return data;
   } catch (error) {
-    const html = raw;
+    const html =
+      error?.message === "Missing fields from autoparse."
+        ? await fetchScraperApi(url, { autoparse: false })
+        : raw;
     const jsonLd = findProductJsonLd(parseJsonLd(html));
     const aggregate = jsonLd?.aggregateRating;
     const offers = Array.isArray(jsonLd?.offers) ? jsonLd.offers[0] : jsonLd?.offers;
@@ -418,50 +425,52 @@ async function main() {
       continue;
     }
 
+    const productsFile = path.join(PRODUCTS_DIR, `${list.childsubcategory}.json`);
+    const existingProducts = await fs
+      .readFile(productsFile, "utf8")
+      .then((data) => JSON.parse(data))
+      .catch(() => []);
+
     const category = categories.find((item) => item.slug === list.category);
     const subcategory = category?.subcategories?.find((item) => item.slug === list.subcategory);
     const child = subcategory?.subcategories?.find((item) => item.slug === list.childsubcategory);
 
     const childName = child?.name ?? list.childsubcategory.replace(/-/g, " ");
     const keywords = [childName, list.title];
-    const query = `best ${childName}`;
-    const asins = await fetchAmazonSearchAsins(query);
+    let scored = [];
 
-    const rawProducts = [];
-    for (const asin of asins) {
-      try {
-        const item = await fetchAmazonProduct(asin);
-        rawProducts.push(item);
-      } catch (error) {
-        continue;
+    try {
+      const query = `best ${childName}`;
+      const asins = await fetchAmazonSearchAsins(query);
+
+      const rawProducts = [];
+      for (const asin of asins) {
+        try {
+          const item = await fetchAmazonProduct(asin);
+          rawProducts.push(item);
+        } catch (error) {
+          continue;
+        }
       }
+
+      const priceLimit = extractPriceLimit(list.keywordSlug) || extractPriceLimit(list.title);
+
+      scored = rawProducts
+        .filter((product) => product.title && product.rating && product.reviewCount)
+        .filter((product) => {
+          if (!priceLimit) return true;
+          const priceValue = Number(String(product.price || "").replace(/[^0-9.]/g, ""));
+          return Number.isFinite(priceValue) && priceValue <= priceLimit;
+        })
+        .map((product) => ({
+          ...product,
+          score: scoreProduct(product.rating, product.reviewCount)
+        }))
+        .sort((a, b) => b.score - a.score)
+        .slice(0, Math.min(list.count || MAX_PRODUCTS, MAX_PRODUCTS));
+    } catch (error) {
+      scored = [];
     }
-
-    const priceLimit = extractPriceLimit(list.keywordSlug) || extractPriceLimit(list.title);
-
-    const scored = rawProducts
-      .filter((product) => product.title && product.rating && product.reviewCount)
-      .filter((product) => {
-        if (!priceLimit) return true;
-        const priceValue = Number(String(product.price || "").replace(/[^0-9.]/g, ""));
-        return Number.isFinite(priceValue) && priceValue <= priceLimit;
-      })
-      .map((product) => ({
-        ...product,
-        score: scoreProduct(product.rating, product.reviewCount)
-      }))
-      .sort((a, b) => b.score - a.score)
-      .slice(0, Math.min(list.count || MAX_PRODUCTS, MAX_PRODUCTS));
-
-    if (scored.length === 0) {
-      throw new Error(`No scored products for ${list.title}.`);
-    }
-
-    const productsFile = path.join(PRODUCTS_DIR, `${list.childsubcategory}.json`);
-    const existingProducts = await fs
-      .readFile(productsFile, "utf8")
-      .then((data) => JSON.parse(data))
-      .catch(() => []);
 
     const existingByAsin = new Map(
       existingProducts.filter((product) => product.asin).map((product) => [product.asin, product])
@@ -470,32 +479,38 @@ async function main() {
 
     const finalProducts = [];
 
-    for (const product of scored) {
-      const existing = existingByAsin.get(product.asin);
-      if (existing) {
-        existing.name = product.title;
-        existing.image = product.image || existing.image;
-        existing.price = normalizePrice(product.price) || existing.price;
-        existing.rating = product.rating || existing.rating;
-        existing.ratingCount = product.reviewCount || existing.ratingCount;
-        existing.brand = product.brand || existing.brand;
-        finalProducts.push(existing);
-        continue;
-      }
+    if (scored.length > 0) {
+      for (const product of scored) {
+        const existing = existingByAsin.get(product.asin);
+        if (existing) {
+          existing.name = product.title;
+          existing.image = product.image || existing.image;
+          existing.price = normalizePrice(product.price) || existing.price;
+          existing.rating = product.rating || existing.rating;
+          existing.ratingCount = product.reviewCount || existing.ratingCount;
+          existing.brand = product.brand || existing.brand;
+          finalProducts.push(existing);
+          continue;
+        }
 
-      const ai = await generateProductCopy(product, childName);
-      const baseSlug = slugify(product.title || `${childName}-${product.asin}`);
-      let slug = baseSlug || product.asin.toLowerCase();
-      let counter = 2;
-      while (usedSlugs.has(slug)) {
-        slug = `${baseSlug}-${counter}`;
-        counter += 1;
-      }
-      usedSlugs.add(slug);
+        const ai = await generateProductCopy(product, childName);
+        const baseSlug = slugify(product.title || `${childName}-${product.asin}`);
+        let slug = baseSlug || product.asin.toLowerCase();
+        let counter = 2;
+        while (usedSlugs.has(slug)) {
+          slug = `${baseSlug}-${counter}`;
+          counter += 1;
+        }
+        usedSlugs.add(slug);
 
-      const affiliateUrl = `https://www.amazon.com/dp/${product.asin}`;
-      const entry = toProductEntry({ base: product, ai, slug, affiliateUrl });
-      finalProducts.push(entry);
+        const affiliateUrl = `https://www.amazon.com/dp/${product.asin}`;
+        const entry = toProductEntry({ base: product, ai, slug, affiliateUrl });
+        finalProducts.push(entry);
+      }
+    } else if (existingProducts.length > 0) {
+      finalProducts.push(...existingProducts.slice(0, Math.min(list.count || MAX_PRODUCTS, MAX_PRODUCTS)));
+    } else {
+      throw new Error(`No products available for ${list.title}.`);
     }
 
     const withAlternatives = finalProducts.map((product) => {
