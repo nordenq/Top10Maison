@@ -4,9 +4,12 @@
     "name": "Kitchen",
     "description": "Best kitchen products and appliances",
     "intro": "Kitchen upgrades should make daily cooking easier, not more complicated. This page helps you compare reliable appliances, cookware, and essentials that deliver consistent results without wasting counter space. We prioritize durability, cleaning ease, and practical features that matter in busy kitchens. Use these guides to narrow your options fast and move from research to purchase with confidence.",
-    "image": "/images/categories/kitchen.svg",
     "published": true,
-    "selectionFactors": ["capacity", "ease of cleaning", "counter space"],
+    "selectionFactors": [
+      "capacity",
+      "ease of cleaning",
+      "counter space"
+    ],
     "howToChoose": [
       "Match size and capacity to how often you cook at home.",
       "Look for durable finishes that handle heat and daily use.",
@@ -190,9 +193,12 @@
     "name": "Bedroom",
     "description": "Comfort-first bedroom essentials",
     "intro": "Bedroom essentials need to feel good night after night, not just on day one. This guide highlights bedding and sleep products that balance comfort, breathability, and long-term value. We focus on materials that age well, easy-care fabrics, and fits that actually stay put. Use these comparisons to make a smart, lasting choice.",
-    "image": "/images/categories/bedroom.svg",
     "published": false,
-    "selectionFactors": ["comfort", "breathability", "care needs"],
+    "selectionFactors": [
+      "comfort",
+      "breathability",
+      "care needs"
+    ],
     "howToChoose": [
       "Choose materials that match your sleep temperature.",
       "Prioritize easy-care fabrics if you wash bedding often.",
