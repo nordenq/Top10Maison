@@ -1,8 +1,9 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import CategoryNav from "../components/CategoryNav.astro";
+import CategoryCard from "../components/CategoryCard.astro";
 import { buildDataIndex } from "../utils/data";
-import { subcategoryToplistUrl, categoryUrl } from "../utils/routes";
+import { subcategoryToplistUrl } from "../utils/routes";
 import { buildCanonical, requireSite } from "../utils/seo";
 import { buildBreadcrumbSchema } from "../utils/schema";
 
@@ -62,25 +63,9 @@ const schema = [buildBreadcrumbSchema(site, [{ name: "Home", path: "/" }])];
         <a class="text-sm font-semibold text-accent" href="/#top-categories">View all</a>
       </div>
       <div class="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {categories.map((category) => {
-          const image = category.image || "/logo.svg";
-          return (
-            <a class="card flex items-start gap-4 overflow-hidden p-5" href={categoryUrl(category.slug)}>
-              <img
-                class="h-16 w-16 rounded-lg object-cover"
-                src={image}
-                alt={category.name}
-                loading="lazy"
-                width="160"
-                height="160"
-              />
-              <div>
-                <h3 class="text-lg font-semibold">{category.name}</h3>
-                <p class="mt-2 text-sm text-ink/70">{category.description}</p>
-              </div>
-            </a>
-          );
-        })}
+        {categories.map((category) => (
+          <CategoryCard category={category} />
+        ))}
       </div>
     </div>
   </section>
