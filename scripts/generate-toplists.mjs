@@ -257,16 +257,6 @@ async function runWithConcurrency(items, limit, worker) {
 }
 
 async function updatePexelsImages({ categories, toplists, refresh, concurrency }) {
-  const childNameByKey = new Map();
-  for (const category of categories) {
-    for (const subcategory of category.subcategories || []) {
-      for (const child of subcategory.subcategories || []) {
-        const key = `${category.slug}:${subcategory.slug}:${child.slug}`;
-        childNameByKey.set(key, child.name);
-      }
-    }
-  }
-
   if (!process.env.PEXELS_API_KEY) {
     if (refresh) {
       console.log("Skipping Pexels updates: missing PEXELS_API_KEY.");
@@ -312,11 +302,9 @@ async function updatePexelsImages({ categories, toplists, refresh, concurrency }
     if (!list.published) continue;
     const needsUpdate = refresh || !list.image;
     if (!needsUpdate) continue;
-    const childKey = `${list.category}:${list.subcategory}:${list.childsubcategory}`;
-    const childName = childNameByKey.get(childKey) || list.childsubcategory.replace(/-/g, " ");
     tasks.push({
       kind: "toplist",
-      query: `${childName} kitchen appliance`,
+      query: list.title,
       target: list
     });
   }
