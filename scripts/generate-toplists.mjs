@@ -546,6 +546,7 @@ async function generateProductCopy(product, categoryName) {
     content: JSON.stringify({
       instructions: {
         style: "Concise, SEO-friendly, neutral, no fluff.",
+        tone: "Curated, clear, value-focused, practical.",
         constraints: "Do not claim hands-on testing, lab testing, or first-hand experience. Avoid mentioning sources or other websites.",
         requirements: {
           pros: 3,
@@ -635,6 +636,7 @@ async function generateToplistArticle({ title, intro, products, keywords }) {
     content: JSON.stringify({
       instructions: {
         style: "SEO-friendly, expert buying guide tone, helpful and specific.",
+        tone: "Curated, clear, value-focused, practical.",
         format: "HTML",
         wordTarget: ARTICLE_WORD_TARGET,
         constraints: "Do not claim hands-on testing, lab testing, or first-hand experience. Avoid mentioning sources or other websites.",

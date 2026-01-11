@@ -2,8 +2,8 @@
   {
     "slug": "kitchen",
     "name": "Kitchen",
-    "description": "Best kitchen products and appliances",
-    "intro": "Kitchen upgrades should make daily cooking easier, not more complicated. This page helps you compare reliable appliances, cookware, and essentials that deliver consistent results without wasting counter space. We prioritize durability, cleaning ease, and practical features that matter in busy kitchens. Use these guides to narrow your options fast and move from research to purchase with confidence.",
+    "description": "Curated kitchen essentials and appliances.",
+    "intro": "Curated kitchen picks that make daily cooking easier. Compare appliances, cookware, and tools by practicality, size, and value, then choose what fits your space and budget.",
     "published": true,
     "selectionFactors": [
       "capacity",
@@ -29,7 +29,7 @@
       {
         "slug": "appliances",
         "name": "Appliances",
-        "description": "Kitchen appliances for daily cooking",
+        "description": "Everyday appliances for faster, easier meals.",
         "intentCopy": "Compare appliances by real-world performance, not just wattage. We highlight options built for everyday cooking and reliable results.",
         "published": true,
         "intentTable": [
@@ -68,7 +68,7 @@
           {
             "slug": "air-fryers",
             "name": "Air Fryers",
-            "description": "Air fryers for fast, lower-oil cooking",
+            "description": "Fast, low-oil cooking with everyday value.",
             "intentCopy": "Air fryers should deliver crisp results quickly without taking over your counter. We prioritize even cooking, easy cleanup, and value at common price points.",
             "published": true,
             "intentTable": [
@@ -113,7 +113,7 @@
       {
         "slug": "cookware",
         "name": "Cookware",
-        "description": "Pots, pans, and tools for every recipe",
+        "description": "Cookware and tools for everyday meals.",
         "intentCopy": "Cookware choices should match your cooking style, heat source, and how often you cook. We focus on pieces that last and perform consistently.",
         "published": false,
         "intentTable": [
@@ -152,7 +152,7 @@
           {
             "slug": "nonstick-pans",
             "name": "Nonstick Pans",
-            "description": "Nonstick pans for easy daily cooking",
+            "description": "Easy-clean nonstick pans for daily cooking.",
             "intentCopy": "Nonstick pans should release food easily and clean up fast. We focus on reliable coatings, even heating, and everyday durability.",
             "published": true,
             "intentTable": [
@@ -197,8 +197,8 @@
   {
     "slug": "bedroom",
     "name": "Bedroom",
-    "description": "Comfort-first bedroom essentials",
-    "intro": "Bedroom essentials need to feel good night after night, not just on day one. This guide highlights bedding and sleep products that balance comfort, breathability, and long-term value. We focus on materials that age well, easy-care fabrics, and fits that actually stay put. Use these comparisons to make a smart, lasting choice.",
+    "description": "Comfort-first bedroom essentials.",
+    "intro": "Curated bedding and sleep essentials focused on comfort, breathability, and value. Compare materials, care, and fit, then choose what lasts.",
     "published": false,
     "selectionFactors": [
       "comfort",
@@ -220,7 +220,7 @@
       {
         "slug": "bedding",
         "name": "Bedding",
-        "description": "Sheets, duvets, and pillows",
+        "description": "Sheets, duvets, and pillows for everyday comfort.",
         "intentCopy": "Bedding buyers want comfort and temperature control. We focus on sets that stay soft, wash well, and last through daily use.",
         "published": false,
         "intentTable": [
