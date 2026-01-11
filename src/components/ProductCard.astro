@@ -1,4 +1,6 @@
 ---
+import { CSP_NONCE } from "../utils/csp";
+
 export interface Props {
   product: {
     name: string;
@@ -118,6 +120,6 @@ const productSchema =
     </div>
   </div>
   {productSchema ? (
-    <script type="application/ld+json" set:html={JSON.stringify(productSchema)} />
+    <script type="application/ld+json" nonce={CSP_NONCE} set:html={JSON.stringify(productSchema)} />
   ) : null}
 </article>

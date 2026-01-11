@@ -136,17 +136,3 @@ const schema = [
     </article>
   </section>
 </Layout>
-
-<script>
-  const backLink = document.getElementById('smart-back');
-  if (backLink) {
-    const referrer = document.referrer;
-    const sameOrigin = referrer && referrer.startsWith(window.location.origin);
-    if (sameOrigin && referrer.includes('/category/')) {
-      backLink.setAttribute('href', referrer);
-    } else {
-      backLink.setAttribute('href', '/');
-    }
-    backLink.classList.remove('hidden');
-  }
-</script>

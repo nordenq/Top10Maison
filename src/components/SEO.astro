@@ -1,4 +1,6 @@
 ---
+import { CSP_NONCE } from "../utils/csp";
+
 const {
   title,
   description,
@@ -51,5 +53,5 @@ const mergedSchema = [organizationSchema, websiteSchema, ...schema];
 <meta name="twitter:description" content={description} />
 {resolvedOgImage ? <meta name="twitter:image" content={resolvedOgImage} /> : null}
 {mergedSchema.map((entry) => (
-  <script type="application/ld+json" set:html={JSON.stringify(entry)} />
+  <script type="application/ld+json" nonce={CSP_NONCE} set:html={JSON.stringify(entry)} />
 ))}
