@@ -412,8 +412,8 @@ async function updateOpenAiImages({ categories, toplists, refresh, concurrency }
       title: list.title,
       context: "Product hero shot on clean background",
       target: list,
-      width: 800,
-      height: 600
+      width: 640,
+      height: 480
     });
   }
 
