@@ -1,5 +1,6 @@
 import fs from "fs/promises";
 import path from "path";
+import sharp from "sharp";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 
 const ROOT = process.cwd();
@@ -281,6 +282,13 @@ async function uploadToR2({ client, bucket, key, body, contentType }) {
   await client.send(command);
 }
 
+async function optimizeImage(buffer, { width, height }) {
+  return sharp(buffer)
+    .resize(width, height, { fit: "cover" })
+    .webp({ quality: 72 })
+    .toBuffer();
+}
+
 async function generateOpenAiImage(prompt, { model }) {
   const wantsB64 = model.startsWith("dall-e");
   const response = await fetch("https://api.openai.com/v1/images/generations", {
@@ -357,10 +365,12 @@ async function updateOpenAiImages({ categories, toplists, refresh, concurrency }
     if (!shouldReplaceImage(category.image, { refresh, allowDefault: true })) continue;
     tasks.push({
       kind: "category",
-      key: `openai/categories/${category.slug}.png`,
+      key: `openai/categories/${category.slug}.webp`,
       title: category.name,
       context: "Interior room scene",
-      target: category
+      target: category,
+      width: 640,
+      height: 360
     });
 
     for (const subcategory of category.subcategories || []) {
@@ -368,10 +378,12 @@ async function updateOpenAiImages({ categories, toplists, refresh, concurrency }
       if (!shouldReplaceImage(subcategory.image, { refresh, allowDefault: false })) continue;
       tasks.push({
         kind: "category",
-        key: `openai/subcategories/${category.slug}/${subcategory.slug}.png`,
+        key: `openai/subcategories/${category.slug}/${subcategory.slug}.webp`,
         title: subcategory.name,
         context: `${category.name} products`,
-        target: subcategory
+        target: subcategory,
+        width: 640,
+        height: 360
       });
 
       for (const child of subcategory.subcategories || []) {
@@ -379,10 +391,12 @@ async function updateOpenAiImages({ categories, toplists, refresh, concurrency }
         if (!shouldReplaceImage(child.image, { refresh, allowDefault: false })) continue;
         tasks.push({
           kind: "category",
-          key: `openai/childsubcategories/${category.slug}/${subcategory.slug}/${child.slug}.png`,
+          key: `openai/childsubcategories/${category.slug}/${subcategory.slug}/${child.slug}.webp`,
           title: child.name,
           context: `${category.name} product close-up`,
-          target: child
+          target: child,
+          width: 640,
+          height: 360
         });
       }
     }
@@ -394,10 +408,12 @@ async function updateOpenAiImages({ categories, toplists, refresh, concurrency }
     if (!refresh && list.image && !isDefault) continue;
     tasks.push({
       kind: "toplist",
-      key: `openai/toplists/${list.slug}.png`,
+      key: `openai/toplists/${list.slug}.webp`,
       title: list.title,
       context: "Product hero shot on clean background",
-      target: list
+      target: list,
+      width: 800,
+      height: 600
     });
   }
 
@@ -407,13 +423,14 @@ async function updateOpenAiImages({ categories, toplists, refresh, concurrency }
 
   const results = await runWithConcurrency(tasks, concurrency, async (task) => {
     const prompt = buildImagePrompt({ title: task.title, context: task.context });
-    const buffer = await generateOpenAiImage(prompt, { model: imageModel });
+    const raw = await generateOpenAiImage(prompt, { model: imageModel });
+    const buffer = await optimizeImage(raw, { width: task.width, height: task.height });
     await uploadToR2({
       client,
       bucket: r2Config.bucket,
       key: task.key,
       body: buffer,
-      contentType: "image/png"
+      contentType: "image/webp"
     });
     return getPublicUrl(r2Config.publicBaseUrl, task.key);
   });
