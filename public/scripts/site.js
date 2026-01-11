@@ -76,12 +76,15 @@
     banner.tabIndex = -1;
     const text = document.createElement('p');
     text.className = 'cookie-banner__text';
-    text.append('This site uses cookies to improve performance and serve personalized ads. ');
+    text.append('This site uses cookies to improve performance and serve personalized ads.');
+
+    const linkRow = document.createElement('div');
+    linkRow.className = 'cookie-banner__links';
     const link = document.createElement('a');
     link.href = '/legal/';
     link.className = 'cookie-banner__link';
     link.textContent = 'Learn more about cookies and privacy';
-    text.append(link, '.');
+    linkRow.append(link);
 
     const actions = document.createElement('div');
     actions.className = 'cookie-banner__actions';
@@ -96,7 +99,7 @@
     declineBtn.textContent = 'Decline';
     actions.append(acceptBtn, declineBtn);
 
-    banner.append(text, actions);
+    banner.append(text, linkRow, actions);
     const lastFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     acceptBtn.addEventListener('click', function () {
       localStorage.setItem('cookieConsent', 'true');
