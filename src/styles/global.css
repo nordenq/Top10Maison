@@ -80,6 +80,23 @@
 }
 
 @layer utilities {
+  .skip-link {
+    position: absolute;
+    left: 12px;
+    top: 12px;
+    padding: 8px 12px;
+    background: #111827;
+    color: #fff;
+    border-radius: 8px;
+    transform: translateY(-160%);
+    transition: transform 0.2s ease;
+    z-index: 60;
+  }
+
+  .skip-link:focus {
+    transform: translateY(0);
+  }
+
   .cookie-banner {
     position: fixed;
     left: 24px;
