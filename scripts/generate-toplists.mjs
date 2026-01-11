@@ -546,6 +546,7 @@ async function generateProductCopy(product, categoryName) {
     content: JSON.stringify({
       instructions: {
         style: "Concise, SEO-friendly, neutral, no fluff.",
+        constraints: "Do not claim hands-on testing, lab testing, or first-hand experience. Avoid mentioning sources or other websites.",
         requirements: {
           pros: 3,
           cons: 2,
@@ -636,6 +637,7 @@ async function generateToplistArticle({ title, intro, products, keywords }) {
         style: "SEO-friendly, expert buying guide tone, helpful and specific.",
         format: "HTML",
         wordTarget: ARTICLE_WORD_TARGET,
+        constraints: "Do not claim hands-on testing, lab testing, or first-hand experience. Avoid mentioning sources or other websites.",
         includeSections: [
           "Overview",
           "How we evaluated",

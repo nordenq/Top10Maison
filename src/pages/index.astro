@@ -13,7 +13,7 @@ const categoryMap = new Map(categories.map((category) => [category.slug, categor
 
 const site = requireSite(Astro.site);
 const title = "Top10Maison — Trending Product Rankings for Every Room";
-const description = "Compare the best home products, track what’s trending, and shop smarter with our expert-built top 10 lists for kitchens, appliances, and more.";
+const description = "Compare the best home products, track what’s trending, and shop smarter with curated top lists for kitchens, appliances, and more.";
 const canonical = buildCanonical(site, "/");
 const schema = [buildBreadcrumbSchema(site, [{ name: "Home", path: "/" }])];
 ---
@@ -34,7 +34,7 @@ const schema = [buildBreadcrumbSchema(site, [{ name: "Home", path: "/" }])];
           Best picks for your home. Trending. Trusted. Wallet-friendly.
         </p>
         <p class="mt-3 text-sm text-ink/70">
-          AI-assisted research, reviewed by humans for clarity and real-world fit.
+          Curated guides, reviewed for clarity and real-world fit.
         </p>
         <div class="mt-6 flex flex-wrap gap-3">
           <a class="btn" href="#top-categories">Browse categories</a>
@@ -44,7 +44,7 @@ const schema = [buildBreadcrumbSchema(site, [{ name: "Home", path: "/" }])];
       <div class="card p-6">
         <h2 class="text-xl font-semibold">What you will find here</h2>
         <ul class="mt-4 space-y-3 text-sm text-ink/70">
-          <li>Best‑of lists for every room, distilled from trusted sources online.</li>
+          <li>Best‑of lists for every room, built with consistent criteria.</li>
           <li>Trending picks and smart comparisons to speed up your decision.</li>
           <li>Concise buying guidance that keeps the focus on what matters.</li>
           <li>Regularly refreshed picks based on ratings, review volume, and value.</li>
