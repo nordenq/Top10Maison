@@ -48,6 +48,10 @@ const {
         }
         const banner = document.createElement('div');
         banner.className = 'cookie-banner';
+        banner.setAttribute('role', 'dialog');
+        banner.setAttribute('aria-label', 'Cookie preferences');
+        banner.setAttribute('aria-modal', 'false');
+        banner.tabIndex = -1;
         banner.innerHTML = `
           <p class="cookie-banner__text">
             This site uses cookies to improve performance and serve personalized ads.
@@ -60,15 +64,19 @@ const {
         `;
         const btn = banner.querySelector('[data-consent="accept"]');
         const declineBtn = banner.querySelector('[data-consent="decline"]');
+        const lastFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
         btn?.addEventListener('click', function () {
           localStorage.setItem('cookieConsent', 'true');
           banner.remove();
+          lastFocused?.focus();
         });
         declineBtn?.addEventListener('click', function () {
           localStorage.setItem('cookieConsent', 'false');
           banner.remove();
+          lastFocused?.focus();
         });
         document.body.appendChild(banner);
+        btn?.focus();
       }
 
       window.addEventListener('DOMContentLoaded', function () {

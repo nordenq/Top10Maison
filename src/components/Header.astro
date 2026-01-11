@@ -81,12 +81,32 @@ const { categories } = buildDataIndex();
   );
   updateScrollState();
 
+  function setMenuState(isOpen) {
+    if (!mobileMenu || !menuButton) {
+      return;
+    }
+    mobileMenu.classList.toggle('hidden', !isOpen);
+    mobileMenu.setAttribute('aria-hidden', (!isOpen).toString());
+    menuButton.setAttribute('aria-expanded', isOpen.toString());
+    if (isOpen) {
+      const firstLink = mobileMenu.querySelector('a, summary');
+      if (firstLink instanceof HTMLElement) {
+        firstLink.focus();
+      }
+    } else {
+      menuButton.focus();
+    }
+  }
+
   menuButton?.addEventListener('click', function () {
     if (!mobileMenu || !menuButton) {
       return;
     }
     const isOpen = !mobileMenu.classList.contains('hidden');
-    mobileMenu.classList.toggle('hidden');
-    menuButton.setAttribute('aria-expanded', (!isOpen).toString());
+    setMenuState(!isOpen);
   });
+
+  if (mobileMenu) {
+    mobileMenu.setAttribute('aria-hidden', 'true');
+  }
 </script>
