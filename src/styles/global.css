@@ -124,6 +124,18 @@
     z-index: 50;
   }
 
+  .cookie-banner__text a {
+    color: #fff;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .cookie-banner__text a:hover,
+  .cookie-banner__text a:focus {
+    text-decoration-thickness: 2px;
+  }
+
   .cookie-banner__text {
     margin: 0;
     max-width: 56ch;
