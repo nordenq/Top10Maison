@@ -42,31 +42,40 @@ const {
     </main>
     <Footer />
     <script>
+      function initCookieBanner() {
+        if (localStorage.getItem('cookieConsent')) {
+          return;
+        }
+        const banner = document.createElement('div');
+        banner.className = 'cookie-banner';
+        banner.innerHTML = `
+          <p class="cookie-banner__text">
+            This site uses cookies to improve performance and serve personalized ads.
+            <a href="/legal/">Learn more about cookies and privacy</a>.
+          </p>
+          <div class="cookie-banner__actions">
+            <button type="button" data-consent="accept">Got it!</button>
+            <button type="button" data-consent="decline" class="cookie-banner__decline">Decline</button>
+          </div>
+        `;
+        const btn = banner.querySelector('[data-consent="accept"]');
+        const declineBtn = banner.querySelector('[data-consent="decline"]');
+        btn?.addEventListener('click', function () {
+          localStorage.setItem('cookieConsent', 'true');
+          banner.remove();
+        });
+        declineBtn?.addEventListener('click', function () {
+          localStorage.setItem('cookieConsent', 'false');
+          banner.remove();
+        });
+        document.body.appendChild(banner);
+      }
+
       window.addEventListener('DOMContentLoaded', function () {
-        if (!localStorage.getItem('cookieConsent')) {
-          const banner = document.createElement('div');
-          banner.className = 'cookie-banner';
-          banner.innerHTML = `
-            <p class="cookie-banner__text">
-              This site uses cookies to improve performance and serve personalized ads.
-              <a href="/legal/">Learn more about cookies and privacy</a>.
-            </p>
-            <div class="cookie-banner__actions">
-              <button type="button" data-consent="accept">Got it!</button>
-              <button type="button" data-consent="decline" class="cookie-banner__decline">Decline</button>
-            </div>
-          `;
-          const btn = banner.querySelector('[data-consent="accept"]');
-          const declineBtn = banner.querySelector('[data-consent="decline"]');
-          btn?.addEventListener('click', function () {
-            localStorage.setItem('cookieConsent', 'true');
-            banner.remove();
-          });
-          declineBtn?.addEventListener('click', function () {
-            localStorage.setItem('cookieConsent', 'false');
-            banner.remove();
-          });
-          document.body.appendChild(banner);
+        if ('requestIdleCallback' in window) {
+          window.requestIdleCallback(initCookieBanner, { timeout: 1500 });
+        } else {
+          setTimeout(initCookieBanner, 800);
         }
       });
     </script>
