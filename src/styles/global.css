@@ -35,7 +35,7 @@
 
 @layer components {
   .section {
-    @apply py-6 md:py-8;
+    @apply py-4 md:py-6;
   }
 
   .page-container {
