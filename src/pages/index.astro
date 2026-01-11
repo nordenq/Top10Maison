@@ -63,8 +63,12 @@ const schema = [buildBreadcrumbSchema(site, [{ name: "Home", path: "/" }])];
         <a class="text-sm font-semibold text-accent" href="/#top-categories">View all</a>
       </div>
       <div class="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {categories.map((category) => (
-          <CategoryCard category={category} />
+        {categories.map((category, index) => (
+          <CategoryCard
+            category={category}
+            loading={index === 0 ? "eager" : "lazy"}
+            fetchpriority={index === 0 ? "high" : undefined}
+          />
         ))}
       </div>
     </div>
