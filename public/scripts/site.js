@@ -79,6 +79,7 @@
     text.append('This site uses cookies to improve performance and serve personalized ads. ');
     const link = document.createElement('a');
     link.href = '/legal/';
+    link.className = 'cookie-banner__link';
     link.textContent = 'Learn more about cookies and privacy';
     text.append(link, '.');
 
