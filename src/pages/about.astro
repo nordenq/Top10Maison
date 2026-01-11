@@ -4,7 +4,7 @@ import { buildCanonical, buildTitle, requireSite } from "../utils/seo";
 
 const site = requireSite(Astro.site);
 const title = buildTitle("About", "Top10Maison");
-const description = "What Top10Maison does and how product rankings are selected.";
+const description = "Curated home buying guides built from AI-assisted research and human review.";
 const canonical = buildCanonical(site, "/about/");
 ---
 
@@ -14,16 +14,17 @@ const canonical = buildCanonical(site, "/about/");
       <div>
         <h1 class="text-3xl font-semibold">About Top10Maison</h1>
         <p class="mt-3 text-sm text-ink/70">
-          Top10Maison publishes concise, research-driven buying guides for home categories. The goal is to help
-          readers compare options quickly and choose products that fit real household needs.
+          Top10Maison publishes curated buying guides for home categories. We combine AI-assisted research with
+          human review to keep lists clear, current, and practical for real households.
         </p>
       </div>
 
       <div class="card p-6">
         <h2 class="text-xl font-semibold">How rankings are chosen</h2>
         <p class="mt-2 text-sm text-ink/70">
-          Rankings are based on consistent criteria such as performance, usability, value, and customer feedback.
-          Each list uses a fixed rubric to keep comparisons fair and repeatable.
+          Rankings follow a consistent rubric based on specs, review volume, customer feedback trends, availability,
+          and value. We do not perform hands-on testing; we synthesize trusted sources and public data to keep
+          comparisons fair and repeatable.
         </p>
       </div>
 
