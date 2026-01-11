@@ -58,14 +58,27 @@ const { categories } = buildDataIndex();
   const menuButton = document.getElementById('mobile-menu-button');
   const mobileMenu = document.getElementById('mobile-menu');
 
+  let ticking = false;
+
   function updateScrollState() {
     if (!header) {
       return;
     }
     header.dataset.scrolled = window.scrollY > 12 ? 'true' : 'false';
+    ticking = false;
   }
 
-  window.addEventListener('scroll', updateScrollState);
+  window.addEventListener(
+    'scroll',
+    function () {
+      if (ticking) {
+        return;
+      }
+      ticking = true;
+      window.requestAnimationFrame(updateScrollState);
+    },
+    { passive: true }
+  );
   updateScrollState();
 
   menuButton?.addEventListener('click', function () {

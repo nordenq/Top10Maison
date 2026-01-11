@@ -79,9 +79,10 @@ const schema = [buildBreadcrumbSchema(site, [{ name: "Home", path: "/" }])];
         </div>
       </div>
       <div class="mt-6 grid gap-6 md:grid-cols-2">
-        {latestToplists.map((list) => {
+        {latestToplists.map((list, index) => {
           const category = categoryMap.get(list.category);
           const image = list.image ?? category?.image ?? "/logo.svg";
+          const isLcp = index === 0;
           return (
             <a
               class="card grid gap-4 overflow-hidden md:grid-cols-[200px_1fr]"
@@ -91,7 +92,9 @@ const schema = [buildBreadcrumbSchema(site, [{ name: "Home", path: "/" }])];
                 class="h-full w-full object-cover"
                 src={image}
                 alt={list.title}
-                loading="lazy"
+                loading={isLcp ? "eager" : "lazy"}
+                fetchpriority={isLcp ? "high" : undefined}
+                decoding="async"
                 width="400"
                 height="300"
               />
