@@ -54,18 +54,29 @@ const {
         banner.setAttribute('aria-label', 'Cookie preferences');
         banner.setAttribute('aria-modal', 'false');
         banner.tabIndex = -1;
-        banner.innerHTML = `
-          <p class="cookie-banner__text">
-            This site uses cookies to improve performance and serve personalized ads.
-            <a href="/legal/">Learn more about cookies and privacy</a>.
-          </p>
-          <div class="cookie-banner__actions">
-            <button type="button" data-consent="accept">Got it!</button>
-            <button type="button" data-consent="decline" class="cookie-banner__decline">Decline</button>
-          </div>
-        `;
-        const btn = banner.querySelector('[data-consent="accept"]');
-        const declineBtn = banner.querySelector('[data-consent="decline"]');
+        const text = document.createElement('p');
+        text.className = 'cookie-banner__text';
+        text.append('This site uses cookies to improve performance and serve personalized ads. ');
+        const link = document.createElement('a');
+        link.href = '/legal/';
+        link.textContent = 'Learn more about cookies and privacy';
+        text.append(link, '.');
+
+        const actions = document.createElement('div');
+        actions.className = 'cookie-banner__actions';
+        const acceptBtn = document.createElement('button');
+        acceptBtn.type = 'button';
+        acceptBtn.dataset.consent = 'accept';
+        acceptBtn.textContent = 'Got it!';
+        const declineBtn = document.createElement('button');
+        declineBtn.type = 'button';
+        declineBtn.dataset.consent = 'decline';
+        declineBtn.className = 'cookie-banner__decline';
+        declineBtn.textContent = 'Decline';
+        actions.append(acceptBtn, declineBtn);
+
+        banner.append(text, actions);
+        const btn = acceptBtn;
         const lastFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
         btn?.addEventListener('click', function () {
           localStorage.setItem('cookieConsent', 'true');
