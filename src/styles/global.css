@@ -35,7 +35,7 @@
 
 @layer components {
   .section {
-    @apply py-12;
+    @apply py-8 md:py-10;
   }
 
   .page-container {

@@ -17,7 +17,6 @@ const href = childsubcategory && parentSubcategory
 const title = childsubcategory?.name ?? subcategory?.name ?? category.name;
 const description = childsubcategory?.description ?? subcategory?.description ?? category.description;
 const image = childsubcategory?.image ?? subcategory?.image ?? category.image ?? "/logo.svg";
-const iconLetter = title.slice(0, 1).toUpperCase();
 ---
 
 <a class="card group flex h-full flex-col overflow-hidden" href={href}>
@@ -30,9 +29,6 @@ const iconLetter = title.slice(0, 1).toUpperCase();
       width="640"
       height="360"
     />
-    <span class="absolute left-4 top-4 grid h-10 w-10 place-items-center rounded-xl bg-white/90 text-sm font-semibold text-ink">
-      {iconLetter}
-    </span>
   </div>
   <div class="flex flex-1 flex-col gap-2 p-4">
     <div class="flex items-center justify-between">
