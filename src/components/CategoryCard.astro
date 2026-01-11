@@ -17,6 +17,7 @@ const href = childsubcategory && parentSubcategory
 const title = childsubcategory?.name ?? subcategory?.name ?? category.name;
 const description = childsubcategory?.description ?? subcategory?.description ?? category.description;
 const image = childsubcategory?.image ?? subcategory?.image ?? category.image ?? "/logo.svg";
+const imageSrcset = childsubcategory?.imageSrcset ?? subcategory?.imageSrcset ?? category.imageSrcset;
 ---
 
 <a class="card group flex h-full flex-col overflow-hidden" href={href}>
@@ -26,6 +27,8 @@ const image = childsubcategory?.image ?? subcategory?.image ?? category.image ??
       src={image}
       alt={title}
       loading="lazy"
+      srcset={imageSrcset}
+      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
       width="640"
       height="360"
     />

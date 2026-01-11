@@ -289,6 +289,10 @@ async function optimizeImage(buffer, { width, height }) {
     .toBuffer();
 }
 
+function buildSrcset(variants, urls) {
+  return variants.map((variant, index) => `${urls[index]} ${variant.width}w`).join(", ");
+}
+
 async function generateOpenAiImage(prompt, { model }) {
   const wantsB64 = model.startsWith("dall-e");
   const response = await fetch("https://api.openai.com/v1/images/generations", {
@@ -365,12 +369,14 @@ async function updateOpenAiImages({ categories, toplists, refresh, concurrency }
     if (!shouldReplaceImage(category.image, { refresh, allowDefault: true })) continue;
     tasks.push({
       kind: "category",
-      key: `openai/categories/${category.slug}.webp`,
+      baseKey: `openai/categories/${category.slug}`,
       title: category.name,
       context: "Interior room scene",
       target: category,
-      width: 640,
-      height: 360
+      variants: [
+        { width: 320, height: 180 },
+        { width: 640, height: 360 }
+      ]
     });
 
     for (const subcategory of category.subcategories || []) {
@@ -378,12 +384,14 @@ async function updateOpenAiImages({ categories, toplists, refresh, concurrency }
       if (!shouldReplaceImage(subcategory.image, { refresh, allowDefault: false })) continue;
       tasks.push({
         kind: "category",
-        key: `openai/subcategories/${category.slug}/${subcategory.slug}.webp`,
+        baseKey: `openai/subcategories/${category.slug}/${subcategory.slug}`,
         title: subcategory.name,
         context: `${category.name} products`,
         target: subcategory,
-        width: 640,
-        height: 360
+        variants: [
+          { width: 320, height: 180 },
+          { width: 640, height: 360 }
+        ]
       });
 
       for (const child of subcategory.subcategories || []) {
@@ -391,12 +399,14 @@ async function updateOpenAiImages({ categories, toplists, refresh, concurrency }
         if (!shouldReplaceImage(child.image, { refresh, allowDefault: false })) continue;
         tasks.push({
           kind: "category",
-          key: `openai/childsubcategories/${category.slug}/${subcategory.slug}/${child.slug}.webp`,
+          baseKey: `openai/childsubcategories/${category.slug}/${subcategory.slug}/${child.slug}`,
           title: child.name,
           context: `${category.name} product close-up`,
           target: child,
-          width: 640,
-          height: 360
+          variants: [
+            { width: 320, height: 180 },
+            { width: 640, height: 360 }
+          ]
         });
       }
     }
@@ -408,12 +418,14 @@ async function updateOpenAiImages({ categories, toplists, refresh, concurrency }
     if (!refresh && list.image && !isDefault) continue;
     tasks.push({
       kind: "toplist",
-      key: `openai/toplists/${list.slug}.webp`,
+      baseKey: `openai/toplists/${list.slug}`,
       title: list.title,
       context: "Product hero shot on clean background",
       target: list,
-      width: 640,
-      height: 480
+      variants: [
+        { width: 320, height: 240 },
+        { width: 640, height: 480 }
+      ]
     });
   }
 
@@ -424,23 +436,30 @@ async function updateOpenAiImages({ categories, toplists, refresh, concurrency }
   const results = await runWithConcurrency(tasks, concurrency, async (task) => {
     const prompt = buildImagePrompt({ title: task.title, context: task.context });
     const raw = await generateOpenAiImage(prompt, { model: imageModel });
-    const buffer = await optimizeImage(raw, { width: task.width, height: task.height });
-    await uploadToR2({
-      client,
-      bucket: r2Config.bucket,
-      key: task.key,
-      body: buffer,
-      contentType: "image/webp"
-    });
-    return getPublicUrl(r2Config.publicBaseUrl, task.key);
+    const urls = [];
+    for (const variant of task.variants) {
+      const buffer = await optimizeImage(raw, variant);
+      const key = `${task.baseKey}-${variant.width}w.webp`;
+      await uploadToR2({
+        client,
+        bucket: r2Config.bucket,
+        key,
+        body: buffer,
+        contentType: "image/webp"
+      });
+      urls.push(getPublicUrl(r2Config.publicBaseUrl, key));
+    }
+    return { urls, variants: task.variants };
   });
 
   let categoriesUpdated = false;
   let toplistsUpdated = false;
-  results.forEach((url, index) => {
-    if (!url) return;
+  results.forEach((result, index) => {
+    if (!result) return;
     const task = tasks[index];
-    task.target.image = url;
+    const { urls, variants } = result;
+    task.target.image = urls[urls.length - 1];
+    task.target.imageSrcset = buildSrcset(variants, urls);
     if (task.kind === "toplist") {
       toplistsUpdated = true;
     } else {

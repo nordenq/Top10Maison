@@ -82,6 +82,7 @@ const schema = [buildBreadcrumbSchema(site, [{ name: "Home", path: "/" }])];
         {latestToplists.map((list, index) => {
           const category = categoryMap.get(list.category);
           const image = list.image ?? category?.image ?? "/logo.svg";
+          const imageSrcset = list.imageSrcset ?? category?.imageSrcset;
           const isLcp = index === 0;
           return (
             <a
@@ -95,6 +96,8 @@ const schema = [buildBreadcrumbSchema(site, [{ name: "Home", path: "/" }])];
                 loading={isLcp ? "eager" : "lazy"}
                 fetchpriority={isLcp ? "high" : undefined}
                 decoding="async"
+                srcset={imageSrcset}
+                sizes="(max-width: 768px) 100vw, 200px"
                 width="400"
                 height="300"
               />

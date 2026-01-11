@@ -13,6 +13,7 @@ export type ChildSubcategory = {
   }>;
   faq: FaqItem[];
   image?: string;
+  imageSrcset?: string;
   published: boolean;
 };
 
@@ -66,6 +67,7 @@ export type Toplist = {
   metaTitle: string;
   metaDescription: string;
   image?: string;
+  imageSrcset?: string;
   schemaHeadline?: string;
   schemaDatePublished?: string;
   schemaImage?: string;
@@ -172,6 +174,9 @@ export function getCategories(): Category[] {
       if (subcategory.image) {
         assertNonEmpty(subcategory.image, `Subcategory ${subcategory.slug} image`);
       }
+      if (subcategory.imageSrcset) {
+        assertNonEmpty(subcategory.imageSrcset, `Subcategory ${subcategory.slug} imageSrcset`);
+      }
       assert(Array.isArray(subcategory.intentTable) && subcategory.intentTable.length > 0, `Subcategory ${subcategory.slug} intentTable must not be empty.`);
       for (const row of subcategory.intentTable) {
         assertNonEmpty(row.label, `Subcategory ${subcategory.slug} intentTable label`);
@@ -196,6 +201,9 @@ export function getCategories(): Category[] {
         assertNonEmpty(childsubcategory.intentCopy, `Child subcategory ${childsubcategory.slug} intentCopy`);
         if (childsubcategory.image) {
           assertNonEmpty(childsubcategory.image, `Child subcategory ${childsubcategory.slug} image`);
+        }
+        if (childsubcategory.imageSrcset) {
+          assertNonEmpty(childsubcategory.imageSrcset, `Child subcategory ${childsubcategory.slug} imageSrcset`);
         }
         assert(Array.isArray(childsubcategory.intentTable) && childsubcategory.intentTable.length > 0, `Child subcategory ${childsubcategory.slug} intentTable must not be empty.`);
         for (const row of childsubcategory.intentTable) {
@@ -283,6 +291,9 @@ export function getToplists(): Toplist[] {
     }
     if (toplist.articleHtml) {
       assertNonEmpty(toplist.articleHtml, `Toplist ${toplist.slug} articleHtml`);
+    }
+    if (toplist.imageSrcset) {
+      assertNonEmpty(toplist.imageSrcset, `Toplist ${toplist.slug} imageSrcset`);
     }
     assertMaxLength(toplist.metaTitle, 60, `Toplist ${toplist.slug} metaTitle`);
     assertMaxLength(toplist.metaDescription, 155, `Toplist ${toplist.slug} metaDescription`);
