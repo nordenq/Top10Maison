@@ -168,7 +168,7 @@ if (bestToplist?.faq?.length) {
       <div class="page-container">
         <h2 class="text-2xl font-semibold">Best overall {data.childsubcategory.name}</h2>
         {bestToplistIntro ? <p class="mt-3 text-sm text-ink/70">{bestToplistIntro}</p> : null}
-        <div class="mt-6 grid gap-6">
+        <div class="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {bestToplistProducts.map((product, index) => (
             <ProductCard product={product} rank={index + 1} schema />
           ))}
@@ -196,7 +196,7 @@ if (bestToplist?.faq?.length) {
     <section class="section">
       <div class="page-container">
         <h2 class="text-2xl font-semibold">Top Lists in {title}</h2>
-        <div class="mt-6 grid gap-6">
+        <div class="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {otherToplists.map((list) => (
             <a href={list.url} class="card p-5 hover:shadow-card">
               <h3 class="text-xl font-semibold">{list.title}</h3>

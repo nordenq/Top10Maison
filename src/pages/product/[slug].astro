@@ -80,7 +80,16 @@ const schema = [
         <a id="smart-back" class="btn-ghost hidden" href="/">Back</a>
       </div>
       <h1 class="text-3xl font-semibold">{product.name}</h1>
-      <img class="mt-6 rounded-xl" src={product.image} alt={product.name} loading="lazy" width="800" height="500" />
+      <img
+        class="mt-6 rounded-xl bg-slate-50 object-contain"
+        src={product.image}
+        alt={product.name}
+        loading="lazy"
+        decoding="async"
+        width="800"
+        height="500"
+        onerror="this.onerror=null;this.src='/images/products/placeholder.svg';"
+      />
       <p class="mt-4 text-lg text-ink/70">{product.description}</p>
 
       <div class="mt-6">

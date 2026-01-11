@@ -110,7 +110,7 @@ const schema = [
   <section class="section">
     <div class="page-container">
       <h2 class="text-2xl font-semibold">Top Picks</h2>
-      <div class="mt-6 grid gap-6">
+      <div class="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {toplist.products.map((product, index) => (
           <ProductCard product={product} rank={index + 1} schema />
         ))}
