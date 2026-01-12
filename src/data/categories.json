@@ -2,23 +2,23 @@
   {
     "slug": "kitchen",
     "name": "Kitchen",
-    "description": "Curated air fryer picks for everyday cooking.",
-    "intro": "Curated air fryer picks that make daily cooking easier. Compare size, capacity, and value, then choose what fits your space and budget.",
+    "description": "Curated kitchen picks for everyday cooking.",
+    "intro": "Explore kitchen guides built for everyday cooking. Compare features, footprint, and value across the tools and small appliances that make daily meals easier.",
     "published": true,
     "selectionFactors": [
-      "capacity",
+      "performance",
       "ease of cleaning",
       "counter space"
     ],
     "howToChoose": [
-      "Match size and capacity to how often you cook at home.",
-      "Look for durable finishes that handle heat and daily use.",
-      "Prioritize features that save time, like quick presets or easy cleanup."
+      "Match size and capacity to how you cook at home.",
+      "Prioritize easy cleanup and controls you will actually use.",
+      "Compare value across the features that matter most to your routine."
     ],
     "faq": [
       {
         "question": "What matters most when buying kitchen products?",
-        "answer": "Start with durability and daily ease of use, then compare features that save time."
+        "answer": "Start with daily ease of use and cleanup, then compare features that genuinely save time."
       },
       {
         "question": "How do I avoid overspending on small appliances?",

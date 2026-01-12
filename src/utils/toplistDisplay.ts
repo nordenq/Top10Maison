@@ -2,7 +2,8 @@ import type { DataIndex, Toplist } from "./data";
 import { buildToplistFraming, inferToplistUseCase, inferToplistYear } from "./toplistNaming";
 
 export type ToplistDisplay = {
-  title: string;
+  metaTitle: string;
+  cardTitle: string;
   h1: string;
   schemaHeadline: string;
   intro: string;
@@ -26,6 +27,14 @@ export function getToplistDisplay(toplist: Toplist, dataIndex: DataIndex): Topli
     useCase
   });
 
-  return { ...framing, productName, year, useCase };
+  return {
+    metaTitle: framing.title,
+    cardTitle: framing.title,
+    h1: framing.h1,
+    schemaHeadline: framing.schemaHeadline,
+    intro: framing.intro,
+    productName,
+    year,
+    useCase
+  };
 }
-

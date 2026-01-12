@@ -51,11 +51,10 @@ export function buildToplistFraming(args: {
   const year = args.year;
   const count = args.count;
 
-  const title = `Best ${productName} of ${year} (Top ${count} Picks for ${useCase})`;
+  const title = `Best ${productName} of ${year} (Top ${count} Picks)`;
   const h1 = `Best ${productName} of ${year} — Top ${count} Picks for ${useCase}`;
   const schemaHeadline = `Best ${productName} of ${year}`;
   const intro = `We compared the most popular ${productName.toLowerCase()} of ${year} using reviews, features, and pricing to identify the best options for ${useCase.toLowerCase()}. These ${count} picks stand out for value, ease of use, and practical performance.`;
 
   return { title, h1, schemaHeadline, intro };
 }
-

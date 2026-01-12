@@ -68,7 +68,7 @@ const schema = [
   buildItemListSchema(
     sortedGroups.flatMap((group) =>
       group.lists.map((list) => ({
-        name: getToplistDisplay(list, dataIndex).title,
+        name: getToplistDisplay(list, dataIndex).cardTitle,
         url: new URL(resolveToplistHref(list), site).toString()
       }))
     )
@@ -163,7 +163,7 @@ const ogImage = categories[0]?.image ?? "/logo.svg";
                           />
                           <div class="p-5">
                             <p class="text-xs font-semibold uppercase tracking-[0.25em] text-ink/70">Top list</p>
-                            <h4 class="mt-2 text-lg font-semibold">{display.title}</h4>
+                            <h4 class="mt-2 text-lg font-semibold">{display.cardTitle}</h4>
                             <p class="mt-2 text-sm text-ink/70">{list.metaDescription}</p>
                           </div>
                         </a>
