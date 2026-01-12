@@ -4,10 +4,8 @@ import { getDataIndex } from "../../../../../utils/dataIndex";
 import { subcategoryToplistUrl } from "../../../../../utils/routes";
 import { buildCanonical, requireSite } from "../../../../../utils/seo";
 
-const dataIndex = getDataIndex();
-
 export function getStaticPaths() {
-  const { toplists } = dataIndex;
+  const { toplists } = getDataIndex();
   return toplists.map((list) => ({
     params: {
       category: list.category,

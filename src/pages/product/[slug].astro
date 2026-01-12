@@ -12,7 +12,7 @@ import FAQAccordion from "../../components/FAQAccordion.astro";
 const dataIndex = getDataIndex();
 
 export function getStaticPaths() {
-  const { products } = dataIndex;
+  const { products } = getDataIndex();
   return products.map((product) => ({
     params: { slug: product.slug }
   }));

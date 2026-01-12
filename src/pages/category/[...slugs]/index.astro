@@ -14,7 +14,7 @@ import { categoryUrl, subcategoryUrl, childSubcategoryUrl, productUrl, subcatego
 const dataIndex = getDataIndex();
 
 export function getStaticPaths() {
-  const { categories } = dataIndex;
+  const { categories } = getDataIndex();
   const paths = [];
   for (const category of categories) {
     paths.push({ params: { slugs: category.slug } });

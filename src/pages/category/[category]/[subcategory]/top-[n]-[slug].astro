@@ -10,10 +10,8 @@ import { buildCanonical, requireSite } from "../../../../utils/seo";
 import { buildArticleSchema, buildBreadcrumbSchema, buildFaqSchema, buildItemListSchema, buildProductSchema } from "../../../../utils/schema";
 import { categoryUrl, childSubcategoryUrl, subcategoryUrl, subcategoryToplistUrl, productUrl } from "../../../../utils/routes";
 
-const dataIndex = getDataIndex();
-
 export function getStaticPaths() {
-  const { toplists } = dataIndex;
+  const { toplists } = getDataIndex();
   return toplists.map((list) => ({
     params: {
       category: list.category,
