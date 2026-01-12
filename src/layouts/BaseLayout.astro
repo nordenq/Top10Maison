@@ -3,6 +3,7 @@ import "../styles/global.css";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import SEO from "../components/SEO.astro";
+import { CSP_NONCE } from "../utils/csp";
 
 const {
   title,
@@ -24,6 +25,10 @@ const {
   metaRefresh?: string;
 };
 
+const gaId = import.meta.env.PUBLIC_GA_ID;
+const gscVerification = import.meta.env.PUBLIC_GSC_VERIFICATION;
+const enableAnalytics = Boolean(gaId && import.meta.env.MODE === "production");
+
 ---
 
 <!doctype html>
@@ -36,6 +41,17 @@ const {
     <link rel="preconnect" href="https://pub-d2291ee7d44d475387fd51f65cd369f0.r2.dev" crossorigin />
     <link rel="dns-prefetch" href="https://pub-d2291ee7d44d475387fd51f65cd369f0.r2.dev" />
     <link rel="preload" as="font" type="font/woff2" href="/fonts/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2" crossorigin />
+    {gscVerification ? (
+      <meta name="google-site-verification" content={gscVerification} />
+    ) : null}
+    {enableAnalytics ? (
+      <>
+        <script async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}></script>
+        <script nonce={CSP_NONCE}>
+          {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config','${gaId}',{anonymize_ip:true});`}
+        </script>
+      </>
+    ) : null}
     <SEO
       title={title}
       description={description}

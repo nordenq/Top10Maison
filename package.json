@@ -11,6 +11,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "check:google-fonts": "node scripts/check-google-fonts.js",
+    "validate:content": "node scripts/validate-content.mjs",
     "postbuild": "node scripts/inline-critical.js"
   },
   "dependencies": {
