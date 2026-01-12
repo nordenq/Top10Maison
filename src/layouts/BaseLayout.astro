@@ -20,10 +20,6 @@ const {
   metaRefresh?: string;
 };
 
-const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
-const enableGoogleAnalytics = Boolean(
-  gaMeasurementId && import.meta.env.MODE === "production"
-);
 const gtmId = import.meta.env.PUBLIC_GTM_ID ?? "GTM-5R5XMPL3";
 const enableGoogleTagManager =
   Boolean(gtmId && import.meta.env.MODE === "production");
@@ -44,22 +40,6 @@ const enableGoogleTagManager =
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
     <link rel="robots" href="/robots.txt" />
-    {enableGoogleAnalytics ? (
-      <>
-        <script
-          async
-          src={`https://www.googletagmanager.com/gtag/js?id=${gaMeasurementId}`}
-        ></script>
-        <script>
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '${gaMeasurementId}', { page_path: window.location.pathname });
-          `}
-        </script>
-      </>
-    ) : null}
     {enableGoogleTagManager ? (
       <script>
         {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
