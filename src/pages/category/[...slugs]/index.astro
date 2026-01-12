@@ -106,6 +106,15 @@ const collectionSchema = {
   breadcrumb: breadcrumbSchema
 };
 
+const microGuide = data.childsubcategory?.microGuide ?? null;
+const microGuideCards = microGuide
+  ? microGuide.bullets.map((line) => {
+      const index = line.indexOf(":");
+      if (index === -1) return { title: line.trim(), body: "" };
+      return { title: line.slice(0, index).trim(), body: line.slice(index + 1).trim() };
+    })
+  : [];
+
 let stripeIndex = 0;
 const takeSurface = () => stripeIndex++ % 2 === 0;
 const sectionClass = (extra = "") => `section${takeSurface() ? " bg-surface" : ""}${extra ? ` ${extra}` : ""}`;
@@ -210,27 +219,41 @@ if (bestToplist?.faq?.length) {
     </section>
   ) : null}
 
-  {data.childsubcategory?.microGuide ? (
+  {microGuide ? (
     <section class={sectionClass()} id="micro-guide">
       <div class="page-container">
-        <h2 class="text-2xl font-semibold">{data.childsubcategory.microGuide.title}</h2>
-        <div class="mt-3 space-y-2 text-sm text-ink/70">
-          {data.childsubcategory.microGuide.intro.map((line) => (
-            <p>{line}</p>
-          ))}
+        <div class="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <h2 class="text-2xl font-semibold">{microGuide.title}</h2>
+            <p class="mt-2 text-sm text-ink/70">A quick sizing + value check before the picks.</p>
+          </div>
         </div>
-        <ul class="mt-5 list-disc list-inside space-y-2 text-sm text-ink/70">
-          {data.childsubcategory.microGuide.bullets.map((line) => (
-            <li>{line}</li>
-          ))}
-        </ul>
-        {data.childsubcategory.microGuide.tip ? (
-          <p class="mt-4 text-sm font-semibold text-ink">
-            {data.childsubcategory.microGuide.tip}
-          </p>
-        ) : null}
-        {data.childsubcategory.microGuide.cta ? (
-          <p class="mt-3 text-sm text-ink/70">{data.childsubcategory.microGuide.cta}</p>
+
+        <div class="mt-6 grid gap-6 lg:grid-cols-3">
+          <div class="card p-5">
+            <p class="text-sm font-semibold text-ink">In 30 seconds</p>
+            <div class="mt-3 space-y-2 text-sm text-ink/70">
+              {microGuide.intro.map((line) => (
+                <p>{line}</p>
+              ))}
+            </div>
+          </div>
+
+          <div class="grid gap-6 md:grid-cols-3 lg:col-span-2">
+            {microGuideCards.map((card) => (
+              <div class="card card-hover p-5">
+                <p class="text-sm font-semibold text-ink">{card.title}</p>
+                {card.body ? <p class="mt-2 text-sm text-ink/70">{card.body}</p> : null}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {microGuide.tip || microGuide.cta ? (
+          <div class="mt-6 rounded-2xl border border-border bg-accent-soft p-5">
+            {microGuide.tip ? <p class="text-sm font-semibold text-ink">{microGuide.tip}</p> : null}
+            {microGuide.cta ? <p class="mt-2 text-sm text-ink/70">{microGuide.cta}</p> : null}
+          </div>
         ) : null}
       </div>
     </section>
@@ -258,11 +281,14 @@ if (bestToplist?.faq?.length) {
   {data.childsubcategory?.fullGuideHtml ? (
     <section class={sectionClass()} id="full-guide">
       <div class="page-container">
-        <details class="card card-hover p-5">
-          <summary class="cursor-pointer text-lg font-semibold">
-            Full {data.childsubcategory.name} Buying Guide
+        <h2 class="text-2xl font-semibold">Full {data.childsubcategory.name} Buying Guide</h2>
+        <p class="mt-2 text-sm text-ink/70">Deeper guidance if you want to compare features, sizing, and value.</p>
+
+        <details class="card card-hover mt-6 p-5">
+          <summary class="cursor-pointer text-sm font-semibold text-ink">
+            Open the full guide
           </summary>
-          <div class="mt-4">
+          <div class="mt-4 border-t border-border pt-4">
             <div class="article-content" set:html={data.childsubcategory.fullGuideHtml} />
           </div>
         </details>
