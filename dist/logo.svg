@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 120" role="img" aria-label="Top10Maison">
+  <rect width="320" height="120" rx="20" fill="#b45309"/>
+  <g fill="#ffffff">
+    <path d="M64 82V38h16v28h24v16H64z"/>
+    <path d="M128 82V38h16v44h-16z"/>
+    <path d="M176 82V38h16v28h24v16h-40z"/>
+    <path d="M244 82V38h16v44h-16z"/>
+  </g>
+</svg>
