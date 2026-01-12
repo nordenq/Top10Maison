@@ -4,9 +4,11 @@ import Breadcrumbs from "../../components/Breadcrumbs.astro";
 import { getDataIndex } from "../../utils/dataIndex";
 import { buildCanonical, requireSite } from "../../utils/seo";
 import { buildBreadcrumbSchema, buildItemListSchema } from "../../utils/schema";
-import { childSubcategoryUrl, subcategoryToplistUrl } from "../../utils/routes";
+import { subcategoryToplistUrl } from "../../utils/routes";
+import { getToplistDisplay } from "../../utils/toplistDisplay";
 
-const { categories, toplists, categoryMap, subcategoryMap, childSubcategoryMap } = getDataIndex();
+const dataIndex = getDataIndex();
+const { categories, toplists, categoryMap, subcategoryMap, childSubcategoryMap } = dataIndex;
 const site = requireSite(Astro.site);
 const title = "All Top Lists";
 const description = "Browse every Top10Maison top list across all categories, organized for quick scanning and SEO-friendly navigation.";
@@ -16,31 +18,8 @@ const breadcrumbItems = [
   { name: "Top Lists", path: "/toplists/" }
 ];
 
-const bestByChild = new Map<string, (typeof toplists)[number]>();
-for (const list of toplists) {
-  if (!list.childsubcategory) continue;
-  const key = `${list.category}:${list.subcategory}:${list.childsubcategory}`;
-  const existing = bestByChild.get(key);
-  if (!existing) {
-    bestByChild.set(key, list);
-    continue;
-  }
-  if (
-    list.performanceScore > existing.performanceScore ||
-    (list.performanceScore === existing.performanceScore && list.count > existing.count)
-  ) {
-    bestByChild.set(key, list);
-  }
-}
-
-const resolveToplistHref = (list: (typeof toplists)[number]) => {
-  const bestKey = `${list.category}:${list.subcategory}:${list.childsubcategory}`;
-  const best = bestByChild.get(bestKey);
-  if (best && best.slug === list.slug) {
-    return childSubcategoryUrl(list.category, list.subcategory, list.childsubcategory);
-  }
-  return subcategoryToplistUrl(list.category, list.subcategory, list.count, list.keywordSlug);
-};
+const resolveToplistHref = (list: (typeof toplists)[number]) =>
+  subcategoryToplistUrl(list.category, list.subcategory, list.count, list.keywordSlug);
 
 const groups = new Map<
   string,
@@ -89,7 +68,7 @@ const schema = [
   buildItemListSchema(
     sortedGroups.flatMap((group) =>
       group.lists.map((list) => ({
-        name: list.title,
+        name: getToplistDisplay(list, dataIndex).title,
         url: new URL(resolveToplistHref(list), site).toString()
       }))
     )
@@ -149,7 +128,7 @@ const ogImage = categories[0]?.image ?? "/logo.svg";
                     {group.lists.map((list, index) => {
                       const childKey = `${list.category}:${list.subcategory}:${list.childsubcategory}`;
                       const child = childSubcategoryMap.get(childKey);
-                      const isBestOverall = bestByChild.get(childKey)?.slug === list.slug;
+                      const display = getToplistDisplay(list, dataIndex);
                       const image =
                         list.image ??
                         child?.image ??
@@ -161,7 +140,10 @@ const ogImage = categories[0]?.image ?? "/logo.svg";
                         child?.imageSrcset ??
                         subcategoryMap.get(`${list.category}:${list.subcategory}`)?.imageSrcset ??
                         categoryMap.get(list.category)?.imageSrcset;
-                      const isLcpCandidate = category.slug === categories[0]?.slug && group.subcategorySlug === catGroups[0]?.subcategorySlug && index === 0;
+                      const isLcpCandidate =
+                        category.slug === categories[0]?.slug &&
+                        group.subcategorySlug === catGroups[0]?.subcategorySlug &&
+                        index === 0;
                       return (
                         <a
                           class="card card-hover grid gap-4 overflow-hidden md:grid-cols-[200px_1fr]"
@@ -180,10 +162,8 @@ const ogImage = categories[0]?.image ?? "/logo.svg";
                             height="300"
                           />
                           <div class="p-5">
-                            <p class="text-xs font-semibold uppercase tracking-[0.25em] text-ink/70">
-                              {isBestOverall ? "Best overall" : "Top list"}
-                            </p>
-                            <h4 class="mt-2 text-lg font-semibold">{list.title}</h4>
+                            <p class="text-xs font-semibold uppercase tracking-[0.25em] text-ink/70">Top list</p>
+                            <h4 class="mt-2 text-lg font-semibold">{display.title}</h4>
                             <p class="mt-2 text-sm text-ink/70">{list.metaDescription}</p>
                           </div>
                         </a>
@@ -199,4 +179,3 @@ const ogImage = categories[0]?.image ?? "/logo.svg";
     </div>
   </section>
 </Layout>
-

@@ -10,6 +10,7 @@ import { getDataIndex } from "../../../utils/dataIndex";
 import { buildCanonical, requireSite } from "../../../utils/seo";
 import { buildBreadcrumbSchema, buildFaqSchema, buildItemListSchema } from "../../../utils/schema";
 import { categoryUrl, subcategoryUrl, childSubcategoryUrl, productUrl, subcategoryToplistUrl } from "../../../utils/routes";
+import { getToplistDisplay } from "../../../utils/toplistDisplay";
 
 const dataIndex = getDataIndex();
 
@@ -84,7 +85,7 @@ const bestToplistProducts = bestToplist
       .filter((item): item is NonNullable<typeof item> => Boolean(item))
   : [];
 const toplists = data.toplists.map((list) => ({
-  title: list.title,
+  title: getToplistDisplay(list, dataIndex).title,
   description: list.metaDescription,
   url: subcategoryToplistUrl(list.category, list.subcategory, list.count, list.keywordSlug)
 }));

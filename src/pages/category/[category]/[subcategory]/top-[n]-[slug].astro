@@ -4,11 +4,12 @@ import Breadcrumbs from "../../../../components/Breadcrumbs.astro";
 import FAQAccordion from "../../../../components/FAQAccordion.astro";
 import ProductGridSection from "../../../../components/ProductGridSection.astro";
 import BulletListSection from "../../../../components/BulletListSection.astro";
-import { getBestToplistForChild, getTopListData } from "../../../../utils/data";
+import { getTopListData } from "../../../../utils/data";
 import { getDataIndex } from "../../../../utils/dataIndex";
 import { buildCanonical, requireSite } from "../../../../utils/seo";
 import { buildArticleSchema, buildBreadcrumbSchema, buildFaqSchema, buildItemListSchema, buildProductSchema } from "../../../../utils/schema";
-import { categoryUrl, childSubcategoryUrl, subcategoryUrl, subcategoryToplistUrl, productUrl } from "../../../../utils/routes";
+import { categoryUrl, subcategoryUrl, subcategoryToplistUrl, productUrl } from "../../../../utils/routes";
+import { getToplistDisplay } from "../../../../utils/toplistDisplay";
 
 export function getStaticPaths() {
   const { toplists } = getDataIndex();
@@ -24,22 +25,16 @@ export function getStaticPaths() {
 
 const { category, subcategory, n, slug } = Astro.params;
 const toplist = getTopListData(category, subcategory, n, slug);
-const bestToplist = toplist.childsubcategory
-  ? getBestToplistForChild(category, subcategory, toplist.childsubcategory.slug)
-  : null;
-const isBestOverall = Boolean(bestToplist && bestToplist.slug === toplist.list.slug);
-const bestOverallUrl = toplist.childsubcategory
-  ? childSubcategoryUrl(category, subcategory, toplist.childsubcategory.slug)
-  : null;
 
 const site = requireSite(Astro.site);
-const canonicalPath =
-  isBestOverall && bestOverallUrl
-    ? bestOverallUrl
-    : subcategoryToplistUrl(category, subcategory, Number(n), slug);
-const canonical = buildCanonical(site, canonicalPath);
+const canonical = buildCanonical(site, subcategoryToplistUrl(category, subcategory, Number(n), slug));
 const ogImage = toplist.list.image ?? toplist.category.image ?? "/logo.svg";
-const robots = isBestOverall && bestOverallUrl ? "noindex,follow" : undefined;
+const dataIndex = getDataIndex();
+const display = getToplistDisplay(toplist.list, dataIndex);
+const productsWithBadges = toplist.products.map((product, index) => ({
+  ...product,
+  badge: toplist.list.productBadges?.[product.slug] ?? (index === 0 ? "Best Overall" : undefined)
+}));
 const breadcrumbItems = [
   { name: "Home", path: "/" },
   { name: "Categories", path: "/categories/" },
@@ -60,7 +55,7 @@ const verdict = toplist.childsubcategory
   : `Best for shoppers comparing ${toplist.subcategory.name.toLowerCase()} with a focus on real-world performance.`;
 const schema = [
   buildBreadcrumbSchema(site, breadcrumbItems),
-  buildArticleSchema(site, toplist.list, canonical),
+  buildArticleSchema(site, { ...toplist.list, schemaHeadline: display.schemaHeadline }, canonical),
   buildItemListSchema(
     toplist.products.map((product) => ({
       name: product.name,
@@ -73,24 +68,13 @@ const schema = [
 ---
 
 <Layout
-  title={toplist.list.metaTitle || toplist.title}
+  title={display.title}
   description={toplist.list.metaDescription || toplist.description}
   canonical={canonical}
   schema={schema}
   ogImage={ogImage}
   ogType="article"
-  robots={robots}
-  metaRefresh={isBestOverall && bestOverallUrl ? `0; url=${bestOverallUrl}` : undefined}
 >
-  {isBestOverall && bestOverallUrl ? (
-    <section class="section">
-      <div class="page-container text-center">
-        <h1 class="text-2xl font-semibold">This guide is now part of the main category page</h1>
-        <p class="mt-3 text-sm text-ink/70">We moved the best overall list into the category page for faster browsing.</p>
-        <a class="btn mt-6" href={bestOverallUrl}>View the main list</a>
-      </div>
-    </section>
-  ) : null}
   <section class="section">
     <div class="page-container">
       <Breadcrumbs items={breadcrumbLinks} />
@@ -98,8 +82,8 @@ const schema = [
   </section>
   <section class="section">
     <div class="page-container">
-      <h1 class="text-3xl font-semibold">{toplist.title}</h1>
-      {toplist.intro ? <p class="mt-3 text-lg text-ink/70">{toplist.intro}</p> : null}
+      <h1 class="text-3xl font-semibold">{display.h1}</h1>
+      <p class="mt-3 text-lg text-ink/70">{display.intro}</p>
     </div>
   </section>
 
@@ -118,7 +102,7 @@ const schema = [
     </div>
   </section>
 
-  <ProductGridSection title="Top Picks" products={toplist.products} schema />
+  <ProductGridSection title="Top Picks" products={productsWithBadges} schema />
 
   {toplist.selectionCriteria.length ? (
     <BulletListSection title="How We Picked" items={toplist.selectionCriteria} />

@@ -66,6 +66,7 @@ export type Toplist = {
   h1: string;
   metaTitle: string;
   metaDescription: string;
+  productBadges?: Record<string, string>;
   image?: string;
   imageSrcset?: string;
   schemaHeadline?: string;
@@ -139,6 +140,20 @@ function assertFaq(items: FaqItem[], label: string): void {
   for (const item of items) {
     assertNonEmpty(item.question, `${label} FAQ question`);
     assertNonEmpty(item.answer, `${label} FAQ answer`);
+  }
+}
+
+function assertBadges(
+  badges: Record<string, string> | undefined,
+  label: string,
+  productSlugs: string[]
+): void {
+  if (!badges) return;
+  const slugs = new Set(productSlugs);
+  for (const [productSlug, badge] of Object.entries(badges)) {
+    assert(slugs.has(productSlug), `${label} productBadges contains unknown product slug: ${productSlug}`);
+    assertNonEmpty(badge, `${label} productBadges value`);
+    assertMaxLength(badge, 48, `${label} productBadges value`);
   }
 }
 
@@ -300,6 +315,7 @@ export function getToplists(): Toplist[] {
     assertNonEmpty(toplist.keywordSlug, `Toplist ${toplist.slug} keywordSlug`);
     assert(Number.isInteger(toplist.count) && toplist.count > 0, `Toplist ${toplist.slug} count must be a positive integer.`);
     assert(Array.isArray(toplist.products) && toplist.products.length > 0, `Toplist ${toplist.slug} must have products.`);
+    assertBadges(toplist.productBadges, `Toplist ${toplist.slug}`, toplist.products);
     assert(Number.isFinite(toplist.performanceScore), `Toplist ${toplist.slug} performanceScore must be a number.`);
     assertNonEmptyArray(toplist.quickCompareCriteria, `Toplist ${toplist.slug} quickCompareCriteria`);
     assertAllowedValues(toplist.quickCompareCriteria, ["Best for", "Key win", "Price range"], `Toplist ${toplist.slug} quickCompareCriteria`);
