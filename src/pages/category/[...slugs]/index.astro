@@ -84,6 +84,10 @@ const bestToplistProducts = bestToplist
       .map((productSlug) => dataIndex.productMap.get(productSlug))
       .filter((item): item is NonNullable<typeof item> => Boolean(item))
   : [];
+const bestToplistProductsWithBadges = bestToplistProducts.map((product, index) => ({
+  ...product,
+  badge: bestToplist?.productBadges?.[product.slug] ?? (index === 0 ? "Best Overall" : undefined)
+}));
 const toplists = data.toplists.map((list) => ({
   title: getToplistDisplay(list, dataIndex).cardTitle,
   description: list.metaDescription,
@@ -218,9 +222,9 @@ if (bestToplist?.faq?.length) {
 
   {bestToplist ? (
     <ProductGridSection
-      title={`Best overall ${data.childsubcategory.name}`}
+      title={`Top picks in ${data.childsubcategory.name}`}
       intro={bestToplistIntro}
-      products={bestToplistProducts}
+      products={bestToplistProductsWithBadges}
       schema
       surface={takeSurface()}
     />
