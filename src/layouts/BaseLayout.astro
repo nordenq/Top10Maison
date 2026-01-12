@@ -19,6 +19,14 @@ const {
   ogImage?: string;
   metaRefresh?: string;
 };
+
+const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
+const enableGoogleAnalytics = Boolean(
+  gaMeasurementId && import.meta.env.MODE === "production"
+);
+const gtmId = import.meta.env.PUBLIC_GTM_ID ?? "GTM-5R5XMPL3";
+const enableGoogleTagManager =
+  Boolean(gtmId && import.meta.env.MODE === "production");
 ---
 
 <!doctype html>
@@ -36,8 +44,43 @@ const {
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
     <link rel="robots" href="/robots.txt" />
+    {enableGoogleAnalytics ? (
+      <>
+        <script
+          async
+          src={`https://www.googletagmanager.com/gtag/js?id=${gaMeasurementId}`}
+        ></script>
+        <script>
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${gaMeasurementId}', { page_path: window.location.pathname });
+          `}
+        </script>
+      </>
+    ) : null}
+    {enableGoogleTagManager ? (
+      <script>
+        {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','${gtmId}');`}
+      </script>
+    ) : null}
   </head>
   <body class="min-h-screen flex flex-col">
+    {enableGoogleTagManager ? (
+      <noscript>
+        <iframe
+          src={`https://www.googletagmanager.com/ns.html?id=${gtmId}`}
+          height="0"
+          width="0"
+          style="display:none;visibility:hidden"
+        ></iframe>
+      </noscript>
+    ) : null}
     <a class="skip-link" href="#site-header">Skip to navigation</a>
     <a class="skip-link" href="#main-content">Skip to content</a>
     <Header />
