@@ -5,9 +5,17 @@ function loadAdsScript(client) {
   window.__adsbygoogleLoaded = true;
   const script = document.createElement('script');
   script.async = true;
-  script.src =
+  const url =
     'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' +
     encodeURIComponent(client);
+  try {
+    const policy = window.trustedTypes?.createPolicy('top10maison#ads', {
+      createScriptURL: (value) => value
+    });
+    script.src = policy ? policy.createScriptURL(url) : url;
+  } catch (error) {
+    script.src = url;
+  }
   script.crossOrigin = 'anonymous';
   document.head.appendChild(script);
 }
