@@ -12,6 +12,7 @@ export type ChildSubcategory = {
     tip?: string;
     cta?: string;
   };
+  guideHighlights?: string[];
   fullGuideHtml?: string;
   intentTable: Array<{
     label: string;
@@ -162,6 +163,11 @@ function assertMicroGuide(value: ChildSubcategory["microGuide"], label: string):
   if (value.cta) assertNonEmpty(value.cta, `${label} microGuide cta`);
 }
 
+function assertGuideHighlights(value: ChildSubcategory["guideHighlights"], label: string): void {
+  if (!value) return;
+  assertNonEmptyArray(value, `${label} guideHighlights`);
+}
+
 function assertBadges(
   badges: Record<string, string> | undefined,
   label: string,
@@ -220,6 +226,7 @@ export function getCategories(): Category[] {
       }
       assertFaq(subcategory.faq, `Subcategory ${subcategory.slug}`);
       assertMicroGuide(subcategory.microGuide, `Subcategory ${subcategory.slug}`);
+      assertGuideHighlights(subcategory.guideHighlights, `Subcategory ${subcategory.slug}`);
       if (subcategory.fullGuideHtml) {
         assertNonEmpty(subcategory.fullGuideHtml, `Subcategory ${subcategory.slug} fullGuideHtml`);
       }
@@ -252,6 +259,7 @@ export function getCategories(): Category[] {
         }
         assertFaq(childsubcategory.faq, `Child subcategory ${childsubcategory.slug}`);
         assertMicroGuide(childsubcategory.microGuide, `Child subcategory ${childsubcategory.slug}`);
+        assertGuideHighlights(childsubcategory.guideHighlights, `Child subcategory ${childsubcategory.slug}`);
         if (childsubcategory.fullGuideHtml) {
           assertNonEmpty(childsubcategory.fullGuideHtml, `Child subcategory ${childsubcategory.slug} fullGuideHtml`);
         }
