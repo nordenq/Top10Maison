@@ -111,8 +111,16 @@
             ],
             "faq": [
               {
-                "question": "What size air fryer is best for two people?",
-                "answer": "A 3-5 quart air fryer is usually enough for two people while staying compact."
+                "question": "What does the “Best overall” tag mean?",
+                "answer": "We use “Best overall” for the option that performs well across the most important factors—core performance, ease of use, build quality, and price—without major trade-offs."
+              },
+              {
+                "question": "What does the “Best value” tag mean?",
+                "answer": "“Best value” highlights the pick that delivers the most for the money: strong performance and reliability at a lower price, even if it skips premium extras."
+              },
+              {
+                "question": "What matters most when comparing models?",
+                "answer": "Prioritize capacity, airflow power for crisping, and a durable basket coating; presets and app features rarely change day-to-day results."
               }
             ],
             "image": "https://pub-d2291ee7d44d475387fd51f65cd369f0.r2.dev/openai/childsubcategories/kitchen/appliances/air-fryers-640w.webp",
