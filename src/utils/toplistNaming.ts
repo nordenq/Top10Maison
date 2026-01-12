@@ -34,7 +34,12 @@ export function inferToplistUseCase(toplist: Toplist): string | null {
   const dashSplit = toplist.h1.split("—");
   if (dashSplit.length > 1) {
     const after = dashSplit.slice(1).join("—").trim();
-    const cleaned = after.replace(/^curated picks for\s+/i, "").replace(/\.$/, "").trim();
+    const cleaned = after
+      .replace(/^curated picks for\s+/i, "")
+      .replace(/^top\s+\d+\s+picks\s+for\s+/i, "")
+      .replace(/^top\s+\d+\s+picks\s*/i, "")
+      .replace(/\.$/, "")
+      .trim();
     return cleaned ? titleCase(cleaned) : null;
   }
   return null;

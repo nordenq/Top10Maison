@@ -197,22 +197,48 @@ const schema = [buildBreadcrumbSchema(site, [{ name: "Home", path: "/" }])];
         </div>
       </div>
       <div class="mt-6 grid gap-6 md:grid-cols-2">
-        {latestGuides.map((list) => {
+        {latestGuides.map((list, index) => {
           const childKey = `${list.category}:${list.subcategory}:${list.childsubcategory}`;
           const child = childSubcategoryMap.get(childKey);
           const category = categoryMap.get(list.category);
           const subcategory = subcategoryMap.get(`${list.category}:${list.subcategory}`);
           const display = getToplistDisplay(list, dataIndex);
+          const image =
+            list.image ??
+            child?.image ??
+            subcategory?.image ??
+            category?.image ??
+            "/logo.svg";
+          const imageSrcset =
+            list.imageSrcset ??
+            child?.imageSrcset ??
+            subcategory?.imageSrcset ??
+            category?.imageSrcset;
+          const isLcp = index === 0;
           return (
             <a
-              class="card card-hover p-5"
+              class="card card-hover grid gap-4 overflow-hidden md:grid-cols-[200px_1fr]"
               href={childSubcategoryUrl(list.category, list.subcategory, list.childsubcategory)}
             >
-              <p class="text-xs font-semibold uppercase tracking-[0.25em] text-ink/70">
-                {child?.name ?? subcategory?.name ?? category?.name ?? "Guide"}
-              </p>
-              <h3 class="mt-2 text-lg font-semibold">{display.h1}</h3>
-              <p class="mt-2 text-sm text-ink/70">{list.metaDescription}</p>
+              <img
+                class="h-full w-full object-cover"
+                src={image}
+                alt={display.schemaHeadline}
+                loading={isLcp ? "eager" : "lazy"}
+                fetchpriority={isLcp ? "high" : undefined}
+                decoding="async"
+                srcset={imageSrcset}
+                sizes="(max-width: 768px) 100vw, 200px"
+                width="400"
+                height="300"
+              />
+              <div class="p-5">
+                <p class="text-xs font-semibold uppercase tracking-[0.25em] text-ink/70">
+                  {child?.name ?? subcategory?.name ?? category?.name ?? "Guide"}
+                </p>
+                <h3 class="mt-2 text-lg font-semibold">{display.schemaHeadline}</h3>
+                <p class="mt-2 text-sm text-ink/70">{list.metaDescription}</p>
+              </div>
             </a>
           );
         })}
