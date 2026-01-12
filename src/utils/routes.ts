@@ -36,7 +36,3 @@ export function subcategoryToplistUrl(
 export function productUrl(productSlug: string): string {
   return `/product/${productSlug}/`;
 }
-
-export function blogUrl(postSlug: string): string {
-  return `/blog/${postSlug}/`;
-}

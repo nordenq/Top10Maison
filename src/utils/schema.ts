@@ -1,5 +1,5 @@
 import type { Product, Toplist } from "./data";
-import { categoryUrl, childSubcategoryUrl, productUrl, subcategoryUrl, toplistUrl } from "./routes";
+import { productUrl, toplistUrl } from "./routes";
 
 export type SchemaGraph = Record<string, unknown>;
 
@@ -147,32 +147,4 @@ export function buildItemListSchema(items: Array<{ name: string; url: string }>)
       url: item.url
     }))
   };
-}
-
-export function buildToplistBreadcrumb(
-  site: URL,
-  categoryName: string,
-  subcategoryName: string,
-  childSubcategoryName: string,
-  toplist: Toplist
-): SchemaGraph {
-  return buildBreadcrumbSchema(site, [
-    { name: "Home", path: "/" },
-    { name: categoryName, path: categoryUrl(toplist.category) },
-    { name: subcategoryName, path: subcategoryUrl(toplist.category, toplist.subcategory) },
-    {
-      name: childSubcategoryName,
-      path: childSubcategoryUrl(toplist.category, toplist.subcategory, toplist.childsubcategory)
-    },
-    {
-      name: toplist.title,
-      path: toplistUrl(
-        toplist.category,
-        toplist.subcategory,
-        toplist.childsubcategory,
-        toplist.count,
-        toplist.keywordSlug
-      )
-    }
-  ]);
 }

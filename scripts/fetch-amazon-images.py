@@ -119,6 +119,12 @@ def fetch_image(asin: str, dest_path: str) -> None:
         handle.write(data)
 
 
+def fetch_image_from_url(image_url: str, dest_path: str) -> None:
+    _, data = open_url(image_url, binary=True)
+    with open(dest_path, "wb") as handle:
+        handle.write(data)
+
+
 def load_products(path: str) -> list:
     with open(path, "r", encoding="utf-8") as handle:
         return json.load(handle)
@@ -136,16 +142,30 @@ def main() -> int:
     parser.add_argument("--slugs", nargs="*", help="Limit to specific product slugs.")
     args = parser.parse_args()
 
-    products_path = "src/data/products.json"
-    extra_paths = glob.glob("src/data/products/*.json")
-    data_files = [products_path] + extra_paths
+    data_files = sorted(glob.glob("src/data/products/*.json"))
+    legacy_path = "src/data/products.json"
+    if not data_files and os.path.exists(legacy_path):
+        data_files = [legacy_path]
+    if not data_files:
+        print("No product data files found.")
+        return 1
 
     os.makedirs("public/images/products", exist_ok=True)
 
     success = {}
     failures = []
 
-    for product in load_products(products_path):
+    all_products = []
+    seen = set()
+    for path in data_files:
+        for product in load_products(path):
+            slug = product.get("slug")
+            if slug in seen:
+                continue
+            seen.add(slug)
+            all_products.append(product)
+
+    for product in all_products:
         slug = product.get("slug")
         if not slug or (args.slugs and slug not in args.slugs):
             continue
@@ -209,7 +229,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-def fetch_image_from_url(image_url: str, dest_path: str) -> None:
-    _, data = open_url(image_url, binary=True)
-    with open(dest_path, "wb") as handle:
-        handle.write(data)
