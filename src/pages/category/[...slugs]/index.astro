@@ -88,14 +88,6 @@ const bestToplistProductsWithBadges = bestToplistProducts.map((product, index) =
   ...product,
   badge: bestToplist?.productBadges?.[product.slug] ?? (index === 0 ? "Best Overall" : undefined)
 }));
-const toplists = data.toplists.map((list) => ({
-  title: getToplistDisplay(list, dataIndex).cardTitle,
-  description: list.metaDescription,
-  url: subcategoryToplistUrl(list.category, list.subcategory, list.count, list.keywordSlug)
-}));
-const otherToplists = bestToplist
-  ? toplists.filter((list) => list.title !== bestToplist.title)
-  : toplists;
 const absoluteUrl = new URL(basePath, site).toString();
 const breadcrumbSchema = {
   "@context": "https://schema.org",
@@ -220,6 +212,37 @@ if (bestToplist?.faq?.length) {
     </section>
   ) : null}
 
+  {data.childsubcategory ? (
+    <section class={sectionClass()}>
+      <div class="page-container">
+        <h2 class="text-2xl font-semibold">{data.childsubcategory.name} for your home</h2>
+        <p class="mt-3 text-sm text-ink/70">{data.childsubcategory.intentCopy}</p>
+        <div class="mt-6 overflow-x-auto">
+          <table class="w-full whitespace-nowrap text-left text-sm">
+            <thead class="text-ink/70">
+              <tr>
+                <th class="py-2 pr-4 font-semibold">Focus</th>
+                <th class="py-2 pr-4 font-semibold">Best for</th>
+                <th class="py-2 pr-4 font-semibold">Priority</th>
+                <th class="py-2 pr-4 font-semibold">Typical range</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.childsubcategory.intentTable.map((row) => (
+                <tr class="border-t border-border">
+                  <td class="py-2 pr-4 font-medium text-ink/80">{row.label}</td>
+                  <td class="py-2 pr-4 text-ink/70">{row.audience}</td>
+                  <td class="py-2 pr-4 text-ink/70">{row.priority}</td>
+                  <td class="py-2 pr-4 text-ink/70">{row.priceBand}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  ) : null}
+
   {bestToplist ? (
     <ProductGridSection
       title={`Top picks in ${data.childsubcategory.name}`}
@@ -236,19 +259,4 @@ if (bestToplist?.faq?.length) {
 
   {bestToplist?.faq?.length ? <FAQAccordion items={bestToplist.faq} surface={takeSurface()} /> : null}
 
-  {otherToplists.length ? (
-    <section class={sectionClass()}>
-      <div class="page-container">
-        <h2 class="text-2xl font-semibold">Top Lists in {title}</h2>
-        <div class="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {otherToplists.map((list) => (
-            <a href={list.url} class="card card-hover p-5">
-              <h3 class="text-xl font-semibold">{list.title}</h3>
-              <p class="mt-2 text-sm text-ink/70">{list.description}</p>
-            </a>
-          ))}
-        </div>
-      </div>
-    </section>
-  ) : null}
 </Layout>

@@ -4,8 +4,7 @@ import {
   categoryUrl,
   childSubcategoryUrl,
   productUrl,
-  subcategoryUrl,
-  subcategoryToplistUrl
+  subcategoryUrl
 } from "../utils/routes";
 
 export const prerender = true;
@@ -16,32 +15,8 @@ export const GET: APIRoute = ({ site }) => {
   }
 
   const defaultLastmod = new Date().toISOString().split("T")[0];
-  const { categories, toplists, products } = getDataIndex();
+  const { categories, products } = getDataIndex();
   const urls = new Map<string, { priority?: number; lastmod: string }>();
-  const bestByChild = new Map<string, (typeof toplists)[number]>();
-
-  for (const list of toplists) {
-    if (!list.childsubcategory) continue;
-    const key = `${list.category}/${list.subcategory}/${list.childsubcategory}`;
-    const existing = bestByChild.get(key);
-    if (!existing) {
-      bestByChild.set(key, list);
-      continue;
-    }
-    if (
-      list.performanceScore > existing.performanceScore ||
-      (list.performanceScore === existing.performanceScore && list.count > existing.count)
-    ) {
-      bestByChild.set(key, list);
-    }
-  }
-
-  const toDateString = (value: string | undefined, fallback: string) => {
-    if (!value) return fallback;
-    const parsed = new Date(value);
-    if (Number.isNaN(parsed.getTime())) return fallback;
-    return parsed.toISOString().split("T")[0];
-  };
 
   const setUrl = (loc: string, priority?: number, lastmod = defaultLastmod) => {
     urls.set(loc, { priority, lastmod });
@@ -78,27 +53,6 @@ export const GET: APIRoute = ({ site }) => {
         );
       }
     }
-  }
-
-  for (const list of toplists) {
-    const listLastmod = toDateString(list.schemaDatePublished, defaultLastmod);
-    const bestKey = list.childsubcategory
-      ? `${list.category}/${list.subcategory}/${list.childsubcategory}`
-      : null;
-    if (bestKey) {
-      const bestList = bestByChild.get(bestKey);
-      if (bestList && bestList.slug === list.slug) {
-        continue;
-      }
-    }
-    setUrl(
-      new URL(
-        subcategoryToplistUrl(list.category, list.subcategory, list.count, list.keywordSlug),
-        site
-      ).toString(),
-      0.6,
-      listLastmod
-    );
   }
 
   for (const product of products) {

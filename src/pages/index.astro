@@ -1,17 +1,13 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import CategoryCard from "../components/CategoryCard.astro";
 import { getDataIndex } from "../utils/dataIndex";
-import { subcategoryToplistUrl } from "../utils/routes";
 import { buildCanonical, requireSite } from "../utils/seo";
 import { buildBreadcrumbSchema } from "../utils/schema";
-import { getToplistDisplay } from "../utils/toplistDisplay";
+import CategoryCard from "../components/CategoryCard.astro";
 
 const dataIndex = getDataIndex();
-const { categories, toplists } = dataIndex;
+const { categories } = dataIndex;
 const ogImage = categories[0]?.image ?? "/logo.svg";
-const latestToplists = [...toplists].sort((a, b) => b.performanceScore - a.performanceScore).slice(0, 4);
-const categoryMap = new Map(categories.map((category) => [category.slug, category]));
 
 const site = requireSite(Astro.site);
 const title = "Top10Maison — Trending Product Rankings for Every Room";
@@ -40,12 +36,12 @@ const schema = [buildBreadcrumbSchema(site, [{ name: "Home", path: "/" }])];
         </p>
         <div class="mt-6 flex flex-wrap gap-3">
           <a class="btn" href="/categories/">Browse categories</a>
-          <a class="btn-ghost" href="/toplists/">Browse top lists</a>
+          <a class="btn-ghost" href="/categories/">Start browsing</a>
         </div>
       </div>
       <div class="card p-6">
         <h2 class="text-xl font-semibold">What you’ll find here</h2>
-        <ul class="mt-4 space-y-3 text-sm text-ink/70">
+        <ul class="mt-4 list-disc list-inside space-y-3 text-sm text-ink/70">
           <li>Best‑of lists for every room, built with consistent criteria.</li>
           <li>Trending picks and smart comparisons to speed up your decision.</li>
           <li>Concise buying guidance that keeps the focus on what matters.</li>
@@ -177,51 +173,6 @@ const schema = [buildBreadcrumbSchema(site, [{ name: "Home", path: "/" }])];
             fetchpriority={index === 0 ? "high" : undefined}
           />
         ))}
-      </div>
-    </div>
-  </section>
-
-  <section id="latest-toplists" class="section">
-    <div class="page-container">
-      <div class="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h2 class="text-2xl font-semibold">Latest top lists</h2>
-          <p class="mt-2 text-sm text-ink/70">Freshly updated guides with ranked picks and quick advice.</p>
-        </div>
-        <a class="text-sm font-semibold text-accent" href="/toplists/">View all</a>
-      </div>
-      <div class="mt-6 grid gap-6 md:grid-cols-2">
-        {latestToplists.map((list, index) => {
-          const category = categoryMap.get(list.category);
-          const image = list.image ?? category?.image ?? "/logo.svg";
-          const imageSrcset = list.imageSrcset ?? category?.imageSrcset;
-          const display = getToplistDisplay(list, dataIndex);
-          const isLcp = index === 0;
-          return (
-            <a
-              class="card card-hover grid gap-4 overflow-hidden md:grid-cols-[200px_1fr]"
-              href={subcategoryToplistUrl(list.category, list.subcategory, list.count, list.keywordSlug)}
-            >
-              <img
-                class="h-full w-full object-cover"
-                src={image}
-                alt={list.title}
-                loading={isLcp ? "eager" : "lazy"}
-                fetchpriority={isLcp ? "high" : undefined}
-                decoding="async"
-                srcset={imageSrcset}
-                sizes="(max-width: 768px) 100vw, 200px"
-                width="400"
-                height="300"
-              />
-              <div class="p-5">
-                <p class="text-xs font-semibold uppercase tracking-[0.25em] text-ink/70">Top list</p>
-                <h3 class="mt-2 text-lg font-semibold">{display.cardTitle}</h3>
-                <p class="mt-2 text-sm text-ink/70">{list.metaDescription}</p>
-              </div>
-            </a>
-          );
-        })}
       </div>
     </div>
   </section>
