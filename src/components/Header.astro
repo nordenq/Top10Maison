@@ -15,6 +15,7 @@ const { categories } = getDataIndex();
     <nav class="hidden items-center gap-6 text-sm font-medium md:flex" aria-label="Primary">
       <a class="nav-link" href={homeUrl()}>Home</a>
       <a class="nav-link" href="/categories/">Categories</a>
+      <a class="nav-link" href="/toplists/">Top lists</a>
       <a class="nav-link" href="/about/">About</a>
       <a class="nav-link" href="/contact/">Contact</a>
     </nav>
@@ -37,6 +38,8 @@ const { categories } = getDataIndex();
   <div id="mobile-menu" class="hidden border-t border-border bg-surface md:hidden">
     <nav class="space-y-4 px-6 py-4 text-sm" aria-label="Mobile">
       <a class="block font-medium text-ink/80 hover:text-accent" href={homeUrl()}>Home</a>
+      <a class="block font-medium text-ink/80 hover:text-accent" href="/toplists/#latest-top-lists">Latest top lists</a>
+      <a class="block font-medium text-ink/80 hover:text-accent" href="/toplists/">Top lists</a>
       <a class="block font-medium text-ink/80 hover:text-accent" href="/about/">About</a>
       <a class="block font-medium text-ink/80 hover:text-accent" href="/contact/">Contact</a>
       <details class="rounded-xl border border-border p-3">
