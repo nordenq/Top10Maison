@@ -6,6 +6,7 @@ import os
 import re
 import sys
 import html
+import time
 import urllib.parse
 import urllib.request
 
@@ -15,6 +16,7 @@ def open_url(
     *,
     binary: bool = False,
     autoparse: bool = False,
+    render: bool = False,
     extra_params: dict | None = None
 ) -> tuple[str, object]:
     scraper_key = os.getenv("SCRAPERAPI_KEY")
@@ -25,6 +27,8 @@ def open_url(
         params = {"api_key": scraper_key, "url": url, "country_code": "us"}
         if autoparse and not binary:
             params["autoparse"] = "true"
+        if render and not binary:
+            params["render"] = "true"
         if "amazon." in url or "amzn.to" in url:
             params["premium"] = "true"
         if extra_params:
@@ -33,14 +37,14 @@ def open_url(
         headers["Accept"] = "*/*"
 
     req = urllib.request.Request(target_url, headers=headers)
-    with urllib.request.urlopen(req, timeout=45) as resp:
+    with urllib.request.urlopen(req, timeout=60) as resp:
         data = resp.read()
         return resp.geturl(), data if binary else data.decode("utf-8", "ignore")
 
 
 def resolve_final_url(url: str) -> str:
     if os.getenv("SCRAPERAPI_KEY"):
-        _, payload = open_url(url, extra_params={"follow_redirect": "false"})
+        _, payload = open_url(url, extra_params={"follow_redirect": "false"}, render=True)
         redirect_url = extract_redirect_from_html(payload)
         return redirect_url or url
     final_url, _ = open_url(url)
@@ -152,24 +156,31 @@ def main() -> int:
         dest_path = os.path.join("public/images/products", f"{slug}.jpg")
         if args.only_missing and os.path.exists(dest_path):
             continue
-        try:
-            final_url = resolve_final_url(affiliate_url)
-            asin = extract_asin(final_url)
-            if not asin:
-                _, payload = open_url(affiliate_url, autoparse=True)
-                image_url = extract_image_url_from_autoparse(payload)
-                if image_url:
-                    fetch_image_from_url(image_url, dest_path)
-                    success[slug] = f"/images/products/{slug}.jpg"
+        last_error = None
+        for attempt in range(3):
+            try:
+                final_url = resolve_final_url(affiliate_url)
+                asin = extract_asin(final_url)
+                if not asin:
+                    _, payload = open_url(affiliate_url, autoparse=True, render=True)
+                    image_url = extract_image_url_from_autoparse(payload)
+                    if image_url:
+                        fetch_image_from_url(image_url, dest_path)
+                        success[slug] = f"/images/products/{slug}.jpg"
+                        break
+                    asin = extract_asin_from_html(payload)
+                if not asin:
+                    last_error = "NO_ASIN"
+                    time.sleep(2 + attempt)
                     continue
-                asin = extract_asin_from_html(payload)
-            if not asin:
-                failures.append((slug, "NO_ASIN"))
-                continue
-            fetch_image(asin, dest_path)
-            success[slug] = f"/images/products/{slug}.jpg"
-        except Exception as exc:
-            failures.append((slug, str(exc)))
+                fetch_image(asin, dest_path)
+                success[slug] = f"/images/products/{slug}.jpg"
+                break
+            except Exception as exc:
+                last_error = str(exc)
+                time.sleep(2 + attempt)
+        else:
+            failures.append((slug, last_error or "UNKNOWN_ERROR"))
 
     if not success:
         print("No images fetched.")

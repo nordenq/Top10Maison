@@ -1,3 +1,4 @@
+@import "./fonts.css";
 @import "./inter.css";
 
 @tailwind base;
@@ -21,7 +22,7 @@
   h4,
   h5,
   h6 {
-    @apply tracking-tight text-ink;
+    @apply tracking-tight text-ink font-serif;
   }
 
   p {
@@ -54,7 +55,7 @@
   }
 
   .card {
-    @apply rounded-2xl bg-white shadow-card border border-border;
+    @apply rounded-2xl bg-surface shadow-card border border-border;
   }
 
   .btn {
@@ -62,7 +63,7 @@
   }
 
   .btn-ghost {
-    @apply inline-flex items-center justify-center rounded-xl px-4 py-2 font-medium text-ink border border-border bg-white hover:border-accent hover:text-accent transition-colors;
+    @apply inline-flex items-center justify-center rounded-xl px-4 py-2 font-medium text-ink border border-border bg-surface hover:border-accent hover:text-accent transition-colors;
   }
 
   .article-content {
@@ -70,11 +71,11 @@
   }
 
   .article-content h2 {
-    @apply mt-8 text-2xl font-semibold text-ink;
+    @apply mt-8 text-2xl font-semibold text-ink font-serif;
   }
 
   .article-content h3 {
-    @apply mt-6 text-xl font-semibold text-ink;
+    @apply mt-6 text-xl font-semibold text-ink font-serif;
   }
 
   .article-content ul {

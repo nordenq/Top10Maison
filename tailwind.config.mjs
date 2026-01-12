@@ -4,17 +4,21 @@ export default {
   theme: {
     extend: {
       colors: {
-        ink: "#1C1C1E",
-        accent: "#1A5FCC",
-        "accent-hover": "#164FA8",
-        background: "#F9FAFB",
-        border: "#E5E7EB",
+        ink: "#1F2428",
+        accent: "#2BBBAD",
+        "accent-hover": "#25A79B",
+        "accent-soft": "#D7F4EF",
+        secondary: "#F7A6A8",
+        background: "#F8FBF9",
+        surface: "#FFFFFF",
+        border: "#E3ECE7",
         success: "#10B981",
         warning: "#F59E0B",
         alert: "#EF4444"
       },
       fontFamily: {
-        sans: ["Inter", "system-ui", "sans-serif"]
+        sans: ["DM Sans", "Inter", "system-ui", "sans-serif"],
+        serif: ["Cormorant Garamond", "Georgia", "serif"]
       },
       boxShadow: {
         card: "0 10px 24px rgba(28, 28, 30, 0.08)"
