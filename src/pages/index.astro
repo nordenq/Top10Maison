@@ -37,8 +37,8 @@ const schema = [buildBreadcrumbSchema(site, [{ name: "Home", path: "/" }])];
           Curated guides, reviewed for clarity and real-world fit.
         </p>
         <div class="mt-6 flex flex-wrap gap-3">
-          <a class="btn" href="#top-categories">Browse categories</a>
-          <a class="btn-ghost" href="#latest-toplists">Latest top lists</a>
+          <a class="btn" href="/categories/">Browse categories</a>
+          <a class="btn-ghost" href="/toplists/">Browse top lists</a>
         </div>
       </div>
       <div class="card p-6">
@@ -165,7 +165,7 @@ const schema = [buildBreadcrumbSchema(site, [{ name: "Home", path: "/" }])];
           <h2 class="text-2xl font-semibold">Top categories</h2>
           <p class="mt-2 text-sm text-ink/70">Start with a room, then drill down to the best lists.</p>
         </div>
-        <a class="text-sm font-semibold text-accent" href="/#top-categories">View all</a>
+        <a class="text-sm font-semibold text-accent" href="/categories/">View all</a>
       </div>
       <div class="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {categories.map((category, index) => (
@@ -186,6 +186,7 @@ const schema = [buildBreadcrumbSchema(site, [{ name: "Home", path: "/" }])];
           <h2 class="text-2xl font-semibold">Latest top lists</h2>
           <p class="mt-2 text-sm text-ink/70">Freshly updated guides with ranked picks and quick advice.</p>
         </div>
+        <a class="text-sm font-semibold text-accent" href="/toplists/">View all</a>
       </div>
       <div class="mt-6 grid gap-6 md:grid-cols-2">
         {latestToplists.map((list, index) => {
