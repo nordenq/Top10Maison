@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro";
-import { buildDataIndex } from "../utils/data";
+import { getDataIndex } from "../utils/dataIndex";
 import {
   categoryUrl,
   childSubcategoryUrl,
@@ -16,7 +16,7 @@ export const GET: APIRoute = ({ site }) => {
   }
 
   const defaultLastmod = new Date().toISOString().split("T")[0];
-  const { categories, toplists, products } = buildDataIndex();
+  const { categories, toplists, products } = getDataIndex();
   const urls = new Map<string, { priority?: number; lastmod: string }>();
   const bestByChild = new Map<string, (typeof toplists)[number]>();
 

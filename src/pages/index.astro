@@ -1,13 +1,12 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import CategoryNav from "../components/CategoryNav.astro";
 import CategoryCard from "../components/CategoryCard.astro";
-import { buildDataIndex } from "../utils/data";
+import { getDataIndex } from "../utils/dataIndex";
 import { subcategoryToplistUrl } from "../utils/routes";
 import { buildCanonical, requireSite } from "../utils/seo";
 import { buildBreadcrumbSchema } from "../utils/schema";
 
-const { categories, toplists } = buildDataIndex();
+const { categories, toplists } = getDataIndex();
 const latestToplists = [...toplists].sort((a, b) => b.performanceScore - a.performanceScore).slice(0, 4);
 const categoryMap = new Map(categories.map((category) => [category.slug, category]));
 

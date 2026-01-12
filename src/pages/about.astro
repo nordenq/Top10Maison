@@ -1,11 +1,12 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { buildCanonical, buildTitle, requireSite } from "../utils/seo";
+import { getPageMeta } from "../utils/meta";
 
-const site = requireSite(Astro.site);
-const title = buildTitle("About", "Top10Maison");
-const description = "Curated home buying guides reviewed for clarity and real-world fit.";
-const canonical = buildCanonical(site, "/about/");
+const { title, description, canonical } = getPageMeta(Astro.site, {
+  title: "About",
+  description: "Curated home buying guides reviewed for clarity and real-world fit.",
+  path: "/about/"
+});
 ---
 
 <BaseLayout title={title} description={description} canonical={canonical}>

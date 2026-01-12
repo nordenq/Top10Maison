@@ -1,12 +1,13 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { buildCanonical, buildTitle, requireSite } from "../utils/seo";
 import { buildBreadcrumbSchema } from "../utils/schema";
+import { getPageMeta } from "../utils/meta";
 
-const site = requireSite(Astro.site);
-const title = buildTitle("Terms of Service", "Top10Maison");
-const description = "Terms of service for Top10Maison.";
-const canonical = buildCanonical(site, "/terms/");
+const { site, title, description, canonical } = getPageMeta(Astro.site, {
+  title: "Terms of Service",
+  description: "Terms of service for Top10Maison.",
+  path: "/terms/"
+});
 const schema = [
   buildBreadcrumbSchema(site, [
     { name: "Home", path: "/" },

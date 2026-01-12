@@ -313,7 +313,19 @@ export function getToplists(): Toplist[] {
   return toplists;
 }
 
-export function buildDataIndex() {
+export type DataIndex = {
+  categories: Category[];
+  products: Product[];
+  toplists: Toplist[];
+  categoryMap: Map<string, Category>;
+  subcategoryMap: Map<string, Subcategory>;
+  childSubcategoryMap: Map<string, ChildSubcategory>;
+  productMap: Map<string, Product>;
+};
+
+let cachedIndex: DataIndex | null = null;
+
+function buildDataIndexInternal(): DataIndex {
   const categories = getCategories();
   const products = getProducts();
   const toplists = getToplists();
@@ -365,6 +377,13 @@ export function buildDataIndex() {
     childSubcategoryMap,
     productMap
   };
+}
+
+export function buildDataIndex(): DataIndex {
+  if (!cachedIndex) {
+    cachedIndex = buildDataIndexInternal();
+  }
+  return cachedIndex;
 }
 
 export function getTopListData(

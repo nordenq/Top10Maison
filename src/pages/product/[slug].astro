@@ -1,15 +1,18 @@
 ---
 import Layout from "../../layouts/BaseLayout.astro";
 import Breadcrumbs from "../../components/Breadcrumbs.astro";
-import { buildDataIndex, getProductData } from "../../utils/data";
+import { getProductData } from "../../utils/data";
+import { getDataIndex } from "../../utils/dataIndex";
 import { buildCanonical, requireSite } from "../../utils/seo";
 import { buildBreadcrumbSchema, buildFaqSchema, buildProductSchema, buildReviewSchema } from "../../utils/schema";
 import { categoryUrl, childSubcategoryUrl, productUrl, subcategoryToplistUrl, subcategoryUrl } from "../../utils/routes";
 import AffiliateButton from "../../components/AffiliateButton.astro";
 import FAQAccordion from "../../components/FAQAccordion.astro";
 
+const dataIndex = getDataIndex();
+
 export function getStaticPaths() {
-  const { products } = buildDataIndex();
+  const { products } = dataIndex;
   return products.map((product) => ({
     params: { slug: product.slug }
   }));
@@ -17,7 +20,7 @@ export function getStaticPaths() {
 
 const { slug } = Astro.params;
 const product = getProductData(slug);
-const { toplists, productMap, categoryMap, subcategoryMap, childSubcategoryMap } = buildDataIndex();
+const { toplists, productMap, categoryMap, subcategoryMap, childSubcategoryMap } = dataIndex;
 const relatedToplist = toplists.find((list) => list.products.includes(product.slug));
 const relatedCategory = relatedToplist ? categoryMap.get(relatedToplist.category) : null;
 const relatedSubcategory = relatedToplist
@@ -72,6 +75,7 @@ const schema = [
   description={product.metaDescription || product.description}
   canonical={canonical}
   schema={schema}
+  ogImage={product.image}
 >
   <section class="section">
     <article class="page-container">

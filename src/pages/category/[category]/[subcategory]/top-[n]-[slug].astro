@@ -1,15 +1,19 @@
 ---
 import Layout from "../../../../layouts/BaseLayout.astro";
 import Breadcrumbs from "../../../../components/Breadcrumbs.astro";
-import ProductCard from "../../../../components/ProductCard.astro";
 import FAQAccordion from "../../../../components/FAQAccordion.astro";
-import { buildDataIndex, getBestToplistForChild, getTopListData } from "../../../../utils/data";
+import ProductGridSection from "../../../../components/ProductGridSection.astro";
+import BulletListSection from "../../../../components/BulletListSection.astro";
+import { getBestToplistForChild, getTopListData } from "../../../../utils/data";
+import { getDataIndex } from "../../../../utils/dataIndex";
 import { buildCanonical, requireSite } from "../../../../utils/seo";
 import { buildArticleSchema, buildBreadcrumbSchema, buildFaqSchema, buildItemListSchema, buildProductSchema } from "../../../../utils/schema";
 import { categoryUrl, childSubcategoryUrl, subcategoryUrl, subcategoryToplistUrl, productUrl } from "../../../../utils/routes";
 
+const dataIndex = getDataIndex();
+
 export function getStaticPaths() {
-  const { toplists } = buildDataIndex();
+  const { toplists } = dataIndex;
   return toplists.map((list) => ({
     params: {
       category: list.category,
@@ -107,28 +111,10 @@ const schema = [
     </div>
   </section>
 
-  <section class="section">
-    <div class="page-container">
-      <h2 class="text-2xl font-semibold">Top Picks</h2>
-      <div class="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {toplist.products.map((product, index) => (
-          <ProductCard product={product} rank={index + 1} schema />
-        ))}
-      </div>
-    </div>
-  </section>
+  <ProductGridSection title="Top Picks" products={toplist.products} schema />
 
   {toplist.selectionCriteria.length ? (
-    <section class="section">
-      <div class="page-container">
-        <h2 class="text-2xl font-semibold">How We Picked</h2>
-        <ul class="mt-4 list-disc list-inside space-y-2 text-sm text-ink/70">
-          {toplist.selectionCriteria.map((item) => (
-            <li>{item}</li>
-          ))}
-        </ul>
-      </div>
-    </section>
+    <BulletListSection title="How We Picked" items={toplist.selectionCriteria} />
   ) : null}
 
   {toplist.faq?.length ? (

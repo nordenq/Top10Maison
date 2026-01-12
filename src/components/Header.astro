@@ -1,9 +1,9 @@
 ---
-import { buildDataIndex } from "../utils/data";
+import { getDataIndex } from "../utils/dataIndex";
 import { homeUrl } from "../utils/routes";
 import CategoryNav from "./CategoryNav.astro";
 
-const { categories } = buildDataIndex();
+const { categories } = getDataIndex();
 ---
 
 <header
