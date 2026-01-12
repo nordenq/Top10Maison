@@ -60,6 +60,100 @@ const schema = [buildBreadcrumbSchema(site, [{ name: "Home", path: "/" }])];
     </div>
   </section>
 
+  
+
+  <section id="top-categories" class="section bg-surface">
+    <div class="page-container">
+      <div class="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h2 class="text-2xl font-semibold">Top categories</h2>
+          <p class="mt-2 text-sm text-ink/70">Start with a room, then drill down to the best lists.</p>
+        </div>
+        <a class="text-sm font-semibold text-accent" href="/categories/">View all</a>
+      </div>
+      <div class="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {categories.map((category, index) => (
+          <CategoryCard
+            category={category}
+            loading={index < 3 ? "eager" : "lazy"}
+            fetchpriority={index === 0 ? "high" : undefined}
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section id="latest-top-lists" class="section">
+    <div class="page-container">
+      <div class="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h2 class="text-2xl font-semibold">Latest top lists</h2>
+          <p class="mt-2 text-sm text-ink/70">
+            Fresh shortlists with ranked picks and quick guidance.
+          </p>
+        </div>
+      </div>
+      <div class="mt-6 grid gap-6 md:grid-cols-2">
+        {latestGuides.map((list, index) => {
+          const childKey = `${list.category}:${list.subcategory}:${list.childsubcategory}`;
+          const child = childSubcategoryMap.get(childKey);
+          const category = categoryMap.get(list.category);
+          const subcategory = subcategoryMap.get(`${list.category}:${list.subcategory}`);
+          const display = getToplistDisplay(list, dataIndex);
+          const image =
+            list.image ??
+            child?.image ??
+            subcategory?.image ??
+            category?.image ??
+            "/logo.svg";
+          const imageSrcset =
+            list.imageSrcset ??
+            child?.imageSrcset ??
+            subcategory?.imageSrcset ??
+            category?.imageSrcset;
+          const isLcp = index === 0;
+          return (
+            <a
+              class="card card-hover grid gap-4 overflow-hidden md:grid-cols-[200px_1fr]"
+              href={childSubcategoryUrl(list.category, list.subcategory, list.childsubcategory)}
+            >
+              <img
+                class="h-full w-full object-cover"
+                src={image}
+                alt={display.schemaHeadline}
+                loading={isLcp ? "eager" : "lazy"}
+                fetchpriority={isLcp ? "high" : undefined}
+                decoding="async"
+                srcset={imageSrcset}
+                sizes="(max-width: 768px) 100vw, 200px"
+                width="400"
+                height="300"
+              />
+              <div class="p-5">
+                <p class="text-xs font-semibold uppercase tracking-[0.25em] text-ink/70">
+                  {child?.name ?? subcategory?.name ?? category?.name ?? "Guide"}
+                </p>
+                <h3 class="mt-2 text-lg font-semibold">{display.schemaHeadline}</h3>
+                <p class="mt-2 text-sm text-ink/70">{list.metaDescription}</p>
+              </div>
+            </a>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  <section class="section bg-surface">
+    <div class="page-container">
+      <h2 class="text-2xl font-semibold">What is Top10Maison?</h2>
+      <p class="mt-3 text-sm text-ink/70">
+        Top10Maison is a home-focused review site that ranks products using consistent criteria, transparent
+        scoring, and real-world use cases. Our goal is to help you choose faster with shortlists that reflect
+        everyday needs, not marketing hype.
+      </p>
+    </div>
+  </section>
+
   <section class="section">
     <div class="page-container">
       <div class="flex flex-wrap items-end justify-between gap-4">
@@ -162,98 +256,6 @@ const schema = [buildBreadcrumbSchema(site, [{ name: "Home", path: "/" }])];
           </p>
         </div>
       </div>
-    </div>
-  </section>
-
-  <section id="top-categories" class="section bg-surface">
-    <div class="page-container">
-      <div class="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h2 class="text-2xl font-semibold">Top categories</h2>
-          <p class="mt-2 text-sm text-ink/70">Start with a room, then drill down to the best lists.</p>
-        </div>
-        <a class="text-sm font-semibold text-accent" href="/categories/">View all</a>
-      </div>
-      <div class="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {categories.map((category, index) => (
-          <CategoryCard
-            category={category}
-            loading={index < 3 ? "eager" : "lazy"}
-            fetchpriority={index === 0 ? "high" : undefined}
-          />
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <section id="latest-top-lists" class="section">
-    <div class="page-container">
-      <div class="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h2 class="text-2xl font-semibold">Latest top lists</h2>
-          <p class="mt-2 text-sm text-ink/70">
-            Fresh shortlists with ranked picks and quick guidance.
-          </p>
-        </div>
-      </div>
-      <div class="mt-6 grid gap-6 md:grid-cols-2">
-        {latestGuides.map((list, index) => {
-          const childKey = `${list.category}:${list.subcategory}:${list.childsubcategory}`;
-          const child = childSubcategoryMap.get(childKey);
-          const category = categoryMap.get(list.category);
-          const subcategory = subcategoryMap.get(`${list.category}:${list.subcategory}`);
-          const display = getToplistDisplay(list, dataIndex);
-          const image =
-            list.image ??
-            child?.image ??
-            subcategory?.image ??
-            category?.image ??
-            "/logo.svg";
-          const imageSrcset =
-            list.imageSrcset ??
-            child?.imageSrcset ??
-            subcategory?.imageSrcset ??
-            category?.imageSrcset;
-          const isLcp = index === 0;
-          return (
-            <a
-              class="card card-hover grid gap-4 overflow-hidden md:grid-cols-[200px_1fr]"
-              href={childSubcategoryUrl(list.category, list.subcategory, list.childsubcategory)}
-            >
-              <img
-                class="h-full w-full object-cover"
-                src={image}
-                alt={display.schemaHeadline}
-                loading={isLcp ? "eager" : "lazy"}
-                fetchpriority={isLcp ? "high" : undefined}
-                decoding="async"
-                srcset={imageSrcset}
-                sizes="(max-width: 768px) 100vw, 200px"
-                width="400"
-                height="300"
-              />
-              <div class="p-5">
-                <p class="text-xs font-semibold uppercase tracking-[0.25em] text-ink/70">
-                  {child?.name ?? subcategory?.name ?? category?.name ?? "Guide"}
-                </p>
-                <h3 class="mt-2 text-lg font-semibold">{display.schemaHeadline}</h3>
-                <p class="mt-2 text-sm text-ink/70">{list.metaDescription}</p>
-              </div>
-            </a>
-          );
-        })}
-      </div>
-    </div>
-  </section>
-
-  <section class="section bg-surface">
-    <div class="page-container">
-      <h2 class="text-2xl font-semibold">What is Top10Maison?</h2>
-      <p class="mt-3 text-sm text-ink/70">
-        Top10Maison is a home-focused review site that ranks products using consistent criteria, transparent
-        scoring, and real-world use cases. Our goal is to help you choose faster with shortlists that reflect
-        everyday needs, not marketing hype.
-      </p>
     </div>
   </section>
 </BaseLayout>
