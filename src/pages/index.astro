@@ -4,10 +4,14 @@ import { getDataIndex } from "../utils/dataIndex";
 import { buildCanonical, requireSite } from "../utils/seo";
 import { buildBreadcrumbSchema } from "../utils/schema";
 import CategoryCard from "../components/CategoryCard.astro";
+import ProductCard from "../components/ProductCard.astro";
 
 const dataIndex = getDataIndex();
-const { categories } = dataIndex;
+const { categories, products } = dataIndex;
 const ogImage = categories[0]?.image ?? "/logo.svg";
+const latestTopPicks = [...products]
+  .sort((a, b) => (b.ratingCount ?? 0) - (a.ratingCount ?? 0) || (b.rating ?? 0) - (a.rating ?? 0))
+  .slice(0, 4);
 
 const site = requireSite(Astro.site);
 const title = "Top10Maison — Trending Product Rankings for Every Room";
@@ -170,6 +174,29 @@ const schema = [buildBreadcrumbSchema(site, [{ name: "Home", path: "/" }])];
           <CategoryCard
             category={category}
             loading={index < 3 ? "eager" : "lazy"}
+            fetchpriority={index === 0 ? "high" : undefined}
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="page-container">
+      <div class="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h2 class="text-2xl font-semibold">Latest top picks</h2>
+          <p class="mt-2 text-sm text-ink/70">
+            A quick shortlist of popular picks people are comparing right now.
+          </p>
+        </div>
+      </div>
+      <div class="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {latestTopPicks.map((product, index) => (
+          <ProductCard
+            product={product}
+            rank={index + 1}
+            loading={index < 2 ? "eager" : "lazy"}
             fetchpriority={index === 0 ? "high" : undefined}
           />
         ))}

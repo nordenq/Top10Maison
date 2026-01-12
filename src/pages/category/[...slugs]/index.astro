@@ -215,7 +215,7 @@ if (bestToplist?.faq?.length) {
   {data.childsubcategory ? (
     <section class={sectionClass()}>
       <div class="page-container">
-        <h2 class="text-2xl font-semibold">{data.childsubcategory.name} for your home</h2>
+        <h2 class="text-2xl font-semibold">Quick {data.childsubcategory.name.toLowerCase()} guide</h2>
         <p class="mt-3 text-sm text-ink/70">{data.childsubcategory.intentCopy}</p>
         <div class="mt-6 overflow-x-auto">
           <table class="w-full whitespace-nowrap text-left text-sm">
@@ -253,7 +253,7 @@ if (bestToplist?.faq?.length) {
     />
   ) : null}
 
-  {bestToplist?.howWePicked?.length ? (
+  {bestToplist?.howWePicked?.length && !data.childsubcategory ? (
     <BulletListSection title="How We Picked" items={bestToplist.howWePicked} surface={takeSurface()} />
   ) : null}
 
