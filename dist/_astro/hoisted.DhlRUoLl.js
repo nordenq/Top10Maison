@@ -1,1 +1,0 @@
-import"./hoisted.Btd34Zvd.js";const t=document.getElementById("smart-back");if(t){const e=document.referrer;e&&e.startsWith(window.location.origin)&&e.includes("/category/")?t.setAttribute("href",e):t.setAttribute("href","/"),t.classList.remove("hidden")}
