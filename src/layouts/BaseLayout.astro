@@ -3,7 +3,6 @@ import "../styles/global.css";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import SEO from "../components/SEO.astro";
-import { CSP_NONCE } from "../utils/csp";
 
 const {
   title,
@@ -21,9 +20,6 @@ const {
   metaRefresh?: string;
 };
 
-const gtmId = import.meta.env.PUBLIC_GTM_ID ?? "GTM-5R5XMPL3";
-const enableGoogleTagManager =
-  Boolean(gtmId && import.meta.env.MODE === "production");
 ---
 
 <!doctype html>
@@ -41,27 +37,8 @@ const enableGoogleTagManager =
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
     <link rel="robots" href="/robots.txt" />
-    {enableGoogleTagManager ? (
-      <script nonce={CSP_NONCE}>
-        {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','${gtmId}');`}
-      </script>
-    ) : null}
   </head>
   <body class="min-h-screen flex flex-col">
-    {enableGoogleTagManager ? (
-      <noscript>
-        <iframe
-          src={`https://www.googletagmanager.com/ns.html?id=${gtmId}`}
-          height="0"
-          width="0"
-          style="display:none;visibility:hidden"
-        ></iframe>
-      </noscript>
-    ) : null}
     <a class="skip-link" href="#site-header">Skip to navigation</a>
     <a class="skip-link" href="#main-content">Skip to content</a>
     <Header />
