@@ -17,8 +17,8 @@ export default {
         alert: "#EF4444"
       },
       fontFamily: {
-        sans: ["DM Sans", "Inter", "system-ui", "sans-serif"],
-        serif: ["Cormorant Garamond", "Georgia", "serif"]
+        sans: ["Inter", "system-ui", "sans-serif"],
+        serif: ["Georgia", "Times New Roman", "serif"]
       },
       boxShadow: {
         card: "0 10px 24px rgba(28, 28, 30, 0.08)"

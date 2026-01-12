@@ -1,1 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap");
+/* Fonts like DM Sans and Cormorant Garamond can be self-hosted via @font-face here.
+   We avoid external @import URLs to respect the CSP and rely on the local Inter files
+   already served from /fonts/ for a cohesive feel until custom fonts are added. */
