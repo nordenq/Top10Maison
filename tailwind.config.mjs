@@ -5,9 +5,9 @@ export default {
     extend: {
       colors: {
         ink: "#1F2428",
-        accent: "#2BBBAD",
-        "accent-hover": "#25A79B",
-        "accent-soft": "#D7F4EF",
+        accent: "#13897C",
+        "accent-hover": "#106D66",
+        "accent-soft": "#D1F0ED",
         secondary: "#F7A6A8",
         background: "#F8FBF9",
         surface: "#FFFFFF",
