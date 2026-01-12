@@ -34,12 +34,13 @@
   }
 
   a {
-    @apply text-ink hover:text-accent underline-offset-4 transition-colors;
-    text-decoration-thickness: 1px;
+    @apply text-ink underline-offset-4 transition-colors;
+    text-decoration: none;
   }
 
   a:hover {
     text-decoration-line: underline;
+    text-decoration-thickness: 1px;
   }
 
   input,
