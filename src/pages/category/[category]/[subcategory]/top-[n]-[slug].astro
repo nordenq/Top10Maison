@@ -42,6 +42,7 @@ const ogImage = toplist.list.image ?? toplist.category.image ?? "/logo.svg";
 const robots = isBestOverall && bestOverallUrl ? "noindex,follow" : undefined;
 const breadcrumbItems = [
   { name: "Home", path: "/" },
+  { name: "Categories", path: "/categories/" },
   { name: toplist.category.name, path: categoryUrl(toplist.category.slug) },
   { name: toplist.subcategory.name, path: subcategoryUrl(toplist.category.slug, toplist.subcategory.slug) },
   { name: toplist.title, path: subcategoryToplistUrl(category, subcategory, Number(n), slug) }
@@ -49,6 +50,7 @@ const breadcrumbItems = [
 
 const breadcrumbLinks = [
   { name: "Home", href: "/" },
+  { name: "Categories", href: "/categories/" },
   { name: toplist.category.name, href: categoryUrl(toplist.category.slug) },
   { name: toplist.subcategory.name, href: subcategoryUrl(toplist.category.slug, toplist.subcategory.slug) },
   { name: toplist.title, href: subcategoryToplistUrl(category, subcategory, Number(n), slug) }
