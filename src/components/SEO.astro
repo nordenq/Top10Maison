@@ -6,13 +6,17 @@ const {
   description,
   canonical,
   schema = [],
-  ogImage
+  ogImage,
+  ogType = "website",
+  robots = "index,follow"
 } = Astro.props as {
   title: string;
   description: string;
   canonical: string;
   schema?: Array<Record<string, unknown>>;
   ogImage?: string;
+  ogType?: string;
+  robots?: string;
 };
 
 const resolvedOgImage = ogImage ? new URL(ogImage, canonical).toString() : null;
@@ -42,16 +46,19 @@ const mergedSchema = [organizationSchema, websiteSchema, ...schema];
 <title>{title}</title>
 <meta name="description" content={description} />
 <link rel="canonical" href={canonical} />
-<meta name="robots" content="index,follow" />
-<meta property="og:type" content="website" />
+<meta name="robots" content={robots} />
+<meta property="og:type" content={ogType} />
+<meta property="og:site_name" content="Top10Maison" />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
 <meta property="og:url" content={canonical} />
 {resolvedOgImage ? <meta property="og:image" content={resolvedOgImage} /> : null}
+{resolvedOgImage ? <meta property="og:image:alt" content={title} /> : null}
 <meta name="twitter:card" content={resolvedOgImage ? "summary_large_image" : "summary"} />
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={description} />
 {resolvedOgImage ? <meta name="twitter:image" content={resolvedOgImage} /> : null}
+{resolvedOgImage ? <meta name="twitter:image:alt" content={title} /> : null}
 {mergedSchema.map((entry) => (
   <script type="application/ld+json" nonce={CSP_NONCE} set:html={JSON.stringify(entry)} />
 ))}

@@ -33,8 +33,13 @@ const bestOverallUrl = toplist.childsubcategory
   : null;
 
 const site = requireSite(Astro.site);
-const canonical = buildCanonical(site, subcategoryToplistUrl(category, subcategory, Number(n), slug));
-const ogImage = toplist.list.image ?? toplist.category.image ?? "/og-image.jpg";
+const canonicalPath =
+  isBestOverall && bestOverallUrl
+    ? bestOverallUrl
+    : subcategoryToplistUrl(category, subcategory, Number(n), slug);
+const canonical = buildCanonical(site, canonicalPath);
+const ogImage = toplist.list.image ?? toplist.category.image ?? "/logo.svg";
+const robots = isBestOverall && bestOverallUrl ? "noindex,follow" : undefined;
 const breadcrumbItems = [
   { name: "Home", path: "/" },
   { name: toplist.category.name, path: categoryUrl(toplist.category.slug) },
@@ -71,6 +76,8 @@ const schema = [
   canonical={canonical}
   schema={schema}
   ogImage={ogImage}
+  ogType="article"
+  robots={robots}
   metaRefresh={isBestOverall && bestOverallUrl ? `0; url=${bestOverallUrl}` : undefined}
 >
   {isBestOverall && bestOverallUrl ? (

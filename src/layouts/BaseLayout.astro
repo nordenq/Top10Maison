@@ -10,6 +10,8 @@ const {
   canonical,
   schema = [],
   ogImage,
+  ogType,
+  robots,
   metaRefresh
 } = Astro.props as {
   title: string;
@@ -17,6 +19,8 @@ const {
   canonical: string;
   schema?: Array<Record<string, unknown>>;
   ogImage?: string;
+  ogType?: string;
+  robots?: string;
   metaRefresh?: string;
 };
 
@@ -32,7 +36,15 @@ const {
     <link rel="preconnect" href="https://pub-d2291ee7d44d475387fd51f65cd369f0.r2.dev" crossorigin />
     <link rel="dns-prefetch" href="https://pub-d2291ee7d44d475387fd51f65cd369f0.r2.dev" />
     <link rel="preload" as="font" type="font/woff2" href="/fonts/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2" crossorigin />
-    <SEO title={title} description={description} canonical={canonical} schema={schema} ogImage={ogImage} />
+    <SEO
+      title={title}
+      description={description}
+      canonical={canonical}
+      schema={schema}
+      ogImage={ogImage}
+      ogType={ogType}
+      robots={robots}
+    />
     <meta name="google-adsense-account" content="ca-pub-3680083929895808" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="sitemap" type="application/xml" href="/sitemap.xml" />

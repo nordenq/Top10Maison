@@ -7,6 +7,7 @@ import { buildCanonical, requireSite } from "../utils/seo";
 import { buildBreadcrumbSchema } from "../utils/schema";
 
 const { categories, toplists } = getDataIndex();
+const ogImage = categories[0]?.image ?? "/logo.svg";
 const latestToplists = [...toplists].sort((a, b) => b.performanceScore - a.performanceScore).slice(0, 4);
 const categoryMap = new Map(categories.map((category) => [category.slug, category]));
 
@@ -22,7 +23,7 @@ const schema = [buildBreadcrumbSchema(site, [{ name: "Home", path: "/" }])];
   description={description}
   canonical={canonical}
   schema={schema}
-  ogImage="/og-image.jpg"
+  ogImage={ogImage}
 >
   <section class="section bg-surface">
     <div class="page-container grid items-center gap-10 md:grid-cols-2">

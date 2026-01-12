@@ -70,6 +70,11 @@ const title = data.childsubcategory && bestToplistTitle
 const description = data.childsubcategory && bestToplistDescription
   ? bestToplistDescription
   : data.childsubcategory?.description ?? data.subcategory?.description ?? data.category.description;
+const ogImage =
+  data.childsubcategory?.image ??
+  data.subcategory?.image ??
+  data.category.image ??
+  "/logo.svg";
 const showSubcategories = !data.subcategory;
 const showChildSubcategories = Boolean(data.subcategory && !data.childsubcategory);
 const bestToplistProducts = bestToplist
@@ -126,6 +131,7 @@ if (bestToplist?.faq?.length) {
   description={description}
   canonical={canonical}
   schema={[...schema, collectionSchema]}
+  ogImage={ogImage}
 >
   <section class="section">
     <div class="page-container">
