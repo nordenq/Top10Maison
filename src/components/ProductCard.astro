@@ -18,9 +18,11 @@ export interface Props {
   };
   rank: number;
   schema?: boolean;
+  loading?: "lazy" | "eager";
+  fetchpriority?: "high" | "low";
 }
 
-const { product, rank, schema = false } = Astro.props as Props;
+const { product, rank, schema = false, loading = "lazy", fetchpriority } = Astro.props as Props;
 const productLink = product.slug ? `/product/${product.slug}/` : null;
 const priceValue = product.price ? product.price.replace(/[^0-9.]/g, "") : "";
 const productSchema =
@@ -60,7 +62,8 @@ const productSchema =
       src={product.image}
       alt={product.name}
       class="h-full w-full object-contain p-5"
-      loading="lazy"
+      loading={loading}
+      fetchpriority={fetchpriority}
       decoding="async"
       width="400"
       height="300"
