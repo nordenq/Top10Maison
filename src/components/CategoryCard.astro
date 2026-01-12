@@ -22,7 +22,7 @@ const image = childsubcategory?.image ?? subcategory?.image ?? category.image ??
 const imageSrcset = childsubcategory?.imageSrcset ?? subcategory?.imageSrcset ?? category.imageSrcset;
 ---
 
-<a class="card group flex h-full flex-col overflow-hidden" href={href}>
+<a class="card card-hover group flex h-full flex-col overflow-hidden" href={href}>
   <div class="relative">
     <img
       class="h-44 w-full object-cover"
@@ -39,7 +39,7 @@ const imageSrcset = childsubcategory?.imageSrcset ?? subcategory?.imageSrcset ??
   <div class="flex flex-1 flex-col gap-2 p-4">
     <div class="flex items-center justify-between">
       <h3 class="text-lg font-semibold">{title}</h3>
-      <span class="text-lg text-accent">→</span>
+      <span class="text-lg text-accent transition group-hover:text-ink">→</span>
     </div>
     <p class="text-sm text-ink/70">{description}</p>
   </div>

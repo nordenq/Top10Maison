@@ -198,7 +198,7 @@ if (bestToplist?.faq?.length) {
         <h2 class="text-2xl font-semibold">Top Lists in {title}</h2>
         <div class="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {otherToplists.map((list) => (
-            <a href={list.url} class="card p-5 hover:shadow-card">
+            <a href={list.url} class="card card-hover p-5">
               <h3 class="text-xl font-semibold">{list.title}</h3>
               <p class="mt-2 text-sm text-ink/70">{list.description}</p>
             </a>

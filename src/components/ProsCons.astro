@@ -4,7 +4,7 @@ const { pros, cons } = Astro.props as { pros: string[]; cons: string[] };
 
 <section class="section">
   <div class="mx-auto w-full max-w-6xl grid gap-6 md:grid-cols-2">
-    <div class="card p-6">
+    <div class="card border-l-4 border-l-accent p-6">
       <h2 class="text-xl font-semibold">Pros</h2>
       <ul class="mt-4 list-disc space-y-2 pl-6 text-sm text-ink/70">
         {pros.map((item) => (
@@ -12,7 +12,7 @@ const { pros, cons } = Astro.props as { pros: string[]; cons: string[] };
         ))}
       </ul>
     </div>
-    <div class="card p-6">
+    <div class="card border-l-4 border-l-secondary p-6">
       <h2 class="text-xl font-semibold">Cons</h2>
       <ul class="mt-4 list-disc space-y-2 pl-6 text-sm text-ink/70">
         {cons.map((item) => (

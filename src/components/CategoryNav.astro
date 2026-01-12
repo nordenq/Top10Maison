@@ -15,7 +15,7 @@ const {
 <nav class={`flex gap-3 overflow-x-auto ${className}`} aria-label="Categories">
   {categories.map((category) => (
     <a
-      class={`whitespace-nowrap rounded-full border border-border px-4 py-1 text-ink/70 hover:border-accent hover:text-accent ${itemClassName}`}
+      class={`whitespace-nowrap rounded-full border border-border px-4 py-1 text-ink/70 transition-colors hover:border-accent hover:text-accent hover:bg-accent-soft ${itemClassName}`}
       href={`/category/${category.slug}/`}
     >
       {category.name}

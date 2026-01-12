@@ -11,7 +11,7 @@ const { toplists, title } = Astro.props as { toplists: Toplist[]; title: string 
     <div class="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       {toplists.map((list) => (
         <a
-          class="card flex h-full flex-col p-5"
+          class="card card-hover flex h-full flex-col p-5"
           href={subcategoryToplistUrl(list.category, list.subcategory, list.count, list.keywordSlug)}
         >
           <h3 class="text-lg font-semibold">{list.title}</h3>

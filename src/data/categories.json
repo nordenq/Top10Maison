@@ -2,8 +2,8 @@
   {
     "slug": "kitchen",
     "name": "Kitchen",
-    "description": "Curated kitchen essentials and appliances.",
-    "intro": "Curated kitchen picks that make daily cooking easier. Compare appliances, cookware, and tools by practicality, size, and value, then choose what fits your space and budget.",
+    "description": "Curated air fryer picks for everyday cooking.",
+    "intro": "Curated air fryer picks that make daily cooking easier. Compare size, capacity, and value, then choose what fits your space and budget.",
     "published": true,
     "selectionFactors": [
       "capacity",
@@ -29,8 +29,8 @@
       {
         "slug": "appliances",
         "name": "Appliances",
-        "description": "Everyday appliances for faster, easier meals.",
-        "intentCopy": "Compare appliances by real-world performance, not just wattage. We highlight options built for everyday cooking and reliable results.",
+        "description": "Air fryer picks for faster, easier meals.",
+        "intentCopy": "Compare air fryers by real-world performance, not just wattage. We highlight options built for everyday cooking and reliable results.",
         "published": true,
         "intentTable": [
           {
@@ -109,154 +109,9 @@
         ],
         "image": "https://pub-d2291ee7d44d475387fd51f65cd369f0.r2.dev/openai/subcategories/kitchen/appliances-640w.webp",
         "imageSrcset": "https://pub-d2291ee7d44d475387fd51f65cd369f0.r2.dev/openai/subcategories/kitchen/appliances-320w.webp 320w, https://pub-d2291ee7d44d475387fd51f65cd369f0.r2.dev/openai/subcategories/kitchen/appliances-640w.webp 640w"
-      },
-      {
-        "slug": "cookware",
-        "name": "Cookware",
-        "description": "Cookware and tools for everyday meals.",
-        "intentCopy": "Cookware choices should match your cooking style, heat source, and how often you cook. We focus on pieces that last and perform consistently.",
-        "published": false,
-        "intentTable": [
-          {
-            "label": "Budget-first",
-            "audience": "Occasional cooks",
-            "priority": "Low cost",
-            "priceBand": "$40-$100"
-          },
-          {
-            "label": "Best overall value",
-            "audience": "Most homes",
-            "priority": "Versatility",
-            "priceBand": "$100-$220"
-          },
-          {
-            "label": "Premium build",
-            "audience": "Daily cooks",
-            "priority": "Long-term durability",
-            "priceBand": "$220-$450"
-          },
-          {
-            "label": "Small-space friendly",
-            "audience": "Compact kitchens",
-            "priority": "Stackable sets",
-            "priceBand": "$70-$160"
-          }
-        ],
-        "faq": [
-          {
-            "question": "Is nonstick cookware worth it?",
-            "answer": "Nonstick is convenient for low-oil cooking but should be replaced more frequently than stainless or cast iron."
-          }
-        ],
-        "subcategories": [
-          {
-            "slug": "nonstick-pans",
-            "name": "Nonstick Pans",
-            "description": "Easy-clean nonstick pans for daily cooking.",
-            "intentCopy": "Nonstick pans should release food easily and clean up fast. We focus on reliable coatings, even heating, and everyday durability.",
-            "published": true,
-            "intentTable": [
-              {
-                "label": "Budget-first",
-                "audience": "Occasional cooks",
-                "priority": "Low cost",
-                "priceBand": "$40-$100"
-              },
-              {
-                "label": "Best overall value",
-                "audience": "Most homes",
-                "priority": "Balanced set",
-                "priceBand": "$100-$220"
-              },
-              {
-                "label": "Premium build",
-                "audience": "Daily cooks",
-                "priority": "Long-term durability",
-                "priceBand": "$220-$450"
-              },
-              {
-                "label": "Small-space friendly",
-                "audience": "Compact kitchens",
-                "priority": "Space-saving pieces",
-                "priceBand": "$70-$160"
-              }
-            ],
-            "faq": [
-              {
-                "question": "How long does a nonstick pan typically last?",
-                "answer": "With normal use and gentle cleaning, most nonstick pans last 2-4 years."
-              }
-            ]
-          }
-        ]
       }
     ],
     "image": "https://pub-d2291ee7d44d475387fd51f65cd369f0.r2.dev/openai/categories/kitchen-640w.webp",
     "imageSrcset": "https://pub-d2291ee7d44d475387fd51f65cd369f0.r2.dev/openai/categories/kitchen-320w.webp 320w, https://pub-d2291ee7d44d475387fd51f65cd369f0.r2.dev/openai/categories/kitchen-640w.webp 640w"
-  },
-  {
-    "slug": "bedroom",
-    "name": "Bedroom",
-    "description": "Comfort-first bedroom essentials.",
-    "intro": "Curated bedding and sleep essentials focused on comfort, breathability, and value. Compare materials, care, and fit, then choose what lasts.",
-    "published": false,
-    "selectionFactors": [
-      "comfort",
-      "breathability",
-      "care needs"
-    ],
-    "howToChoose": [
-      "Choose materials that match your sleep temperature.",
-      "Prioritize easy-care fabrics if you wash bedding often.",
-      "Set a budget based on how long you plan to keep the item."
-    ],
-    "faq": [
-      {
-        "question": "What makes bedroom products feel premium?",
-        "answer": "Look for breathable materials and construction that holds up after repeated washing."
-      }
-    ],
-    "subcategories": [
-      {
-        "slug": "bedding",
-        "name": "Bedding",
-        "description": "Sheets, duvets, and pillows for everyday comfort.",
-        "intentCopy": "Bedding buyers want comfort and temperature control. We focus on sets that stay soft, wash well, and last through daily use.",
-        "published": false,
-        "intentTable": [
-          {
-            "label": "Budget-first",
-            "audience": "Guest rooms",
-            "priority": "Low cost",
-            "priceBand": "$30-$80"
-          },
-          {
-            "label": "Best overall value",
-            "audience": "Primary bedrooms",
-            "priority": "Comfort vs price",
-            "priceBand": "$80-$160"
-          },
-          {
-            "label": "Premium build",
-            "audience": "Hot sleepers",
-            "priority": "Breathability",
-            "priceBand": "$160-$300"
-          },
-          {
-            "label": "Small-space friendly",
-            "audience": "Dorms",
-            "priority": "Easy care",
-            "priceBand": "$40-$120"
-          }
-        ],
-        "faq": [
-          {
-            "question": "What bedding is best for hot sleepers?",
-            "answer": "Look for breathable fabrics like percale cotton or linen with lower thread counts."
-          }
-        ]
-      }
-    ],
-    "image": "/images/categories/bedroom.svg"
   }
 ]

@@ -13,10 +13,10 @@ const { categories } = buildDataIndex();
   <div class="page-container flex w-full items-center justify-between py-4">
     <a class="rounded-md px-2 py-2 text-xl font-semibold tracking-tight font-serif text-ink" href={homeUrl()}>Top10Maison</a>
     <nav class="hidden items-center gap-6 text-sm font-medium md:flex" aria-label="Primary">
-      <a class="text-ink/80 hover:text-accent" href={homeUrl()}>Home</a>
-      <a class="text-ink/80 hover:text-accent" href="/#top-categories">Categories</a>
-      <a class="text-ink/80 hover:text-accent" href="/about/">About</a>
-      <a class="text-ink/80 hover:text-accent" href="/contact/">Contact</a>
+      <a class="nav-link" href={homeUrl()}>Home</a>
+      <a class="nav-link" href="/#top-categories">Categories</a>
+      <a class="nav-link" href="/about/">About</a>
+      <a class="nav-link" href="/contact/">Contact</a>
     </nav>
     <button
       id="mobile-menu-button"

@@ -18,6 +18,23 @@ export const GET: APIRoute = ({ site }) => {
   const defaultLastmod = new Date().toISOString().split("T")[0];
   const { categories, toplists, products } = buildDataIndex();
   const urls = new Map<string, { priority?: number; lastmod: string }>();
+  const bestByChild = new Map<string, (typeof toplists)[number]>();
+
+  for (const list of toplists) {
+    if (!list.childsubcategory) continue;
+    const key = `${list.category}/${list.subcategory}/${list.childsubcategory}`;
+    const existing = bestByChild.get(key);
+    if (!existing) {
+      bestByChild.set(key, list);
+      continue;
+    }
+    if (
+      list.performanceScore > existing.performanceScore ||
+      (list.performanceScore === existing.performanceScore && list.count > existing.count)
+    ) {
+      bestByChild.set(key, list);
+    }
+  }
 
   const toDateString = (value: string | undefined, fallback: string) => {
     if (!value) return fallback;
@@ -65,6 +82,15 @@ export const GET: APIRoute = ({ site }) => {
 
   for (const list of toplists) {
     const listLastmod = toDateString(list.schemaDatePublished, defaultLastmod);
+    const bestKey = list.childsubcategory
+      ? `${list.category}/${list.subcategory}/${list.childsubcategory}`
+      : null;
+    if (bestKey) {
+      const bestList = bestByChild.get(bestKey);
+      if (bestList && bestList.slug === list.slug) {
+        continue;
+      }
+    }
     setUrl(
       new URL(
         subcategoryToplistUrl(list.category, list.subcategory, list.count, list.keywordSlug),

@@ -14,6 +14,10 @@
     @apply bg-background text-ink font-sans antialiased;
     font-size: 18px;
     font-size-adjust: 0.52;
+    background-image:
+      radial-gradient(900px 400px at 10% -10%, rgba(43, 187, 173, 0.12), transparent 60%),
+      radial-gradient(900px 400px at 95% 0%, rgba(247, 166, 168, 0.16), transparent 55%);
+    background-attachment: fixed;
   }
 
   h1,
@@ -30,7 +34,24 @@
   }
 
   a {
-    @apply text-ink hover:text-accent transition-colors;
+    @apply text-ink hover:text-accent underline-offset-4 transition-colors;
+    text-decoration-thickness: 1px;
+  }
+
+  a:hover {
+    text-decoration-line: underline;
+  }
+
+  input,
+  select,
+  textarea {
+    @apply rounded-xl border border-border bg-surface px-3 py-2 text-ink placeholder:text-ink/50;
+  }
+
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    @apply border-accent outline-none ring-2 ring-accent/20;
   }
 
   a:focus-visible,
@@ -58,12 +79,16 @@
     @apply rounded-2xl bg-surface shadow-card border border-border;
   }
 
+  .card-hover {
+    @apply transition hover:-translate-y-0.5 hover:shadow-md;
+  }
+
   .btn {
-    @apply inline-flex items-center justify-center rounded-xl px-4 py-2 font-medium text-white bg-accent hover:bg-accent-hover transition-colors;
+    @apply inline-flex items-center justify-center rounded-xl px-4 py-2 font-medium text-white bg-accent hover:bg-accent-hover transition-colors shadow-sm;
   }
 
   .btn-ghost {
-    @apply inline-flex items-center justify-center rounded-xl px-4 py-2 font-medium text-ink border border-border bg-surface hover:border-accent hover:text-accent transition-colors;
+    @apply inline-flex items-center justify-center rounded-xl px-4 py-2 font-medium text-ink border border-border bg-surface hover:border-accent hover:text-accent hover:bg-accent-soft transition-colors;
   }
 
   .article-content {
@@ -80,6 +105,28 @@
 
   .article-content ul {
     @apply list-disc list-inside space-y-2;
+  }
+
+  .nav-link {
+    @apply relative text-ink/80 transition-colors hover:text-accent;
+  }
+
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -6px;
+    height: 2px;
+    background: #2BBBAD;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.2s ease;
+  }
+
+  .nav-link:hover::after,
+  .nav-link:focus-visible::after {
+    transform: scaleX(1);
   }
 }
 
