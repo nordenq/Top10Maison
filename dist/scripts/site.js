@@ -88,15 +88,13 @@ function maybeLoadCookieBanner() {
   if (!shouldShowCookieBanner()) {
     return;
   }
-  scheduleIdle(() => {
-    import('./cookie-banner.js')
-      .then((module) => {
-        module.initCookieBanner();
-      })
-      .catch(() => {
-        return;
-      });
-  });
+  import('./cookie-banner.js')
+    .then((module) => {
+      module.initCookieBanner();
+    })
+    .catch(() => {
+      return;
+    });
 }
 
 function maybeLoadAds() {
@@ -119,8 +117,19 @@ function onReady() {
   initScrollState();
   initMenu();
   initSmartBack();
-  maybeLoadCookieBanner();
   maybeLoadAds();
+
+  if (shouldShowCookieBanner()) {
+    window.addEventListener(
+      'load',
+      function () {
+        setTimeout(() => {
+          scheduleIdle(maybeLoadCookieBanner, 6000);
+        }, 3500);
+      },
+      { once: true }
+    );
+  }
 }
 
 if (document.readyState === 'loading') {

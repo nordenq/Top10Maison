@@ -44,14 +44,7 @@ const enableAnalytics = Boolean(gaId && import.meta.env.MODE === "production");
     {gscVerification ? (
       <meta name="google-site-verification" content={gscVerification} />
     ) : null}
-    {enableAnalytics ? (
-      <>
-        <script async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}></script>
-        <script nonce={CSP_NONCE}>
-          {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config','${gaId}',{anonymize_ip:true});`}
-        </script>
-      </>
-    ) : null}
+    {enableAnalytics ? <meta name="ga-id" content={gaId} /> : null}
     <SEO
       title={title}
       description={description}
@@ -75,5 +68,6 @@ const enableAnalytics = Boolean(gaId && import.meta.env.MODE === "production");
     </main>
     <Footer />
     <script src="/scripts/site.js" type="module"></script>
+    {enableAnalytics ? <script src="/scripts/analytics.js" type="module"></script> : null}
   </body>
 </html>
