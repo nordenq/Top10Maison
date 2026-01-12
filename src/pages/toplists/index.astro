@@ -11,7 +11,7 @@ const dataIndex = getDataIndex();
 const { categories, toplists, categoryMap, subcategoryMap, childSubcategoryMap } = dataIndex;
 const site = requireSite(Astro.site);
 const title = "All Top Lists";
-const description = "Browse every Top10Maison top list across all categories, organized for quick scanning and SEO-friendly navigation.";
+const description = "Browse every Top10Maison top list across all categories, organized so you can find what fits your home fast.";
 const canonical = buildCanonical(site, "/toplists/");
 const breadcrumbItems = [
   { name: "Home", path: "/" },
@@ -92,7 +92,7 @@ const ogImage = categories[0]?.image ?? "/logo.svg";
       <Breadcrumbs items={breadcrumbLinks} />
       <h1 class="mt-4 text-3xl font-semibold">All top lists</h1>
       <p class="mt-3 text-lg text-ink/70">
-        Browse by category and subcategory. Best-overall pages link directly to the main category pages.
+        Browse by category and subcategory. Start with a shortlist, then click into the full guide.
       </p>
       <div class="mt-6 flex flex-wrap gap-2">
         {categories.map((category) => (

@@ -15,7 +15,7 @@ const categoryMap = new Map(categories.map((category) => [category.slug, categor
 
 const site = requireSite(Astro.site);
 const title = "Top10Maison — Trending Product Rankings for Every Room";
-const description = "Compare the best home products, track what’s trending, and shop smarter with curated top lists for kitchens, small appliances, and more.";
+const description = "Compare the best home products, track what’s trending, and find what fits your home faster.";
 const canonical = buildCanonical(site, "/");
 const schema = [buildBreadcrumbSchema(site, [{ name: "Home", path: "/" }])];
 ---
@@ -30,13 +30,13 @@ const schema = [buildBreadcrumbSchema(site, [{ name: "Home", path: "/" }])];
   <section class="section bg-surface">
     <div class="page-container grid items-center gap-10 md:grid-cols-2">
       <div>
-        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-ink/70">Home essentials hub</p>
-        <h1 class="mt-3 text-4xl font-semibold md:text-5xl">Shop smarter with curated top lists.</h1>
+        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-ink/70">For your home</p>
+        <h1 class="mt-3 text-4xl font-semibold md:text-5xl">Shop smarter with clear top lists.</h1>
         <p class="mt-4 text-lg text-ink/70">
-          Best picks for your home. Trending. Trusted. Wallet-friendly.
+          Ranked picks for your home—simple, practical, and easy to compare.
         </p>
         <p class="mt-3 text-sm text-ink/70">
-          Curated guides, reviewed for clarity and real-world fit.
+          Shortlists built for real-world needs, with criteria you can understand.
         </p>
         <div class="mt-6 flex flex-wrap gap-3">
           <a class="btn" href="/categories/">Browse categories</a>
@@ -44,7 +44,7 @@ const schema = [buildBreadcrumbSchema(site, [{ name: "Home", path: "/" }])];
         </div>
       </div>
       <div class="card p-6">
-        <h2 class="text-xl font-semibold">What you will find here</h2>
+        <h2 class="text-xl font-semibold">What you’ll find here</h2>
         <ul class="mt-4 space-y-3 text-sm text-ink/70">
           <li>Best‑of lists for every room, built with consistent criteria.</li>
           <li>Trending picks and smart comparisons to speed up your decision.</li>
@@ -59,11 +59,11 @@ const schema = [buildBreadcrumbSchema(site, [{ name: "Home", path: "/" }])];
     <div class="page-container">
       <div class="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p class="text-xs font-semibold uppercase tracking-[0.3em] text-ink/70">Brand moments</p>
-          <h2 class="mt-2 text-2xl font-semibold">Small details, clearer picks.</h2>
+          <p class="text-xs font-semibold uppercase tracking-[0.3em] text-ink/70">How we keep it simple</p>
+          <h2 class="mt-2 text-2xl font-semibold">Small details. Clearer picks.</h2>
         </div>
         <p class="max-w-xl text-sm text-ink/70">
-          A friendly, modern guide with just enough warmth to feel human and just enough rigor to trust.
+          A friendly guide with enough detail to trust—and enough simplicity to move fast.
         </p>
       </div>
       <div class="mt-6 grid gap-6 md:grid-cols-3">

@@ -2,8 +2,8 @@
   {
     "slug": "kitchen",
     "name": "Kitchen",
-    "description": "Curated kitchen picks for everyday cooking.",
-    "intro": "Explore kitchen guides built for everyday cooking. Compare features, footprint, and value across the tools and small appliances that make daily meals easier.",
+    "description": "Kitchen picks for everyday cooking.",
+    "intro": "Kitchen guides to help you cook smarter at home. Compare features, footprint, and value across the tools and small appliances you’ll use every week.",
     "published": true,
     "selectionFactors": [
       "performance",

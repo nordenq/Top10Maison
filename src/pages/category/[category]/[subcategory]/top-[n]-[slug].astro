@@ -35,6 +35,12 @@ const productsWithBadges = toplist.products.map((product, index) => ({
   ...product,
   badge: toplist.list.productBadges?.[product.slug] ?? (index === 0 ? "Best Overall" : undefined)
 }));
+const articleHtml = toplist.list.articleHtml
+  ? toplist.list.articleHtml.replace(
+      /<h2>[^<]*<\/h2>\s*<p>[\s\S]*?<\/p>/,
+      `<h2>${display.schemaHeadline}</h2>\n<p>${display.intro}</p>`
+    )
+  : null;
 const breadcrumbItems = [
   { name: "Home", path: "/" },
   { name: "Categories", path: "/categories/" },
@@ -87,10 +93,10 @@ const schema = [
     </div>
   </section>
 
-  {toplist.list.articleHtml ? (
+  {articleHtml ? (
     <section class="section">
       <div class="page-container">
-        <div class="article-content" set:html={toplist.list.articleHtml} />
+        <div class="article-content" set:html={articleHtml} />
       </div>
     </section>
   ) : null}
