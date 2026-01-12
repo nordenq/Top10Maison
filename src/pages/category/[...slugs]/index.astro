@@ -318,28 +318,88 @@ if (bestToplist?.faq?.length) {
         <div class="flex flex-wrap items-end justify-between gap-4">
           <div>
             <h2 class="text-2xl font-semibold">{microGuide.title}</h2>
-            <p class="mt-2 text-sm text-ink/70">A quick sizing + value check before the picks.</p>
-          </div>
-        </div>
-
-        <div class="mt-6 grid gap-6 lg:grid-cols-3">
-          <div class="card p-5">
-            <p class="text-sm font-semibold text-ink">In 30 seconds</p>
             <div class="mt-3 space-y-2 text-sm text-ink/70">
               {microGuide.intro.map((line) => (
                 <p>{line}</p>
               ))}
             </div>
           </div>
+        </div>
 
-          <div class="grid gap-6 md:grid-cols-3 lg:col-span-2">
-            {microGuideCards.map((card) => (
-              <div class="card card-hover p-5">
-                <p class="text-sm font-semibold text-ink">{card.title}</p>
-                {card.body ? <p class="mt-2 text-sm text-ink/70">{card.body}</p> : null}
+        <div class="mt-6 grid gap-6 md:grid-cols-3">
+          {microGuideCards.map((card, index) => (
+            <div class="card card-hover p-5">
+              <div class="flex items-center gap-3">
+                <span class="brand-icon">
+                  {index % 3 === 0 ? (
+                    <svg viewBox="0 0 24 24" class="h-5 w-5" aria-hidden="true">
+                      <path
+                        d="M4 7.5C4 5.6 5.6 4 7.5 4h9C18.4 4 20 5.6 20 7.5v9c0 1.9-1.6 3.5-3.5 3.5h-9C5.6 20 4 18.4 4 16.5v-9z"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M8 9.5h8M8 12.5h5M8 15.5h6"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <circle class="accent-dot" cx="18.2" cy="6" r="1.3" fill="#2BBBAD" />
+                    </svg>
+                  ) : index % 3 === 1 ? (
+                    <svg viewBox="0 0 24 24" class="h-5 w-5" aria-hidden="true">
+                      <path
+                        d="M6 7.5h12M6 12h7M6 16.5h10"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <circle
+                        class="accent-dot"
+                        cx="18"
+                        cy="12"
+                        r="3"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <circle class="accent-dot" cx="19.5" cy="8.2" r="1.2" fill="#2BBBAD" />
+                    </svg>
+                  ) : (
+                    <svg viewBox="0 0 24 24" class="h-5 w-5" aria-hidden="true">
+                      <path
+                        d="M7.5 4.5h6.5L18 8v11c0 .9-.7 1.5-1.5 1.5h-9C6.7 20.5 6 19.9 6 19V6c0-.8.7-1.5 1.5-1.5z"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M9 12l2 2 4-4"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <circle class="accent-dot" cx="16.8" cy="6.3" r="1.2" fill="#2BBBAD" />
+                    </svg>
+                  )}
+                </span>
+                <h3 class="text-sm font-semibold text-ink">{card.title}</h3>
               </div>
-            ))}
-          </div>
+              {card.body ? <p class="mt-2 text-sm text-ink/70">{card.body}</p> : null}
+            </div>
+          ))}
         </div>
 
         {microGuide.tip || microGuide.cta ? (
@@ -374,17 +434,20 @@ if (bestToplist?.faq?.length) {
   {data.childsubcategory?.fullGuideHtml ? (
     <section class={sectionClass()} id="full-guide">
       <div class="page-container">
-        <h2 class="text-2xl font-semibold">Full {data.childsubcategory.name} Buying Guide</h2>
-        <p class="mt-2 text-sm text-ink/70">Deeper guidance if you want to compare features, sizing, and value.</p>
-
-        <details class="card card-hover mt-6 p-5">
-          <summary class="cursor-pointer text-sm font-semibold text-ink">
-            Open the full guide
-          </summary>
-          <div class="mt-4 border-t border-border pt-4">
-            <div class="article-content" set:html={data.childsubcategory.fullGuideHtml} />
+        <div class="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <h2 class="text-2xl font-semibold">
+              {data.childsubcategory.name} buying guide
+            </h2>
+            <p class="mt-2 text-sm text-ink/70">
+              A practical breakdown of sizing, value tiers, and the features that matter most.
+            </p>
           </div>
-        </details>
+        </div>
+
+        <div class="mt-6 card p-6">
+          <div class="article-content" set:html={data.childsubcategory.fullGuideHtml} />
+        </div>
       </div>
     </section>
   ) : null}
