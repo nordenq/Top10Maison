@@ -5,6 +5,14 @@ export type ChildSubcategory = {
   name: string;
   description: string;
   intentCopy: string;
+  microGuide?: {
+    title: string;
+    intro: string[];
+    bullets: string[];
+    tip?: string;
+    cta?: string;
+  };
+  fullGuideHtml?: string;
   intentTable: Array<{
     label: string;
     audience: string;
@@ -143,6 +151,17 @@ function assertFaq(items: FaqItem[], label: string): void {
   }
 }
 
+function assertMicroGuide(value: ChildSubcategory["microGuide"], label: string): void {
+  if (!value) return;
+  assertNonEmpty(value.title, `${label} microGuide title`);
+  assert(Array.isArray(value.intro) && value.intro.length > 0, `${label} microGuide intro must not be empty.`);
+  value.intro.forEach((line) => assertNonEmpty(line, `${label} microGuide intro line`));
+  assert(Array.isArray(value.bullets) && value.bullets.length > 0, `${label} microGuide bullets must not be empty.`);
+  value.bullets.forEach((line) => assertNonEmpty(line, `${label} microGuide bullet`));
+  if (value.tip) assertNonEmpty(value.tip, `${label} microGuide tip`);
+  if (value.cta) assertNonEmpty(value.cta, `${label} microGuide cta`);
+}
+
 function assertBadges(
   badges: Record<string, string> | undefined,
   label: string,
@@ -200,6 +219,10 @@ export function getCategories(): Category[] {
         assertNonEmpty(row.priceBand, `Subcategory ${subcategory.slug} intentTable priceBand`);
       }
       assertFaq(subcategory.faq, `Subcategory ${subcategory.slug}`);
+      assertMicroGuide(subcategory.microGuide, `Subcategory ${subcategory.slug}`);
+      if (subcategory.fullGuideHtml) {
+        assertNonEmpty(subcategory.fullGuideHtml, `Subcategory ${subcategory.slug} fullGuideHtml`);
+      }
       assert(Array.isArray(subcategory.subcategories) && subcategory.subcategories.length > 0, `Subcategory ${subcategory.slug} must have subcategories.`);
       assert(!subSlugs.has(subcategory.slug), `Duplicate subcategory slug in ${category.slug}: ${subcategory.slug}`);
       subSlugs.add(subcategory.slug);
@@ -228,6 +251,10 @@ export function getCategories(): Category[] {
           assertNonEmpty(row.priceBand, `Child subcategory ${childsubcategory.slug} intentTable priceBand`);
         }
         assertFaq(childsubcategory.faq, `Child subcategory ${childsubcategory.slug}`);
+        assertMicroGuide(childsubcategory.microGuide, `Child subcategory ${childsubcategory.slug}`);
+        if (childsubcategory.fullGuideHtml) {
+          assertNonEmpty(childsubcategory.fullGuideHtml, `Child subcategory ${childsubcategory.slug} fullGuideHtml`);
+        }
         assert(!childSlugs.has(childsubcategory.slug), `Duplicate child subcategory slug in ${subcategory.slug}: ${childsubcategory.slug}`);
         childSlugs.add(childsubcategory.slug);
       }
