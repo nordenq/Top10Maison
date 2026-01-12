@@ -1,5 +1,5 @@
 // Cloudflare Pages Function to Redirect Old 2-Level URLs to New 3-Level URLs
-// Catch-all: /category/appliances/[slug] => /category/kitchen/appliances/[slug]
+// Catch-all: /category/appliances/[slug] => /category/kitchen/small-appliances/[slug]
 
 export const onRequest: PagesFunction = async (context) => {
   const url = new URL(context.request.url);
@@ -8,7 +8,7 @@ export const onRequest: PagesFunction = async (context) => {
   if (pathname.startsWith("/category/appliances/")) {
     const targetPath = pathname.replace(
       "/category/appliances/",
-      "/category/kitchen/appliances/"
+      "/category/kitchen/small-appliances/"
     );
     return Response.redirect(targetPath, 301);
   }

@@ -21,16 +21,16 @@
         "answer": "Start with durability and daily ease of use, then compare features that save time."
       },
       {
-        "question": "How do I avoid overspending on appliances?",
+        "question": "How do I avoid overspending on small appliances?",
         "answer": "Focus on the few features you will use weekly and skip add-ons that inflate price."
       }
     ],
     "subcategories": [
       {
-        "slug": "appliances",
-        "name": "Appliances",
-        "description": "Air fryer picks for faster, easier meals.",
-        "intentCopy": "Compare air fryers by real-world performance, not just wattage. We highlight options built for everyday cooking and reliable results.",
+        "slug": "small-appliances",
+        "name": "Small Appliances",
+        "description": "Small appliance picks for faster, easier meals.",
+        "intentCopy": "Compare small appliances by real-world performance, not just wattage. We highlight options built for everyday cooking and reliable results.",
         "published": true,
         "intentTable": [
           {
@@ -60,7 +60,7 @@
         ],
         "faq": [
           {
-            "question": "What is the best appliance for most homes?",
+            "question": "What is the best small appliance for most homes?",
             "answer": "Pick a model that balances performance, size, and easy cleanup over extra features."
           }
         ],
