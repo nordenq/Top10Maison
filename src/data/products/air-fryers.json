@@ -1,75 +1,110 @@
 [
   {
-    "slug": "cosori-air-fryer",
-    "name": "Cosori Air Fryer",
-    "description": "Compact air fryer with fast heat-up and easy presets.",
-    "image": "/images/products/cosori-air-fryer.svg",
-    "price": "$129",
-    "affiliateUrl": "https://amzn.to/4qoMFkP",
+    "slug": "ninja-crispi-glass-air-fryer",
+    "name": "Ninja Crispi Glass Air Fryer",
+    "description": "Glass-bowl air fryer with a clamp-on heating lid and simple modes.",
+    "image": "/images/products/placeholder.svg",
+    "price": "Premium",
+    "affiliateUrl": "https://www.amazon.com/s?k=Ninja+Crispi+glass+air+fryer",
     "published": true,
     "pros": [
-      "Fast preheat",
-      "Simple controls",
-      "Even cooking"
+      "Glass bowl lets you watch food cook",
+      "Easy cleanup with dishwasher-safe glass",
+      "Simple modes and timer"
     ],
     "cons": [
-      "Limited basket size",
-      "Noisy fan"
+      "Smaller capacity than XL basket fryers",
+      "Glass bowl gets hot during cooking"
     ],
-    "bestFor": "Small households who want quick weeknight meals",
-    "uniqueValue": "Strong performance in a compact footprint",
-    "notIdealFor": "Large families",
+    "bestFor": "Cooks who care about visibility and easy cleanup",
+    "uniqueValue": "Glass cooking bowl with clamp-on heater",
+    "notIdealFor": "Large households cooking big batches",
     "specs": {
-      "Capacity": "5.8 qt",
-      "Power": "1700 W",
-      "Temperature range": "170–400°F",
-      "Basket type": "Nonstick, square",
-      "Controls": "Digital presets",
-      "Dishwasher safe parts": "Yes",
-      "Dimensions": "11.8 x 14.7 x 12.0 in",
-      "Warranty": "1 year",
-      "Noise level": "Moderate"
+      "Capacity": "4-qt glass bowl (plus 6-cup container)",
+      "Cooking modes": "Air fry, bake, reheat, warm",
+      "Design": "Clamp-on top heater",
+      "Cleaning": "Glass bowl is dishwasher-safe",
+      "Visibility": "See-through glass chamber"
     },
     "faq": [
       {
-        "question": "Is the Cosori Air Fryer easy to clean?",
-        "answer": "Yes, the basket is nonstick and the removable parts are dishwasher safe."
+        "question": "Is the glass bowl easy to clean?",
+        "answer": "Yes. The glass bowl is dishwasher-safe and wipes clean easily."
       }
     ],
     "alternatives": [
+      "cosori-turboblaze-6qt",
       "ninja-af101",
-      "instant-vortex-plus",
-      "chefman-turbofry-xl"
+      "dash-tasti-crisp"
     ],
-    "brand": "Cosori",
-    "rating": 4.6,
-    "ratingCount": 1280,
-    "reviewSnippet": "Fast, even results in a compact basket."
+    "brand": "Ninja",
+    "reviewSnippet": "Glass bowl, easy cleanup, and strong crisping in a compact footprint."
+  },
+  {
+    "slug": "our-place-wonder-oven",
+    "name": "Our Place Wonder Oven",
+    "description": "Countertop oven that air fries, bakes, roasts, toasts, reheats, and broils with steam infusion.",
+    "image": "/images/products/placeholder.svg",
+    "price": "Mid-range",
+    "affiliateUrl": "https://www.amazon.com/s?k=Our+Place+Wonder+Oven",
+    "published": true,
+    "pros": [
+      "Air fry and oven modes in one unit",
+      "Steam infusion helps keep food moist",
+      "Countertop-friendly size"
+    ],
+    "cons": [
+      "Modest capacity for big meals",
+      "Batch cooking for large groups"
+    ],
+    "bestFor": "Small kitchens that want oven-style versatility",
+    "uniqueValue": "Steam infusion for crisp exteriors and moist interiors",
+    "notIdealFor": "Large families or oversized roasts",
+    "specs": {
+      "Style": "Countertop oven air fryer",
+      "Functions": "Air fry, bake, roast, toast, reheat, broil",
+      "Steam feature": "Steam infusion",
+      "Capacity": "Compact oven for single-pan meals",
+      "Best fit": "Snacks, reheating, and small roasts"
+    },
+    "faq": [
+      {
+        "question": "Does it replace a full-size oven?",
+        "answer": "It handles small meals well but not large holiday roasts."
+      }
+    ],
+    "alternatives": [
+      "breville-smart-oven-air",
+      "instant-pot-duo-crisp",
+      "ninja-crispi-glass-air-fryer"
+    ],
+    "brand": "Our Place",
+    "reviewSnippet": "Steam infusion keeps food moist while still crisping."
   },
   {
     "slug": "ninja-af101",
-    "name": "Ninja AF101",
-    "description": "Reliable air fryer with crisp results and dishwasher-safe basket.",
-    "image": "/images/products/ninja-af101.svg",
-    "price": "$119",
-    "affiliateUrl": "https://amzn.to/4jywnDb",
+    "name": "Ninja 4-Quart Air Fryer",
+    "description": "Budget-friendly basket air fryer with strong crisping power.",
+    "image": "/images/products/ninja-af101.jpg",
+    "price": "Under $100",
+    "affiliateUrl": "https://www.amazon.com/s?k=Ninja+4-quart+air+fryer",
     "published": true,
     "pros": [
-      "Crisp finish",
-      "Solid build",
-      "Easy cleaning"
+      "Powerful crisping for wings and fries",
+      "Simple presets",
+      "Great value"
     ],
     "cons": [
-      "Small capacity",
-      "Basic presets"
+      "Nonstick basket",
+      "Small for larger households"
     ],
-    "bestFor": "Budget-conscious shoppers who still want strong performance",
-    "uniqueValue": "Great crisping at a lower price point",
-    "notIdealFor": "Cooking for more than two people",
+    "bestFor": "Budget shoppers who still want strong performance",
+    "uniqueValue": "Hot, fast convection in a compact 4-qt size",
+    "notIdealFor": "Families cooking full meals at once",
     "specs": {
       "Capacity": "4 qt",
       "Power": "1550 W",
-      "Temperature range": "105–400°F",
+      "Temperature range": "105-400\u00b0F",
       "Basket type": "Nonstick, round",
       "Controls": "Digital",
       "Dishwasher safe parts": "Yes",
@@ -79,127 +114,112 @@
     },
     "faq": [
       {
-        "question": "Does the Ninja AF101 cook evenly?",
+        "question": "Does the Ninja 4-quart air fryer cook evenly?",
         "answer": "Yes, it delivers consistent crisping when food is placed in a single layer."
       }
     ],
     "alternatives": [
-      "cosori-air-fryer",
-      "instant-vortex-plus",
-      "chefman-turbofry-xl"
+      "dash-tasti-crisp",
+      "cosori-turboblaze-6qt",
+      "ninja-foodi-dualzone"
     ],
     "brand": "Ninja",
-    "rating": 4.5,
-    "ratingCount": 980,
-    "reviewSnippet": "Crisp performance with simple controls and easy cleanup."
+    "reviewSnippet": "Crisp performance with simple controls at a budget price."
   },
   {
-    "slug": "instant-vortex-plus",
-    "name": "Instant Vortex Plus Air Fryer",
-    "description": "Versatile air fryer with a large basket and multiple cooking modes for everyday family meals.",
-    "image": "/images/products/instant-vortex-plus.svg",
-    "price": "$149",
-    "affiliateUrl": "https://amzn.to/3LBLEqs",
+    "slug": "instant-pot-duo-crisp",
+    "name": "Instant Pot Duo Crisp",
+    "description": "Multicooker that pressure cooks, slow cooks, and air fries with a dedicated lid.",
+    "image": "/images/products/placeholder.svg",
+    "price": "Around $150",
+    "affiliateUrl": "https://www.amazon.com/s?k=Instant+Pot+Duo+Crisp",
     "published": true,
     "pros": [
-      "Large capacity",
-      "Multiple cooking functions",
-      "Fast preheating",
-      "Easy-to-clean basket"
-    ],
-    "cons": [
-      "Takes up more counter space",
-      "Slightly louder than compact models"
-    ],
-    "bestFor": "Families and batch cooking",
-    "uniqueValue": "Combines large capacity with versatile cooking modes",
-    "notIdealFor": "Very small kitchens",
-    "specs": {
-      "Capacity": "6 qt",
-      "Power": "1700 W",
-      "Temperature range": "120–400°F",
-      "Basket type": "Nonstick, square",
-      "Controls": "Digital touch panel",
-      "Dishwasher safe parts": "Yes",
-      "Warranty": "1 year",
-      "Noise level": "Moderate"
-    },
-    "faq": [
-      {
-        "question": "Can the Instant Vortex Plus replace a full oven?",
-        "answer": "It works well for small meals and reheating but is best used alongside a traditional oven."
-      }
-    ],
-    "alternatives": [
-      "cosori-air-fryer",
-      "ninja-af101",
-      "chefman-turbofry-xl"
-    ],
-    "brand": "Instant",
-    "rating": 4.7,
-    "ratingCount": 860,
-    "reviewSnippet": "Large capacity with versatile cooking modes for families."
-  },
-  {
-    "slug": "chefman-turbofry-xl",
-    "name": "Chefman TurboFry XL Air Fryer",
-    "description": "Extra-large air fryer designed for cooking bigger portions with simple, no-fuss controls.",
-    "image": "/images/products/chefman-turbofry-xl.svg",
-    "price": "$129",
-    "affiliateUrl": "https://amzn.to/456flXj",
-    "published": true,
-    "pros": [
-      "Very large basket",
-      "Good airflow for crisp results",
-      "Simple temperature controls",
-      "Great value for size"
+      "Multiple cooking functions in one appliance",
+      "Air fries as well as many stand-alone units",
+      "Saves counter space versus multiple devices"
     ],
     "cons": [
       "Bulky footprint",
-      "Basic interface"
+      "Air-fry basket is smaller than full pot"
     ],
-    "bestFor": "Large households and batch cooking",
-    "uniqueValue": "One of the largest baskets available under $200",
-    "notIdealFor": "Minimalist or compact kitchens",
+    "bestFor": "Homes that want a multicooker plus air fryer",
+    "uniqueValue": "Pressure-cook and air-fry combo with a separate lid",
+    "notIdealFor": "People who want a simple basket-only fryer",
     "specs": {
-      "Capacity": "8 qt",
-      "Power": "1700 W",
-      "Temperature range": "200–400°F",
-      "Basket type": "Nonstick, rectangular",
-      "Controls": "Manual dial",
-      "Dishwasher safe parts": "Yes",
-      "Warranty": "1 year",
-      "Noise level": "Moderate"
+      "Capacity": "6.5 qt (common size)",
+      "Functions": "Pressure cook, slow cook, air fry, steam, sear",
+      "Lid system": "Swappable air-fry lid",
+      "Style": "Multi-cooker plus air fryer",
+      "Controls": "Digital presets"
     },
     "faq": [
       {
-        "question": "Is the Chefman TurboFry XL easy to use?",
-        "answer": "Yes, its manual controls make it very straightforward, especially for beginners."
+        "question": "Can you air fry full meals in one batch?",
+        "answer": "It works best for smaller batches; large meals may need two rounds."
       }
     ],
     "alternatives": [
-      "cosori-air-fryer",
-      "ninja-af101",
-      "instant-vortex-plus"
+      "breville-smart-oven-air",
+      "ninja-foodi-dualzone",
+      "ninja-af101"
     ],
-    "brand": "Chefman",
-    "rating": 4.4,
-    "ratingCount": 740,
-    "reviewSnippet": "Big basket and straightforward controls for batch cooking."
+    "brand": "Instant Pot",
+    "reviewSnippet": "A true multi-tasker that air fries well and replaces several appliances."
+  },
+  {
+    "slug": "breville-smart-oven-air",
+    "name": "Breville Smart Oven Air",
+    "description": "Premium countertop oven with strong air-fry performance and full oven modes.",
+    "image": "/images/products/placeholder.svg",
+    "price": "Premium",
+    "affiliateUrl": "https://www.amazon.com/s?k=Breville+Smart+Oven+Air",
+    "published": true,
+    "pros": [
+      "Oven-sized capacity",
+      "Wide range of cooking modes",
+      "Excellent build quality"
+    ],
+    "cons": [
+      "Large footprint",
+      "High price"
+    ],
+    "bestFor": "Home cooks who want an oven-style air fryer",
+    "uniqueValue": "Toaster-oven versatility with strong airflow",
+    "notIdealFor": "Small counters or budget-focused buyers",
+    "specs": {
+      "Style": "Countertop oven air fryer",
+      "Functions": "Toast, bake, roast, broil, warm, reheat, air fry",
+      "Capacity": "Fits a small chicken or multiple fillets",
+      "Controls": "Digital dial and presets",
+      "Best use": "Batch cooking and full meals"
+    },
+    "faq": [
+      {
+        "question": "Is it overkill for simple air frying?",
+        "answer": "Yes if you only want a small basket air fryer."
+      }
+    ],
+    "alternatives": [
+      "our-place-wonder-oven",
+      "instant-pot-duo-crisp",
+      "ninja-crispi-glass-air-fryer"
+    ],
+    "brand": "Breville",
+    "reviewSnippet": "A premium countertop oven that air fries, bakes, and roasts with consistency."
   },
   {
     "slug": "dash-tasti-crisp",
     "name": "Dash Tasti-Crisp Air Fryer",
     "description": "Compact and lightweight air fryer ideal for small portions and limited counter space.",
     "image": "/images/products/dash-tasti-crisp.svg",
-    "price": "$69",
-    "affiliateUrl": "https://amzn.to/4aROpOB",
+    "price": "Under $50",
+    "affiliateUrl": "https://www.amazon.com/s?k=Dash+2+quart+air+fryer",
     "published": true,
     "pros": [
       "Very compact design",
       "Quick heat-up",
-      "Simple controls",
-      "Affordable price"
+      "Simple controls"
     ],
     "cons": [
       "Small capacity",
@@ -211,7 +231,7 @@
     "specs": {
       "Capacity": "2.6 qt",
       "Power": "1000 W",
-      "Temperature range": "200–400°F",
+      "Temperature range": "200-400\u00b0F",
       "Basket type": "Nonstick, round",
       "Controls": "Manual dial",
       "Dishwasher safe parts": "Yes",
@@ -221,17 +241,97 @@
     "faq": [
       {
         "question": "Is the Dash Tasti-Crisp powerful enough?",
-        "answer": "Yes, it is powerful enough for small portions like fries, nuggets, and vegetables."
+        "answer": "Yes, it is strong enough for small portions like fries, nuggets, and vegetables."
       }
     ],
     "alternatives": [
-      "cosori-air-fryer",
       "ninja-af101",
-      "instant-vortex-plus"
+      "cosori-turboblaze-6qt",
+      "ninja-crispi-glass-air-fryer"
     ],
     "brand": "Dash",
-    "rating": 4.3,
-    "ratingCount": 560,
     "reviewSnippet": "Compact, quick, and ideal for small servings."
+  },
+  {
+    "slug": "ninja-foodi-dualzone",
+    "name": "Ninja Foodi DualZone Air Fryer",
+    "description": "Dual-basket air fryer for cooking two foods at once with sync finish.",
+    "image": "/images/products/placeholder.svg",
+    "price": "Mid-range",
+    "affiliateUrl": "https://www.amazon.com/s?k=Ninja+Foodi+DualZone+air+fryer",
+    "published": true,
+    "pros": [
+      "Two baskets for full meals",
+      "Sync and match cooking settings",
+      "Great for families"
+    ],
+    "cons": [
+      "Takes up counter space",
+      "Heavier than single-basket models"
+    ],
+    "bestFor": "Families cooking full meals at once",
+    "uniqueValue": "Independent dual zones with match cook",
+    "notIdealFor": "Small kitchens or occasional use",
+    "specs": {
+      "Capacity": "8 qt (two 4-qt baskets)",
+      "Zones": "Dual independent baskets",
+      "Controls": "Sync and match cook",
+      "Functions": "Air fry, roast, reheat, dehydrate",
+      "Footprint": "Large countertop appliance"
+    },
+    "faq": [
+      {
+        "question": "Can you cook two foods at different temperatures?",
+        "answer": "Yes. Each basket can be set independently."
+      }
+    ],
+    "alternatives": [
+      "instant-pot-duo-crisp",
+      "cosori-turboblaze-6qt",
+      "breville-smart-oven-air"
+    ],
+    "brand": "Ninja",
+    "reviewSnippet": "Dual baskets make full meals easy without batch cooking."
+  },
+  {
+    "slug": "cosori-turboblaze-6qt",
+    "name": "Cosori TurboBlaze 6-Quart Air Fryer",
+    "description": "6-quart air fryer with adjustable fan speeds for dialed-in crisping.",
+    "image": "/images/products/placeholder.svg",
+    "price": "Mid-range",
+    "affiliateUrl": "https://www.amazon.com/s?k=Cosori+TurboBlaze+6-Quart+Air+Fryer",
+    "published": true,
+    "pros": [
+      "Adjustable fan speeds",
+      "Roomy 6-qt capacity",
+      "Even, controlled crisping"
+    ],
+    "cons": [
+      "Slightly less crisp than top picks in some tests",
+      "Bigger footprint than compact models"
+    ],
+    "bestFor": "Most households who want airflow control",
+    "uniqueValue": "Fan-speed control for crisping",
+    "notIdealFor": "Tiny kitchens or single servings",
+    "specs": {
+      "Capacity": "6 qt",
+      "Fan speeds": "Adjustable",
+      "Controls": "Digital presets",
+      "Basket type": "Nonstick",
+      "Best use": "Family-size batches"
+    },
+    "faq": [
+      {
+        "question": "What does fan speed change?",
+        "answer": "It lets you tune airflow for crisping versus gentler reheating."
+      }
+    ],
+    "alternatives": [
+      "ninja-af101",
+      "ninja-foodi-dualzone",
+      "ninja-crispi-glass-air-fryer"
+    ],
+    "brand": "Cosori",
+    "reviewSnippet": "Adjustable fan speeds help dial in crisping for larger batches."
   }
 ]

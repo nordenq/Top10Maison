@@ -57,11 +57,11 @@ const productSchema =
 ---
 
 <article class="card card-hover group flex h-full flex-col overflow-hidden">
-  <div class="relative aspect-[4/3] w-full bg-gradient-to-br from-accent-soft to-surface">
+  <div class="relative flex aspect-[4/3] w-full items-center justify-center overflow-hidden bg-gradient-to-br from-accent-soft to-surface">
     <img
       src={product.image}
       alt={product.name}
-      class="h-full w-full object-contain p-5"
+      class="h-36 w-auto max-w-[85%] object-contain sm:h-40 lg:h-44"
       loading={loading}
       fetchpriority={fetchpriority}
       decoding="async"

@@ -1,5 +1,7 @@
 import fs from "fs/promises";
 import path from "path";
+import { execFile } from "node:child_process";
+import { promisify } from "node:util";
 import sharp from "sharp";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 
@@ -19,6 +21,7 @@ const DEFAULT_OPENAI_CONCURRENCY = 3;
 const DEFAULT_ASIN_FETCH_LIMIT = 30;
 const DEFAULT_OPENAI_IMAGE_CONCURRENCY = 2;
 const DEFAULT_OPENAI_IMAGE_MODEL = "dall-e-3";
+const execFileAsync = promisify(execFile);
 
 async function loadEnv() {
   const envPath = path.join(ROOT, ".env");
@@ -86,33 +89,8 @@ function isAmazonUrl(url) {
   return url.includes("amazon.") || url.includes("amzn.to");
 }
 
-async function fetchScrapingBee(
-  url,
-  { renderJs, countryCode = "us", premiumProxy } = {}
-) {
-  const apiKey = process.env.SCRAPINGBEE_API_KEY;
-  const apiUrl = new URL("https://app.scrapingbee.com/api/v1/");
-  apiUrl.searchParams.set("api_key", apiKey);
-  apiUrl.searchParams.set("url", url);
-  apiUrl.searchParams.set("country_code", countryCode);
-  const shouldRender =
-    typeof renderJs === "boolean"
-      ? renderJs
-      : String(process.env.SCRAPINGBEE_RENDER_JS || "") === "1";
-  const shouldUsePremium =
-    typeof premiumProxy === "boolean" ? premiumProxy : isAmazonUrl(url);
-  if (shouldRender) {
-    apiUrl.searchParams.set("render_js", "true");
-  }
-  if (shouldUsePremium) {
-    apiUrl.searchParams.set("premium_proxy", "true");
-  }
-  const response = await fetch(apiUrl.toString());
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`ScrapingBee failed (${response.status}) for ${url}: ${errorText}`);
-  }
-  return response.text();
+async function fetchHtmlDisabled() {
+  throw new Error("Auto-generation is disabled. Manual content only.");
 }
 
 function parseJsonLd(html) {
@@ -161,8 +139,18 @@ function extractTitle(html) {
 }
 
 function extractPrice(html) {
-  const match = html.match(/id="priceblock_(?:dealprice|ourprice)"[^>]*>\s*([^<]+)<\/span>/i);
-  return match ? stripTags(match[1]) : null;
+  const priceBlock = html.match(/id="priceblock_(?:dealprice|ourprice|saleprice)"[^>]*>\s*([^<]+)<\/span>/i);
+  if (priceBlock) return stripTags(priceBlock[1]);
+  const offscreen = html.match(/class="a-offscreen"[^>]*>\s*([^<]+)<\/span>/i);
+  if (offscreen) return stripTags(offscreen[1]);
+  const whole = html.match(/class="a-price-whole"[^>]*>\s*([\d,.]+)<\/span>/i);
+  const fraction = html.match(/class="a-price-fraction"[^>]*>\s*(\d+)<\/span>/i);
+  if (whole) {
+    const wholeValue = stripTags(whole[1]).replace(/,/g, "");
+    const fractionValue = fraction ? stripTags(fraction[1]) : "";
+    return fractionValue ? `$${wholeValue}.${fractionValue}` : `$${wholeValue}`;
+  }
+  return null;
 }
 
 function extractRating(html) {
@@ -182,11 +170,42 @@ function extractImage(html) {
   return match ? match[1] : null;
 }
 
+function extractReviewHighlights(html) {
+  const bodies = [...html.matchAll(/data-hook="review-body"[^>]*>\s*<span[^>]*>([\s\S]*?)<\/span>/gi)]
+    .map((match) => stripTags(match[1]))
+    .filter(Boolean);
+  const titles = [...html.matchAll(/data-hook="review-title"[^>]*>\s*([\s\S]*?)<\/(?:a|span)>/gi)]
+    .map((match) => stripTags(match[1]))
+    .filter(Boolean);
+  const combined = [];
+  for (const item of titles) combined.push(item);
+  for (const item of bodies) combined.push(item);
+  return combined.slice(0, 4);
+}
+
+function extractAsinFromText(value) {
+  if (!value) return "";
+  const match =
+    value.match(/\/dp\/([A-Z0-9]{10})/) ||
+    value.match(/\/gp\/product\/([A-Z0-9]{10})/) ||
+    value.match(/data-asin="([A-Z0-9]{10})"/);
+  return match ? match[1] : "";
+}
+
 function normalizePrice(value) {
   if (!value) return null;
   const cleaned = value.replace(/[^0-9.]/g, "");
   if (!cleaned) return null;
   return `$${cleaned}`;
+}
+
+function extractOfferPrice(offers) {
+  if (!offers) return null;
+  const priceValue =
+    typeof offers.price === "number" || typeof offers.price === "string"
+      ? offers.price
+      : offers.priceSpecification?.price;
+  return priceValue ? String(priceValue) : null;
 }
 
 function applyAssociateTag(url, tag, fallbackAsin) {
@@ -207,18 +226,47 @@ function applyAssociateTag(url, tag, fallbackAsin) {
   }
 }
 
-async function fetchAmazonSearchAsins(query) {
-  const searchUrl = `https://www.amazon.com/s?k=${encodeURIComponent(query)}`;
-  const html = await fetchScrapingBee(searchUrl);
-  const asins = [...html.matchAll(/data-asin="([A-Z0-9]{10})"/g)]
-    .map((match) => match[1])
-    .filter((asin) => asin && asin !== "")
-    .filter((asin, index, array) => array.indexOf(asin) === index)
-    .slice(0, SEARCH_RESULTS_LIMIT);
-  if (asins.length === 0) {
-    throw new Error(`No ASINs found for query: ${query}`);
+function updateProductFromScrape(existing, scraped, ai, associateTag) {
+  if (!existing) return null;
+  const updated = { ...existing };
+  if (scraped?.asin) {
+    updated.asin = scraped.asin;
   }
-  return asins;
+  if (scraped?.title) {
+    updated.name = scraped.title;
+  }
+  if (scraped?.brand) {
+    updated.brand = scraped.brand;
+  }
+  updated.price = normalizePrice(scraped?.price) || updated.price;
+  updated.image = scraped?.image || updated.image;
+  updated.rating = scraped?.rating || updated.rating;
+  updated.ratingCount = scraped?.reviewCount || updated.ratingCount;
+  updated.affiliateUrl = applyAssociateTag(
+    updated.affiliateUrl || (scraped?.asin ? `https://www.amazon.com/dp/${scraped.asin}` : ""),
+    associateTag,
+    scraped?.asin
+  );
+
+  if (ai) {
+    const normalizedAi = sanitizeAiProduct(ai, updated.name || existing.name || "Product");
+    updated.description = normalizedAi.description;
+    updated.reviewSnippet = normalizedAi.reviewSnippet;
+    updated.pros = normalizedAi.pros;
+    updated.cons = normalizedAi.cons;
+    updated.bestFor = normalizedAi.bestFor;
+    updated.uniqueValue = normalizedAi.uniqueValue;
+    updated.notIdealFor = normalizedAi.notIdealFor;
+    updated.specs = normalizedAi.specs;
+    updated.faq = normalizedAi.faq;
+  }
+
+  return updated;
+}
+
+async function fetchAmazonSearchAsins(query) {
+  await fetchHtmlDisabled();
+  return [];
 }
 
 async function loadToplists() {
@@ -506,21 +554,18 @@ async function updateOpenAiImages({ categories, toplists, refresh, concurrency }
 }
 
 async function fetchAmazonProduct(asin) {
-  const url = `https://www.amazon.com/dp/${asin}`;
-  const html = await fetchScrapingBee(url);
-  const jsonLd = findProductJsonLd(parseJsonLd(html));
-  const aggregate = jsonLd?.aggregateRating;
-  const offers = Array.isArray(jsonLd?.offers) ? jsonLd.offers[0] : jsonLd?.offers;
+  await fetchHtmlDisabled();
   return {
     asin,
-    title: jsonLd?.name || extractTitle(html),
-    brand: jsonLd?.brand?.name || null,
-    price: offers?.price || extractPrice(html),
-    image: Array.isArray(jsonLd?.image) ? jsonLd.image[0] : jsonLd?.image || extractImage(html),
-    rating: aggregate?.ratingValue || extractRating(html),
-    reviewCount: aggregate?.reviewCount || extractReviewCount(html),
-    bullets: extractFeatureBullets(html),
-    url
+    title: null,
+    brand: null,
+    price: null,
+    image: null,
+    rating: null,
+    reviewCount: null,
+    bullets: [],
+    reviewHighlights: [],
+    url: `https://www.amazon.com/dp/${asin}`
   };
 }
 
@@ -559,7 +604,8 @@ async function generateProductCopy(product, categoryName) {
       instructions: {
         style: "Concise, SEO-friendly, neutral, no fluff.",
         tone: "Curated, clear, value-focused, practical.",
-        constraints: "Do not claim hands-on testing, lab testing, or first-hand experience. Avoid mentioning sources or other websites.",
+        constraints:
+          "Do not claim hands-on testing, lab testing, or first-hand experience. Avoid mentioning sources or other websites. Base pros/cons on review themes when provided.",
         requirements: {
           pros: 3,
           cons: 2,
@@ -572,6 +618,7 @@ async function generateProductCopy(product, categoryName) {
         title: product.title,
         brand: product.brand,
         bullets: product.bullets,
+        reviewHighlights: product.reviewHighlights,
         rating: product.rating,
         reviewCount: product.reviewCount
       }
@@ -717,29 +764,33 @@ function toProductEntry({ base, ai, slug, affiliateUrl }) {
 async function main() {
   await loadEnv();
   const hasOpenAI = Boolean(process.env.OPENAI_API_KEY);
-  const hasScrapingBee = Boolean(process.env.SCRAPINGBEE_API_KEY);
+  const enableAutoGeneration = String(process.env.ENABLE_AUTOGENERATION || "").toLowerCase() === "1";
   const associateTag = process.env.AMAZON_ASSOCIATE_TAG || process.env.AMAZON_AFFILIATE_TAG || "";
+  const overwriteProducts = String(process.env.OVERWRITE_PRODUCTS || "").toLowerCase() === "1";
+  const fetchProductImages = String(process.env.FETCH_PRODUCT_IMAGES || "").toLowerCase() === "1";
+  const forceProductImages = String(process.env.FETCH_PRODUCT_IMAGES_FORCE || "").toLowerCase() === "1";
+  const pythonBin = process.env.PYTHON_BIN || "python3";
   const enableImageGeneration = String(process.env.ENABLE_OPENAI_IMAGES || "").toLowerCase() === "1";
   const refreshImages = String(process.env.REFRESH_OPENAI_IMAGES || "").toLowerCase() === "1";
   const skipGeneration = String(process.env.SKIP_AI_GENERATION || "").toLowerCase() === "1";
   const isCloudflarePages = Boolean(process.env.CF_PAGES);
   const forceGeneration = String(process.env.FORCE_AI_GENERATION || "").toLowerCase() === "1";
-  const scraperConcurrency = Number(
-    process.env.SCRAPINGBEE_CONCURRENCY || process.env.SCRAPER_CONCURRENCY || DEFAULT_SCRAPER_CONCURRENCY
-  );
+  const scraperConcurrency = Number(process.env.SCRAPER_CONCURRENCY || DEFAULT_SCRAPER_CONCURRENCY);
   const openAiConcurrency = Number(process.env.OPENAI_CONCURRENCY || DEFAULT_OPENAI_CONCURRENCY);
   const openAiImageConcurrency = Number(
     process.env.OPENAI_IMAGE_CONCURRENCY || DEFAULT_OPENAI_IMAGE_CONCURRENCY
   );
   const asinFetchLimit = Number(process.env.ASIN_FETCH_LIMIT || DEFAULT_ASIN_FETCH_LIMIT);
 
-  if (skipGeneration || (isCloudflarePages && !forceGeneration) || !hasOpenAI || !hasScrapingBee) {
+  if (!enableAutoGeneration || skipGeneration || (isCloudflarePages && !forceGeneration) || !hasOpenAI) {
     if (skipGeneration) {
       console.log("Skipping AI/product generation: SKIP_AI_GENERATION=1.");
+    } else if (!enableAutoGeneration) {
+      console.log("Skipping AI/product generation: ENABLE_AUTOGENERATION is not set.");
     } else if (isCloudflarePages && !forceGeneration) {
       console.log("Skipping AI/product generation: running on Cloudflare Pages.");
     } else {
-      console.log("Skipping AI/product generation: missing OPENAI_API_KEY or SCRAPINGBEE_API_KEY.");
+      console.log("Skipping AI/product generation: missing OPENAI_API_KEY.");
     }
     if (enableImageGeneration || refreshImages) {
       const [categoriesRaw, toplists] = await Promise.all([
@@ -760,6 +811,22 @@ async function main() {
         await saveToplists(toplists);
       }
     }
+    if (fetchProductImages) {
+      const args = ["scripts/fetch-amazon-images.py"];
+      if (!forceProductImages) {
+        args.push("--only-missing");
+      }
+      const { stdout, stderr } = await execFileAsync(pythonBin, args, {
+        cwd: ROOT,
+        maxBuffer: 1024 * 1024
+      });
+      if (stdout?.trim()) {
+        console.log(stdout.trim());
+      }
+      if (stderr?.trim()) {
+        console.error(stderr.trim());
+      }
+    }
     return;
   }
 
@@ -770,6 +837,7 @@ async function main() {
   const categories = JSON.parse(categoriesRaw);
 
   const productsByType = new Map();
+  const imageSlugs = new Set();
 
   for (const list of toplists) {
     if (!list.published || !TARGET_CHILD_SUBCATEGORIES.includes(list.childsubcategory)) {
@@ -777,7 +845,7 @@ async function main() {
     }
 
     const productsFile = path.join(PRODUCTS_DIR, `${list.childsubcategory}.json`);
-    const existingProducts = await fs
+    let existingProducts = await fs
       .readFile(productsFile, "utf8")
       .then((data) => JSON.parse(data))
       .catch(() => []);
@@ -885,6 +953,7 @@ async function main() {
         .map((item) => item.slug);
       return { ...product, alternatives };
     });
+    withAlternatives.forEach((product) => imageSlugs.add(product.slug));
 
     const articleHtml = await generateToplistArticle({
       title: list.title,
@@ -897,7 +966,7 @@ async function main() {
     list.articleHtml = articleHtml;
     list.count = Math.min(list.count || MAX_PRODUCTS, MAX_PRODUCTS, withAlternatives.length);
 
-    const existingTypeProducts = productsByType.get(list.childsubcategory) ?? [];
+    const existingTypeProducts = overwriteProducts ? [] : productsByType.get(list.childsubcategory) ?? [];
     const mergedBySlug = new Map(existingTypeProducts.map((item) => [item.slug, item]));
     for (const product of withAlternatives) {
       mergedBySlug.set(product.slug, product);
@@ -909,6 +978,26 @@ async function main() {
   for (const [type, products] of productsByType.entries()) {
     const outputPath = path.join(PRODUCTS_DIR, `${type}.json`);
     await fs.writeFile(outputPath, `${JSON.stringify(products, null, 2)}\n`);
+  }
+
+  if (fetchProductImages) {
+    const args = ["scripts/fetch-amazon-images.py"];
+    if (!forceProductImages) {
+      args.push("--only-missing");
+    }
+    if (imageSlugs.size > 0) {
+      args.push("--slugs", ...Array.from(imageSlugs.values()));
+    }
+    const { stdout, stderr } = await execFileAsync(pythonBin, args, {
+      cwd: ROOT,
+      maxBuffer: 1024 * 1024
+    });
+    if (stdout?.trim()) {
+      console.log(stdout.trim());
+    }
+    if (stderr?.trim()) {
+      console.error(stderr.trim());
+    }
   }
 
   if (enableImageGeneration || refreshImages) {
