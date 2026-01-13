@@ -5,6 +5,7 @@ import { CSP_NONCE } from "../utils/csp";
 <div
   class="fixed inset-0 z-50 pointer-events-none data-[state=open]:pointer-events-auto"
   aria-hidden="true"
+  inert
   data-state="closed"
   data-product-drawer
 >
@@ -44,6 +45,7 @@ import { CSP_NONCE } from "../utils/csp";
     let activeUrl = null;
     let fetchController = null;
     let trustedHtmlPolicy = null;
+    let lastActiveElement = null;
 
     const getTrustedHtml = (value) => {
       if (!window.trustedTypes) return value;
@@ -68,15 +70,28 @@ import { CSP_NONCE } from "../utils/csp";
     const setOpenState = (open) => {
       isOpen = open;
       drawerRoot.dataset.state = open ? "open" : "closed";
-      drawerRoot.setAttribute("aria-hidden", open ? "false" : "true");
       overlay.dataset.state = open ? "open" : "closed";
       panel.dataset.state = open ? "open" : "closed";
       if (open) {
+        drawerRoot.inert = false;
+        drawerRoot.setAttribute("aria-hidden", "false");
         closeButton?.focus();
+      } else {
+        if (lastActiveElement && typeof lastActiveElement.focus === "function") {
+          lastActiveElement.focus();
+        }
+        drawerRoot.inert = true;
+        drawerRoot.setAttribute("aria-hidden", "true");
+        lastActiveElement = null;
       }
     };
 
+    const stripScripts = (root) => {
+      root.querySelectorAll("script").forEach((script) => script.remove());
+    };
+
     const replaceDrawerContent = (source) => {
+      stripScripts(source);
       const nodes = Array.from(source.childNodes).map((node) => document.importNode(node, true));
       content.replaceChildren(...nodes);
     };
@@ -115,6 +130,7 @@ import { CSP_NONCE } from "../utils/csp";
     const openDrawer = async (url, { push = true } = {}) => {
       if (!url) return;
       activeUrl = url;
+      lastActiveElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
       setOpenState(true);
       if (push) {
         history.pushState({ drawerOpen: true, url }, "", url);
