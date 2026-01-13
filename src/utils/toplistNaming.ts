@@ -52,14 +52,13 @@ export function buildToplistFraming(args: {
   useCase: string;
 }) {
   const productName = args.productName.trim();
-  const useCase = args.useCase.trim();
   const year = args.year;
   const count = args.count;
 
-  const title = `Best ${productName} of ${year} (Top ${count} Picks)`;
-  const h1 = `Best ${productName} of ${year} — Top ${count} Picks for ${useCase}`;
+  const title = `Best ${productName} of ${year} - Top ${count} Picks for Home Use`;
+  const h1 = `Best ${productName} of ${year}`;
   const schemaHeadline = `Best ${productName} of ${year}`;
-  const intro = `We compared the most popular ${productName.toLowerCase()} of ${year} using reviews, features, and pricing to identify the best options for ${useCase.toLowerCase()}. These ${count} picks stand out for value, ease of use, and practical performance.`;
+  const intro = `Compare the best ${productName.toLowerCase()} for home use with this top list of ${count} picks. This comparison ranks models by performance, ease of use, and value for everyday use.`;
 
   return { title, h1, schemaHeadline, intro };
 }

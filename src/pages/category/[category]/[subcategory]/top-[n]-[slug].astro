@@ -27,11 +27,11 @@ const redirectPath = childSubcategoryUrl(
   toplist.childsubcategory.slug
 );
 const redirectUrl = buildCanonical(site, redirectPath);
-const description = `This guide has moved to ${redirectUrl}. You are being redirected.`;
+const description = `This top list has moved to ${redirectUrl}. You are being redirected.`;
 ---
 
 <Layout
-  title="Guide moved | Top10Maison"
+  title="Top list moved | Top10Maison"
   description={description}
   canonical={redirectUrl}
   robots="noindex,follow"
@@ -39,7 +39,7 @@ const description = `This guide has moved to ${redirectUrl}. You are being redir
 >
   <section class="section">
     <div class="mx-auto w-full max-w-3xl text-center">
-      <h1 class="text-2xl font-semibold">This guide has moved</h1>
+      <h1 class="text-2xl font-semibold">This top list has moved</h1>
       <p class="mt-3 text-sm text-ink/70">
         We now use category pages for browsing. You’ll be redirected automatically.
       </p>

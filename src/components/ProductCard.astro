@@ -24,7 +24,6 @@ export interface Props {
 
 const { product, rank, schema = false, loading = "lazy", fetchpriority } = Astro.props as Props;
 const productLink = product.slug ? `/product/${product.slug}/` : null;
-const priceValue = product.price ? product.price.replace(/[^0-9.]/g, "") : "";
 const productSchema =
   schema && product.name && product.image
     ? {
@@ -40,15 +39,6 @@ const productSchema =
                 "@type": "AggregateRating",
                 ratingValue: product.rating,
                 reviewCount: 1
-              }
-            }
-          : {}),
-        ...(priceValue || product.affiliateUrl
-          ? {
-              offers: {
-                "@type": "Offer",
-                ...(priceValue ? { price: priceValue, priceCurrency: "USD" } : {}),
-                ...(product.affiliateUrl ? { url: product.affiliateUrl } : {})
               }
             }
           : {})

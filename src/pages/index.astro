@@ -10,7 +10,7 @@ import { getToplistDisplay } from "../utils/toplistDisplay";
 const dataIndex = getDataIndex();
 const { categories, toplists, categoryMap, subcategoryMap, childSubcategoryMap } = dataIndex;
 const ogImage = categories[0]?.image ?? "/logo.svg";
-const latestGuides = [...toplists]
+const latestToplists = [...toplists]
   .sort((a, b) => {
     const aTime = a.schemaDatePublished ? Date.parse(a.schemaDatePublished) : 0;
     const bTime = b.schemaDatePublished ? Date.parse(b.schemaDatePublished) : 0;
@@ -20,7 +20,8 @@ const latestGuides = [...toplists]
 
 const site = requireSite(Astro.site);
 const title = "Top10Maison — Trending Product Rankings for Every Room";
-const description = "Compare the best home products, track what’s trending, and find what fits your home faster.";
+const description =
+  "Compare the best home products with clear top lists, side-by-side rankings, and practical picks for home use.";
 const canonical = buildCanonical(site, "/");
 const schema = [buildBreadcrumbSchema(site, [{ name: "Home", path: "/" }])];
 ---
@@ -94,7 +95,7 @@ const schema = [buildBreadcrumbSchema(site, [{ name: "Home", path: "/" }])];
         </div>
       </div>
       <div class="mt-6 grid gap-6 md:grid-cols-2">
-        {latestGuides.map((list, index) => {
+        {latestToplists.map((list, index) => {
           const childKey = `${list.category}:${list.subcategory}:${list.childsubcategory}`;
           const child = childSubcategoryMap.get(childKey);
           const category = categoryMap.get(list.category);
@@ -131,7 +132,7 @@ const schema = [buildBreadcrumbSchema(site, [{ name: "Home", path: "/" }])];
               />
               <div class="p-5">
                 <p class="text-xs font-semibold uppercase tracking-[0.25em] text-ink/70">
-                  {child?.name ?? subcategory?.name ?? category?.name ?? "Guide"}
+                  {child?.name ?? subcategory?.name ?? category?.name ?? "Top list"}
                 </p>
                 <h3 class="mt-2 text-lg font-semibold">{display.schemaHeadline}</h3>
                 <p class="mt-2 text-sm text-ink/70">{list.metaDescription}</p>
@@ -162,7 +163,7 @@ const schema = [buildBreadcrumbSchema(site, [{ name: "Home", path: "/" }])];
           <h2 class="mt-2 text-2xl font-semibold">Small details. Clearer picks.</h2>
         </div>
         <p class="max-w-xl text-sm text-ink/70">
-          A friendly guide with enough detail to trust—and enough simplicity to move fast.
+          Clear rankings with enough detail to trust and enough simplicity to move fast.
         </p>
       </div>
       <div class="mt-6 grid gap-6 md:grid-cols-3">

@@ -20,6 +20,27 @@ export function buildBreadcrumbSchema(
 }
 
 export function buildProductSchema(site: URL, product: Product): SchemaGraph {
+  const positiveNotes = product.pros?.length
+    ? {
+        "@type": "ItemList",
+        itemListElement: product.pros.map((value, index) => ({
+          "@type": "ListItem",
+          position: index + 1,
+          name: value
+        }))
+      }
+    : undefined;
+  const negativeNotes = product.cons?.length
+    ? {
+        "@type": "ItemList",
+        itemListElement: product.cons.map((value, index) => ({
+          "@type": "ListItem",
+          position: index + 1,
+          name: value
+        }))
+      }
+    : undefined;
+
   return {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -27,6 +48,8 @@ export function buildProductSchema(site: URL, product: Product): SchemaGraph {
     description: product.description,
     image: new URL(product.image, site).toString(),
     ...(product.brand ? { brand: { "@type": "Brand", name: product.brand } } : {}),
+    ...(positiveNotes ? { positiveNotes } : {}),
+    ...(negativeNotes ? { negativeNotes } : {}),
     ...(typeof product.rating === "number"
       ? {
           aggregateRating: {
@@ -35,18 +58,32 @@ export function buildProductSchema(site: URL, product: Product): SchemaGraph {
             reviewCount: product.ratingCount ?? 1
           }
         }
-      : {}),
-    offers: {
-      "@type": "Offer",
-      url: new URL(productUrl(product.slug), site).toString(),
-      priceCurrency: "USD",
-      price: product.price.replace(/[^0-9.]/g, ""),
-      availability: "https://schema.org/InStock"
-    }
+      : {})
   };
 }
 
 export function buildReviewSchema(site: URL, product: Product): SchemaGraph {
+  const positiveNotes = product.pros?.length
+    ? {
+        "@type": "ItemList",
+        itemListElement: product.pros.map((value, index) => ({
+          "@type": "ListItem",
+          position: index + 1,
+          name: value
+        }))
+      }
+    : undefined;
+  const negativeNotes = product.cons?.length
+    ? {
+        "@type": "ItemList",
+        itemListElement: product.cons.map((value, index) => ({
+          "@type": "ListItem",
+          position: index + 1,
+          name: value
+        }))
+      }
+    : undefined;
+
   return {
     "@context": "https://schema.org",
     "@type": "Review",
@@ -59,6 +96,8 @@ export function buildReviewSchema(site: URL, product: Product): SchemaGraph {
       "@type": "Organization",
       name: "Top10Maison"
     },
+    ...(positiveNotes ? { positiveNotes } : {}),
+    ...(negativeNotes ? { negativeNotes } : {}),
     ...(typeof product.rating === "number"
       ? {
           reviewRating: {

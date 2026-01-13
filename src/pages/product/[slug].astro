@@ -38,6 +38,9 @@ const relatedProducts = relatedToplist
       .filter((item): item is NonNullable<typeof item> => Boolean(item))
   : [];
 
+const pageTitle = `${product.name} Review - Pros, Cons & Who It's Best For`;
+const verdict = product.reviewSnippet ?? product.description;
+
 const site = requireSite(Astro.site);
 const canonical = buildCanonical(site, productUrl(product.slug));
 const breadcrumbItems =
@@ -71,7 +74,7 @@ const schema = [
 ---
 
 <Layout
-  title={product.metaTitle || product.name}
+  title={pageTitle}
   description={product.metaDescription || product.description}
   canonical={canonical}
   schema={schema}
@@ -100,6 +103,39 @@ const schema = [
       <div class="mt-6">
         <AffiliateButton url={product.affiliateUrl} label="View on Amazon" productSlug={product.slug} />
       </div>
+
+      <section class="mt-10">
+        <h2 class="text-xl font-semibold">Short verdict</h2>
+        <p class="mt-3 text-ink/70">{verdict}</p>
+      </section>
+
+      <section class="mt-10">
+        <h2 class="text-xl font-semibold">Pros and cons</h2>
+        <div class="mt-4 grid gap-6 text-sm text-ink/70 md:grid-cols-2">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-wide text-ink">Pros</p>
+            <ul class="mt-3 list-disc list-inside space-y-2">
+              {product.pros.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-wide text-ink">Cons</p>
+            <ul class="mt-3 list-disc list-inside space-y-2">
+              {product.cons.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="mt-10">
+        <h2 class="text-xl font-semibold">Who this is best for</h2>
+        <p class="mt-3 text-ink/70">{product.bestFor}</p>
+        {product.notIdealFor ? <p class="mt-2 text-sm text-ink/60">Not ideal for: {product.notIdealFor}</p> : null}
+      </section>
 
       <section class="mt-10">
         <h2 class="text-xl font-semibold">Specifications</h2>
