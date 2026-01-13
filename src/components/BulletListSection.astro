@@ -12,7 +12,7 @@ const { title, items, intro, id, surface = false } = Astro.props as {
   <div class="page-container">
     <h2 class="text-2xl font-semibold">{title}</h2>
     {intro ? <p class="mt-3 text-sm text-ink/70">{intro}</p> : null}
-    <ul class="mt-4 list-disc list-inside space-y-2 text-sm text-ink/70">
+    <ul class="mt-4 list-clean space-y-2 text-sm text-ink/70">
       {items.map((item) => (
         <li>{item}</li>
       ))}

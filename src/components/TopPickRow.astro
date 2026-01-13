@@ -1,5 +1,6 @@
 ---
 import { CSP_NONCE } from "../utils/csp";
+import ImageStage from "./ImageStage.astro";
 
 export interface Props {
   image: string;
@@ -59,26 +60,21 @@ const productSchema =
     : null;
 ---
 
-<article class="card card-hover grid gap-6 p-5 md:grid-cols-[40%_60%] md:p-7">
-  <div class="relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-xl bg-surface-muted">
-    <img
+<article class="card card-hover grid gap-6 p-5 md:grid-cols-[280px_1fr] md:p-7">
+  <div class="relative">
+    <ImageStage
       src={image}
       alt={title}
-      class="max-h-[90%] max-w-[90%] object-contain"
-      loading={loading}
+      eager={loading === "eager"}
       fetchpriority={fetchpriority}
-      decoding="async"
-      width="400"
-      height="300"
-      onerror="this.onerror=null;this.src='/images/products/placeholder.svg';"
     />
     {badge ? (
-      <span class="tag absolute left-3 top-3 bg-accent font-semibold text-white">
+      <span class="tag absolute left-3 top-3 bg-accent font-semibold text-white px-4 py-2 text-sm md:text-base">
         {badge}
       </span>
     ) : null}
     {typeof rank === "number" ? (
-      <span class="tag absolute right-3 top-3 bg-surface/90 font-semibold text-ink">
+      <span class="tag absolute right-3 top-3 bg-surface/90 font-semibold text-ink px-4 py-2 text-sm md:text-base">
         #{rank}
       </span>
     ) : null}
@@ -103,7 +99,7 @@ const productSchema =
         {pros.length ? (
           <div>
             <p class="text-xs font-semibold uppercase tracking-wide text-ink">Pros</p>
-            <ul class="mt-2 list-disc list-inside space-y-1">
+            <ul class="mt-2 list-clean space-y-1">
               {pros.slice(0, 3).map((item) => (
                 <li>{item}</li>
               ))}
@@ -113,7 +109,7 @@ const productSchema =
         {cons.length ? (
           <div>
             <p class="text-xs font-semibold uppercase tracking-wide text-ink">Cons</p>
-            <ul class="mt-2 list-disc list-inside space-y-1">
+            <ul class="mt-2 list-clean space-y-1">
               {cons.slice(0, 2).map((item) => (
                 <li>{item}</li>
               ))}

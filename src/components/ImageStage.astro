@@ -1,0 +1,20 @@
+---
+const { src, alt, eager = false, fetchpriority } = Astro.props as {
+  src: string;
+  alt: string;
+  eager?: boolean;
+  fetchpriority?: "high" | "low";
+};
+---
+
+<div class="relative aspect-square overflow-hidden rounded-xl bg-surface flex items-center justify-center">
+  <img
+    src={src}
+    alt={alt}
+    loading={eager ? "eager" : "lazy"}
+    decoding="async"
+    class="w-[130%] h-full object-contain"
+    fetchpriority={fetchpriority}
+    onerror="this.onerror=null;this.src='/images/products/placeholder.svg';"
+  />
+</div>
