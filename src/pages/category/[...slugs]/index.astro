@@ -9,6 +9,7 @@ import QuickSummary from "../../../components/QuickSummary.astro";
 import BuyingGuide from "../../../components/BuyingGuide.astro";
 import FeaturesThatMatter from "../../../components/FeaturesThatMatter.astro";
 import FAQ from "../../../components/FAQ.astro";
+import AudienceSplit from "../../../components/AudienceSplit.astro";
 import { getBestToplistForChild, getCategoryData } from "../../../utils/data";
 import { getDataIndex } from "../../../utils/dataIndex";
 import { buildCanonical, requireSite } from "../../../utils/seo";
@@ -78,7 +79,7 @@ const pageDescription = data.childsubcategory && bestToplistDescription
   : data.childsubcategory?.description ?? data.subcategory?.description ?? data.category.description;
 const introParagraph =
   bestToplist && data.childsubcategory
-    ? `Compare the best ${productName.toLowerCase()} for home use with this top ${bestToplist.count} list. This comparison ranks models by performance, ease of use, and value.`
+    ? `Compare the best ${productName.toLowerCase()} for home use in this top ${bestToplist.count} list, ranked by performance, ease of use, and value.`
     : pageDescription;
 const ogImage =
   data.childsubcategory?.image ??
@@ -135,6 +136,19 @@ const featuredToplistsTitle = showChildSubcategories ? "Top lists in this subcat
 const featuredToplistsIntro = showChildSubcategories
   ? data.subcategory?.intentCopy ?? data.subcategory?.description ?? "Ranked picks to compare the best options."
   : "Ranked picks to compare the best options for home use.";
+const formatCriteriaList = (items: string[]) => {
+  if (items.length === 1) return items[0];
+  if (items.length === 2) return `${items[0]} and ${items[1]}`;
+  return `${items.slice(0, -1).join(", ")}, and ${items[items.length - 1]}`;
+};
+const topPicksIntro = bestToplist?.quickCompareCriteria?.length
+  ? `Ranked picks compared across ${formatCriteriaList(
+      bestToplist.quickCompareCriteria.map((item) => item.toLowerCase())
+    )}.`
+  : bestToplist?.metaDescription;
+const whoForItems = bestToplist?.whoShouldBuy ?? [];
+const whoSkipItems = guide?.whoShouldSkip ?? [];
+const hasAudienceSplit = whoForItems.length || whoSkipItems.length;
 
 let stripeIndex = 0;
 const takeSurface = () => stripeIndex++ % 2 === 0;
@@ -153,6 +167,7 @@ const tocItems = bestToplist
         ? [{ id: "features-that-matter", label: "Features that matter" }]
         : []),
       ...(guide?.commonMistakes?.length ? [{ id: "common-mistakes", label: "Common mistakes" }] : []),
+      ...(hasAudienceSplit ? [{ id: "who-this-is-for", label: "Who this is for" }] : []),
       ...(bestToplist?.howWePicked?.length ? [{ id: "how-we-picked", label: "How we picked" }] : []),
       ...(faqItems.length ? [{ id: "faq", label: "FAQ" }] : [])
     ]
@@ -254,15 +269,13 @@ if (faqItems.length) {
   {bestToplist ? (
     <section class={sectionClass()} id="toplist-article">
       <div class="page-container">
-        <div class="lg:flex lg:items-start lg:gap-8">
-          <aside class="order-1 lg:order-2 lg:w-64">
-            {tocItems.length ? <ArticleToc items={tocItems} /> : null}
-          </aside>
-          <div class="order-2 mt-6 space-y-6 lg:order-1 lg:mt-0 lg:flex-1">
+        <div class="space-y-6">
+          {tocItems.length ? <ArticleToc items={tocItems} /> : null}
+          <div class="space-y-6">
             <div class={articleSectionClass()}>
               <ProductGridSection
                 title={`Top Picks: Best ${data.childsubcategory.name}`}
-                intro={bestToplist?.metaDescription}
+                intro={topPicksIntro}
                 products={bestToplistProductsWithBadges}
                 schema
                 id="top-picks"
@@ -309,20 +322,9 @@ if (faqItems.length) {
               </div>
             ) : null}
 
-            {guide?.whoShouldSkip?.length ? (
+            {hasAudienceSplit ? (
               <div class={articleSectionClass()}>
-                <section id="who-should-skip">
-                  <details class="card p-4">
-                    <summary class="cursor-pointer text-sm font-semibold text-ink">
-                      Who should skip this product
-                    </summary>
-                    <ul class="mt-3 list-disc list-inside space-y-2 text-sm text-ink/70">
-                      {guide.whoShouldSkip.map((item) => (
-                        <li>{item}</li>
-                      ))}
-                    </ul>
-                  </details>
-                </section>
+                <AudienceSplit forList={whoForItems} skipList={whoSkipItems} />
               </div>
             ) : null}
 

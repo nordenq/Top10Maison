@@ -72,10 +72,9 @@
             "intentCopy": "If you want crispy results without the fuss, start here. We\u2019ll help you choose the right size, features, and price range for how you cook at home.",
             "guide": {
               "quickSummary": [
-                "Choose size first: 5-6 qt covers most homes without taking over the counter.",
-                "Price sweet spot: $120-$200 delivers strong performance without overpaying.",
-                "Go premium only if you cook daily or want quieter operation and sturdier build.",
-                "Mistake to avoid: buying too small; extra batches erase the convenience."
+                "For most homes, a 5-6 qt air fryer offers the best balance of capacity and counter space.",
+                "Single baskets are simpler and cheaper; dual baskets help if you cook full meals at once.",
+                "Focus on airflow power and easy-clean coatings; presets and apps rarely matter."
               ],
               "buyerProfiles": [
                 {
@@ -95,14 +94,6 @@
                 }
               ],
               "howToChoose": [
-                {
-                  "title": "Choose the right size",
-                  "bullets": [
-                    "1\u20132 people: 2\u20134 qt for faster cooking and less counter space.",
-                    "3\u20134 people: 5\u20136 qt for the best all-around balance.",
-                    "5+ people: 7+ qt or dual basket to reduce batches."
-                  ]
-                },
                 {
                   "title": "Single basket vs dual basket",
                   "bullets": [
@@ -191,7 +182,15 @@
               },
               {
                 "question": "What matters most when comparing models?",
-                "answer": "Prioritize capacity, airflow power for crisping, and a durable basket coating; presets and app features rarely change day-to-day results."
+                "answer": "Focus on consistent cooking results, easy cleanup, and value that fits your routine; extra presets rarely change daily use."
+              },
+              {
+                "question": "Are more expensive models always better?",
+                "answer": "Not always. Higher-priced models often add convenience features, while core cooking performance can be similar in mid-range picks."
+              },
+              {
+                "question": "How often are rankings updated?",
+                "answer": "Rankings are reviewed regularly based on availability, pricing changes, and new product releases."
               }
             ],
             "image": "https://pub-d2291ee7d44d475387fd51f65cd369f0.r2.dev/openai/childsubcategories/kitchen/appliances/air-fryers-640w.webp",

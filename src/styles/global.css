@@ -93,6 +93,24 @@
     @apply transition hover:-translate-y-0.5 hover:shadow-md;
   }
 
+  .toc-row {
+    @apply flex gap-2 overflow-x-auto whitespace-nowrap pb-1 list-none p-0 m-0;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .toc-row::-webkit-scrollbar {
+    display: none;
+  }
+
+  .toc-row > li {
+    @apply flex-none;
+  }
+
+  .toc-pill {
+    @apply inline-flex items-center justify-center rounded-full bg-accent-soft px-3 py-2 text-xs text-ink hover:bg-accent-soft/70;
+  }
+
   .brand-icon {
     @apply flex h-10 w-10 items-center justify-center rounded-2xl bg-accent-soft text-ink;
     animation: brand-icon-breathe 6s ease-in-out infinite;
