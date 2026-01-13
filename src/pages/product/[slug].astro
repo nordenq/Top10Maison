@@ -6,6 +6,7 @@ import { buildCanonical, requireSite } from "../../utils/seo";
 import { buildBreadcrumbSchema, buildProductSchema, buildReviewSchema } from "../../utils/schema";
 import { categoryUrl, childSubcategoryUrl, productUrl, subcategoryUrl } from "../../utils/routes";
 import ProductDetailContent from "../../components/ProductDetailContent.astro";
+import ProductDrawerContent from "../../components/ProductDrawerContent.astro";
 
 const dataIndex = getDataIndex();
 
@@ -32,6 +33,7 @@ const relatedChildsubcategory = relatedToplist
 
 const pageTitle = `${product.name} Review – Pros, Cons & Who It's Best For`;
 const verdict = product.reviewSnippet ?? product.description;
+const shortVerdict = verdict.split(/(?<=\.)\s+/)[0] ?? verdict;
 const isDrawer = Astro.url.searchParams.get("drawer") === "1";
 
 const site = requireSite(Astro.site);
@@ -66,15 +68,11 @@ const schema = [
 ---
 
 {isDrawer ? (
-  <ProductDetailContent
+  <ProductDrawerContent
     product={product}
-    verdict={verdict}
+    shortVerdict={shortVerdict}
     relatedToplist={relatedToplist}
     relatedChildsubcategory={relatedChildsubcategory}
-    breadcrumbItems={breadcrumbItems}
-    showBreadcrumbs={true}
-    showBackLink={false}
-    showCloseButton={true}
   />
 ) : (
   <Layout

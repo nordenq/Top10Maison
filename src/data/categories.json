@@ -70,6 +70,77 @@
             "name": "Air Fryers",
             "description": "Fast, low-oil cooking with everyday value.",
             "intentCopy": "If you want crispy results without the fuss, start here. We\u2019ll help you choose the right size, features, and price range for how you cook at home.",
+            "guide": {
+              "quickSummary": [
+                "Choose size first: 5-6 qt covers most homes without taking over the counter.",
+                "Price sweet spot: $120-$200 delivers strong performance without overpaying.",
+                "Go premium only if you cook daily or want quieter operation and sturdier build.",
+                "Mistake to avoid: buying too small; extra batches erase the convenience."
+              ],
+              "buyerProfiles": [
+                {
+                  "title": "1\u20132 people",
+                  "detail": "2\u20134 qt",
+                  "note": "Faster cooking, takes less space."
+                },
+                {
+                  "title": "3\u20134 people",
+                  "detail": "5\u20136 qt",
+                  "note": "Best balance for most homes."
+                },
+                {
+                  "title": "5+ people",
+                  "detail": "7+ qt or dual basket",
+                  "note": "Fewer batches, easier full meals."
+                }
+              ],
+              "howToChoose": [
+                {
+                  "title": "Choose the right size",
+                  "bullets": [
+                    "1\u20132 people: 2\u20134 qt for faster cooking and less counter space.",
+                    "3\u20134 people: 5\u20136 qt for the best all-around balance.",
+                    "5+ people: 7+ qt or dual basket to reduce batches."
+                  ]
+                },
+                {
+                  "title": "Single basket vs dual basket",
+                  "bullets": [
+                    "Single basket: cheaper, simpler, best for beginners.",
+                    "Dual basket: cook two foods at once, better for families, costs more and takes more space."
+                  ]
+                },
+                {
+                  "title": "Price vs value",
+                  "bullets": [
+                    "$60\u2013$120: basic controls, less consistent airflow.",
+                    "$120\u2013$200: best value with even cooking and a solid build.",
+                    "$200\u2013$300: dual baskets and convenience features."
+                  ]
+                }
+              ],
+              "featuresThatMatter": {
+                "matters": [
+                  "Capacity \u2014 determines how often you cook in batches",
+                  "Airflow power \u2014 affects crispiness and speed",
+                  "Basket coating \u2014 makes cleaning easier and helps it last longer"
+                ],
+                "ignore": [
+                  "Dozens of presets",
+                  "App connectivity",
+                  "Fancy touchscreens"
+                ]
+              },
+              "commonMistakes": [
+                "Buying too small \"to save space\"",
+                "Overpaying for features you won't use",
+                "Ignoring basket cleaning and maintenance"
+              ],
+              "whoShouldSkip": [
+                "Large households cooking full meals in one batch",
+                "Anyone who already uses a convection oven daily"
+              ]
+            },
             "microGuide": {
               "title": "Buying Guide: How to Choose the Best Air Fryer",
               "intro": [

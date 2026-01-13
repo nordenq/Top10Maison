@@ -2,9 +2,13 @@
 import Layout from "../../../layouts/BaseLayout.astro";
 import Breadcrumbs from "../../../components/Breadcrumbs.astro";
 import CategoryCard from "../../../components/CategoryCard.astro";
-import FAQAccordion from "../../../components/FAQAccordion.astro";
 import ProductGridSection from "../../../components/ProductGridSection.astro";
-import ProductDetailDrawer from "../../../components/ProductDetailDrawer.astro";
+import ProductDrawer from "../../../components/ProductDrawer.astro";
+import ArticleToc from "../../../components/ArticleToc.astro";
+import QuickSummary from "../../../components/QuickSummary.astro";
+import BuyingGuide from "../../../components/BuyingGuide.astro";
+import FeaturesThatMatter from "../../../components/FeaturesThatMatter.astro";
+import FAQ from "../../../components/FAQ.astro";
 import { getBestToplistForChild, getCategoryData } from "../../../utils/data";
 import { getDataIndex } from "../../../utils/dataIndex";
 import { buildCanonical, requireSite } from "../../../utils/seo";
@@ -112,15 +116,9 @@ const collectionSchema = {
   breadcrumb: breadcrumbSchema
 };
 
-const microGuide = data.childsubcategory?.microGuide ?? null;
-const microGuideCards = microGuide
-  ? microGuide.bullets.map((line) => {
-      const index = line.indexOf(":");
-      if (index === -1) return { title: line.trim(), body: "" };
-      return { title: line.slice(0, index).trim(), body: line.slice(index + 1).trim() };
-    })
-  : [];
-const hasBuyingGuide = Boolean(microGuide || data.childsubcategory?.fullGuideHtml);
+const guide = data.childsubcategory?.guide ?? null;
+const faqItems =
+  data.childsubcategory?.faq?.length ? data.childsubcategory.faq : bestToplist?.faq ?? [];
 const relatedToplists = bestToplist
   ? toplists.filter((list) => list.category === bestToplist.category && list.slug !== bestToplist.slug)
   : [];
@@ -141,6 +139,24 @@ const featuredToplistsIntro = showChildSubcategories
 let stripeIndex = 0;
 const takeSurface = () => stripeIndex++ % 2 === 0;
 const sectionClass = (extra = "") => `section${takeSurface() ? " bg-surface" : ""}${extra ? ` ${extra}` : ""}`;
+let articleStripeIndex = 0;
+const articleSectionClass = () =>
+  `rounded-2xl border border-border p-6 ${articleStripeIndex++ % 2 === 0 ? "bg-surface" : "bg-accent-soft/20"}`;
+const tocItems = bestToplist
+  ? [
+      { id: "top-picks", label: "Top picks" },
+      ...(guide?.quickSummary?.length ? [{ id: "quick-summary", label: "Quick buying summary" }] : []),
+      ...(guide?.buyerProfiles?.length || guide?.howToChoose?.length
+        ? [{ id: "how-to-choose", label: `How to choose the right ${productName}` }]
+        : []),
+      ...(guide?.featuresThatMatter?.matters?.length && guide?.featuresThatMatter?.ignore?.length
+        ? [{ id: "features-that-matter", label: "Features that matter" }]
+        : []),
+      ...(guide?.commonMistakes?.length ? [{ id: "common-mistakes", label: "Common mistakes" }] : []),
+      ...(bestToplist?.howWePicked?.length ? [{ id: "how-we-picked", label: "How we picked" }] : []),
+      ...(faqItems.length ? [{ id: "faq", label: "FAQ" }] : [])
+    ]
+  : [];
 
 if (bestToplistProducts.length) {
   schema.push(
@@ -158,8 +174,8 @@ if (bestToplist) {
   schema.push(buildArticleSchema(site, bestToplist, canonical));
 }
 
-if (bestToplist?.faq?.length) {
-  schema.push(buildFaqSchema(bestToplist.faq));
+if (faqItems.length) {
+  schema.push(buildFaqSchema(faqItems));
 }
 ---
 
@@ -236,154 +252,106 @@ if (bestToplist?.faq?.length) {
   ) : null}
 
   {bestToplist ? (
-    <ProductGridSection
-      title={`Top Picks: Best ${data.childsubcategory.name}`}
-      intro={bestToplist?.metaDescription}
-      products={bestToplistProductsWithBadges}
-      schema
-      id="top-picks"
-      surface={takeSurface()}
-    />
-  ) : null}
-
-  {hasBuyingGuide ? (
-    <section class={sectionClass()} id="buying-guide">
+    <section class={sectionClass()} id="toplist-article">
       <div class="page-container">
-        <div class="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <h2 class="text-2xl font-semibold">
-              Buying Guide: How to Choose the Best {data.childsubcategory?.name ?? productName}
-            </h2>
-            <p class="mt-2 text-sm text-ink/70">
-              Focus on fit, performance, and cleanup to compare the best options for home use.
-            </p>
-          </div>
-        </div>
-
-        {microGuide ? (
-          <>
-            <div class="mt-4 space-y-2 text-sm text-ink/70">
-              {microGuide.intro.map((line) => (
-                <p>{line}</p>
-              ))}
+        <div class="lg:flex lg:items-start lg:gap-8">
+          <aside class="order-1 lg:order-2 lg:w-64">
+            {tocItems.length ? <ArticleToc items={tocItems} /> : null}
+          </aside>
+          <div class="order-2 mt-6 space-y-6 lg:order-1 lg:mt-0 lg:flex-1">
+            <div class={articleSectionClass()}>
+              <ProductGridSection
+                title={`Top Picks: Best ${data.childsubcategory.name}`}
+                intro={bestToplist?.metaDescription}
+                products={bestToplistProductsWithBadges}
+                schema
+                id="top-picks"
+                embedded
+              />
             </div>
 
-            <div class="mt-6 grid gap-6 md:grid-cols-3">
-              {microGuideCards.map((card, index) => (
-                <div class="card card-hover p-5">
-                  <div class="flex items-center gap-3">
-                    <span class="brand-icon">
-                      {index % 3 === 0 ? (
-                        <svg viewBox="0 0 24 24" class="h-5 w-5" aria-hidden="true">
-                          <path
-                            d="M4 7.5C4 5.6 5.6 4 7.5 4h9C18.4 4 20 5.6 20 7.5v9c0 1.9-1.6 3.5-3.5 3.5h-9C5.6 20 4 18.4 4 16.5v-9z"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="1.8"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                          <path
-                            d="M8 9.5h8M8 12.5h5M8 15.5h6"
-                            stroke="currentColor"
-                            stroke-width="1.8"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                          <circle class="accent-dot" cx="18.2" cy="6" r="1.3" fill="#2BBBAD" />
-                        </svg>
-                      ) : index % 3 === 1 ? (
-                        <svg viewBox="0 0 24 24" class="h-5 w-5" aria-hidden="true">
-                          <path
-                            d="M6 7.5h12M6 12h7M6 16.5h10"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="1.8"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                          <circle
-                            class="accent-dot"
-                            cx="18"
-                            cy="12"
-                            r="3"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="1.8"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                          <circle class="accent-dot" cx="19.5" cy="8.2" r="1.2" fill="#2BBBAD" />
-                        </svg>
-                      ) : (
-                        <svg viewBox="0 0 24 24" class="h-5 w-5" aria-hidden="true">
-                          <path
-                            d="M7.5 4.5h6.5L18 8v11c0 .9-.7 1.5-1.5 1.5h-9C6.7 20.5 6 19.9 6 19V6c0-.8.7-1.5 1.5-1.5z"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="1.8"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                          <path
-                            d="M9 12l2 2 4-4"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="1.8"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                          <circle class="accent-dot" cx="16.8" cy="6.3" r="1.2" fill="#2BBBAD" />
-                        </svg>
-                      )}
-                    </span>
-                    <h3 class="text-lg font-semibold text-ink">{card.title}</h3>
-                  </div>
-                  {card.body ? <p class="mt-2 text-sm text-ink/70">{card.body}</p> : null}
-                </div>
-              ))}
-            </div>
-
-            {microGuide.tip || microGuide.cta ? (
-              <div class="mt-6 rounded-2xl border border-border bg-accent-soft p-5">
-                {microGuide.tip ? <p class="text-sm font-semibold text-ink">{microGuide.tip}</p> : null}
-                {microGuide.cta ? <p class="mt-2 text-sm text-ink/70">{microGuide.cta}</p> : null}
+            {guide?.quickSummary?.length ? (
+              <div class={articleSectionClass()}>
+                <QuickSummary bullets={guide.quickSummary} />
               </div>
             ) : null}
-          </>
-        ) : null}
 
-        {data.childsubcategory?.fullGuideHtml ? (
-          <div class="mt-6">
-            <div class="article-content" set:html={data.childsubcategory.fullGuideHtml} />
+            {guide?.buyerProfiles?.length || guide?.howToChoose?.length ? (
+              <div class={articleSectionClass()}>
+                <BuyingGuide
+                  title={`How to choose the right ${productName}`}
+                  profiles={guide?.buyerProfiles ?? []}
+                  sections={guide?.howToChoose ?? []}
+                  id="how-to-choose"
+                />
+              </div>
+            ) : null}
+
+            {guide?.featuresThatMatter?.matters?.length && guide?.featuresThatMatter?.ignore?.length ? (
+              <div class={articleSectionClass()}>
+                <FeaturesThatMatter
+                  matters={guide.featuresThatMatter.matters}
+                  ignore={guide.featuresThatMatter.ignore}
+                />
+              </div>
+            ) : null}
+
+            {guide?.commonMistakes?.length ? (
+              <div class={articleSectionClass()}>
+                <section id="common-mistakes">
+                  <h2 class="text-2xl font-semibold text-ink">Common mistakes to avoid</h2>
+                  <ul class="mt-4 list-disc list-inside space-y-2 text-sm text-ink/70">
+                    {guide.commonMistakes.map((item) => (
+                      <li>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+              </div>
+            ) : null}
+
+            {guide?.whoShouldSkip?.length ? (
+              <div class={articleSectionClass()}>
+                <section id="who-should-skip">
+                  <details class="card p-4">
+                    <summary class="cursor-pointer text-sm font-semibold text-ink">
+                      Who should skip this product
+                    </summary>
+                    <ul class="mt-3 list-disc list-inside space-y-2 text-sm text-ink/70">
+                      {guide.whoShouldSkip.map((item) => (
+                        <li>{item}</li>
+                      ))}
+                    </ul>
+                  </details>
+                </section>
+              </div>
+            ) : null}
+
+            {bestToplist?.howWePicked?.length ? (
+              <div class={articleSectionClass()}>
+                <section id="how-we-picked">
+                  <h2 class="text-2xl font-semibold text-ink">How we picked</h2>
+                  <p class="mt-2 text-sm text-ink/70">
+                    We analyze review data, specs, capacity, and availability, then apply editorial checks to keep
+                    comparisons consistent.
+                  </p>
+                  <ul class="mt-4 list-disc list-inside space-y-2 text-sm text-ink/70">
+                    {bestToplist.howWePicked.map((item) => (
+                      <li>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+              </div>
+            ) : null}
+
+            {faqItems.length ? (
+              <div class={articleSectionClass()}>
+                <FAQ items={faqItems} />
+              </div>
+            ) : null}
           </div>
-        ) : null}
+        </div>
       </div>
     </section>
-  ) : null}
-
-  {bestToplist?.howWePicked?.length ? (
-    <section class={sectionClass()} id="how-we-picked">
-      <div class="page-container">
-        <h2 class="text-2xl font-semibold">How We Picked</h2>
-        <p class="mt-2 text-sm text-ink/70">
-          We analyze review data, specs, and pricing, then apply editorial checks to keep comparisons consistent.
-        </p>
-        <ul class="mt-4 list-disc list-inside space-y-2 text-sm text-ink/70">
-          {bestToplist.howWePicked.map((item) => (
-            <li>{item}</li>
-          ))}
-        </ul>
-      </div>
-    </section>
-  ) : null}
-
-  {data.childsubcategory?.faq?.length || bestToplist?.faq?.length ? (
-    <FAQAccordion
-      items={data.childsubcategory?.faq?.length ? data.childsubcategory.faq : bestToplist.faq}
-      id="faq"
-      surface={takeSurface()}
-    />
   ) : null}
 
   {relatedToplists.length ? (
@@ -406,6 +374,6 @@ if (bestToplist?.faq?.length) {
     </section>
   ) : null}
 
-  {bestToplist ? <ProductDetailDrawer /> : null}
+  {bestToplist ? <ProductDrawer /> : null}
 
 </Layout>

@@ -1,0 +1,18 @@
+---
+const { title = "Quick buying summary", bullets = [], id = "quick-summary" } = Astro.props as {
+  title?: string;
+  bullets: string[];
+  id?: string;
+};
+---
+
+<section id={id}>
+  <div class="card bg-accent-soft p-5">
+    <h2 class="text-lg font-semibold text-ink">{title}</h2>
+    <ul class="mt-3 list-disc list-inside space-y-2 text-sm text-ink/70">
+      {bullets.map((bullet) => (
+        <li>{bullet}</li>
+      ))}
+    </ul>
+  </div>
+</section>

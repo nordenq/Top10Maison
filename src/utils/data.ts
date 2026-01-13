@@ -5,6 +5,24 @@ export type ChildSubcategory = {
   name: string;
   description: string;
   intentCopy: string;
+  guide?: {
+    quickSummary?: string[];
+    buyerProfiles?: Array<{
+      title: string;
+      detail: string;
+      note: string;
+    }>;
+    howToChoose?: Array<{
+      title: string;
+      bullets: string[];
+    }>;
+    featuresThatMatter?: {
+      matters: string[];
+      ignore: string[];
+    };
+    commonMistakes?: string[];
+    whoShouldSkip?: string[];
+  };
   microGuide?: {
     title: string;
     intro: string[];
@@ -162,6 +180,38 @@ function assertMicroGuide(value: ChildSubcategory["microGuide"], label: string):
   if (value.cta) assertNonEmpty(value.cta, `${label} microGuide cta`);
 }
 
+function assertGuide(value: ChildSubcategory["guide"], label: string): void {
+  if (!value) return;
+  if (value.quickSummary) {
+    assertNonEmptyArray(value.quickSummary, `${label} quickSummary`);
+  }
+  if (value.buyerProfiles) {
+    assert(value.buyerProfiles.length > 0, `${label} buyerProfiles must not be empty.`);
+    value.buyerProfiles.forEach((profile) => {
+      assertNonEmpty(profile.title, `${label} buyerProfile title`);
+      assertNonEmpty(profile.detail, `${label} buyerProfile detail`);
+      assertNonEmpty(profile.note, `${label} buyerProfile note`);
+    });
+  }
+  if (value.howToChoose) {
+    assert(value.howToChoose.length > 0, `${label} howToChoose must not be empty.`);
+    value.howToChoose.forEach((section) => {
+      assertNonEmpty(section.title, `${label} howToChoose title`);
+      assertNonEmptyArray(section.bullets, `${label} howToChoose bullets`);
+    });
+  }
+  if (value.featuresThatMatter) {
+    assertNonEmptyArray(value.featuresThatMatter.matters, `${label} featuresThatMatter matters`);
+    assertNonEmptyArray(value.featuresThatMatter.ignore, `${label} featuresThatMatter ignore`);
+  }
+  if (value.commonMistakes) {
+    assertNonEmptyArray(value.commonMistakes, `${label} commonMistakes`);
+  }
+  if (value.whoShouldSkip) {
+    assertNonEmptyArray(value.whoShouldSkip, `${label} whoShouldSkip`);
+  }
+}
+
 function assertBadges(
   badges: Record<string, string> | undefined,
   label: string,
@@ -252,6 +302,7 @@ export function getCategories(): Category[] {
         }
         assertFaq(childsubcategory.faq, `Child subcategory ${childsubcategory.slug}`);
         assertMicroGuide(childsubcategory.microGuide, `Child subcategory ${childsubcategory.slug}`);
+        assertGuide(childsubcategory.guide, `Child subcategory ${childsubcategory.slug}`);
         if (childsubcategory.fullGuideHtml) {
           assertNonEmpty(childsubcategory.fullGuideHtml, `Child subcategory ${childsubcategory.slug} fullGuideHtml`);
         }
