@@ -1,0 +1,74 @@
+---
+import Breadcrumbs from "./Breadcrumbs.astro";
+import AffiliateButton from "./AffiliateButton.astro";
+import type { Product } from "../utils/data";
+
+const {
+  product,
+  verdict,
+  breadcrumbItems = [],
+  showBreadcrumbs = true,
+  showBackLink = true,
+  showCloseButton = false
+} = Astro.props as {
+  product: Product;
+  verdict: string;
+  breadcrumbItems?: Array<{ name: string; href: string }>;
+  showBreadcrumbs?: boolean;
+  showBackLink?: boolean;
+  showCloseButton?: boolean;
+};
+---
+
+<article class="page-container" data-drawer-fragment>
+  <div class="mx-auto w-full max-w-5xl space-y-8">
+    <header class="space-y-3">
+      {showBreadcrumbs ? (
+        <div class="flex flex-wrap items-center justify-between gap-3 text-sm text-ink/60">
+          <Breadcrumbs items={breadcrumbItems} />
+          <div class="flex items-center gap-2">
+            {showBackLink ? <a id="smart-back" class="btn-ghost hidden" href="/">Back</a> : null}
+            {showCloseButton ? (
+              <button class="btn-ghost text-sm" type="button" data-drawer-close>Close</button>
+            ) : null}
+          </div>
+        </div>
+      ) : (
+        showCloseButton ? (
+          <div class="flex justify-end">
+            <button class="btn-ghost text-sm" type="button" data-drawer-close>Close</button>
+          </div>
+        ) : null
+      )}
+    </header>
+
+    <section>
+      <div class="card grid gap-6 p-5 md:grid-cols-[40%_60%] md:p-7">
+        <div class="relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-xl bg-surface-muted">
+          <img
+            class="max-h-[90%] max-w-[90%] object-contain"
+            src={product.image}
+            alt={product.name}
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
+            width="800"
+            height="600"
+            onerror="this.onerror=null;this.src='/images/products/placeholder.svg';"
+          />
+        </div>
+        <div class="flex flex-col gap-4">
+          <h1 class="text-3xl font-semibold text-ink" data-drawer-title>{product.name}</h1>
+          <p class="text-base font-medium leading-relaxed text-ink/80 sm:text-lg">{verdict}</p>
+          <div class="pt-1">
+            <AffiliateButton url={product.affiliateUrl} label="View on Amazon" productSlug={product.slug} />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="space-y-10">
+      <slot />
+    </div>
+  </div>
+</article>

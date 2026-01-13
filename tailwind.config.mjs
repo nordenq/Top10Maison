@@ -11,6 +11,7 @@ export default {
         secondary: "#F7A6A8",
         background: "#F8FBF9",
         surface: "#FFFFFF",
+        "surface-muted": "#F3F5F4",
         border: "#E3ECE7",
         success: "#10B981",
         warning: "#F59E0B",

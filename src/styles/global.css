@@ -6,6 +6,20 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --tag-font-size: 0.85rem;
+    --tag-line-height: 1;
+    --tag-padding-y: 0.35rem;
+    --tag-padding-x: 0.8rem;
+    --tag-radius: 999px;
+  }
+
+  @media (max-width: 640px) {
+    :root {
+      --tag-padding-x: 0.7rem;
+    }
+  }
+
   html {
     scroll-behavior: smooth;
   }
@@ -91,6 +105,18 @@
 
   .card-hover {
     @apply transition hover:-translate-y-0.5 hover:shadow-md;
+  }
+
+  .tag {
+    font-size: var(--tag-font-size);
+    line-height: var(--tag-line-height);
+    padding: var(--tag-padding-y) var(--tag-padding-x);
+    border-radius: var(--tag-radius);
+    @apply inline-flex items-center whitespace-nowrap;
+  }
+
+  .product-image {
+    @apply w-auto max-w-[90%] object-contain;
   }
 
   .toc-row {

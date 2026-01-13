@@ -1,6 +1,6 @@
 ---
 import type { Product } from "../utils/data";
-import ProductCard from "./ProductCard.astro";
+import TopPickRow from "./TopPickRow.astro";
 
 const {
   title,
@@ -31,8 +31,18 @@ const {
     {intro ? <p class="mt-3 text-sm text-ink/70">{intro}</p> : null}
     <div class="mt-6 grid gap-6">
       {products.map((product, index) => (
-        <ProductCard
-          product={product}
+        <TopPickRow
+          image={product.image}
+          title={product.name}
+          brand={product.brand}
+          rating={product.rating}
+          priceTag={product.price}
+          badge={product.badge}
+          summary={product.reviewSnippet ?? product.description}
+          pros={product.pros}
+          cons={product.cons}
+          ctaUrl={product.affiliateUrl}
+          reviewUrl={product.slug ? `/product/${product.slug}/` : undefined}
           rank={startRank + index}
           schema={schema}
           loading={index < eagerCount ? "eager" : "lazy"}
@@ -48,13 +58,23 @@ const {
       {intro ? <p class="mt-3 text-sm text-ink/70">{intro}</p> : null}
       <div class="mt-6 grid gap-6">
         {products.map((product, index) => (
-          <ProductCard
-            product={product}
-            rank={startRank + index}
-            schema={schema}
-            loading={index < eagerCount ? "eager" : "lazy"}
-            fetchpriority={index === 0 && eagerCount > 0 ? "high" : undefined}
-          />
+        <TopPickRow
+          image={product.image}
+          title={product.name}
+          brand={product.brand}
+          rating={product.rating}
+          priceTag={product.price}
+          badge={product.badge}
+          summary={product.reviewSnippet ?? product.description}
+          pros={product.pros}
+          cons={product.cons}
+          ctaUrl={product.affiliateUrl}
+          reviewUrl={product.slug ? `/product/${product.slug}/` : undefined}
+          rank={startRank + index}
+          schema={schema}
+          loading={index < eagerCount ? "eager" : "lazy"}
+          fetchpriority={index === 0 && eagerCount > 0 ? "high" : undefined}
+        />
         ))}
       </div>
     </div>
