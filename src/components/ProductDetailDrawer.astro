@@ -14,18 +14,18 @@ import { CSP_NONCE } from "../utils/csp";
     data-state="closed"
   ></div>
   <aside
-    class="absolute right-0 top-0 h-full w-full max-w-2xl translate-x-full bg-white shadow-xl transition-transform data-[state=open]:translate-x-0"
+    class="absolute right-0 top-0 flex h-full w-full max-w-2xl translate-x-full flex-col bg-white shadow-xl transition-transform data-[state=open]:translate-x-0"
     role="dialog"
     aria-modal="true"
     aria-labelledby="drawer-title"
     data-drawer-panel
     data-state="closed"
   >
-    <div class="flex items-center justify-between border-b border-border px-6 py-4">
-      <h2 id="drawer-title" class="text-lg font-semibold">Product details</h2>
+    <div class="flex items-center justify-end border-b border-border px-6 py-4">
+      <h2 id="drawer-title" class="sr-only">Product details</h2>
       <button class="btn-ghost text-sm" type="button" data-drawer-close>Close</button>
     </div>
-    <div class="h-full overflow-y-auto px-6 py-6" data-drawer-content>
+    <div class="flex-1 overflow-y-auto px-6 py-6" data-drawer-content>
       <p class="text-sm text-ink/70">Loading…</p>
     </div>
   </aside>
@@ -118,7 +118,13 @@ import { CSP_NONCE } from "../utils/csp";
     });
 
     overlay.addEventListener("click", () => closeDrawer());
-    closeButton.addEventListener("click", () => closeDrawer());
+    drawerRoot.addEventListener("click", (event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      const closeTarget = target.closest("[data-drawer-close]");
+      if (!closeTarget) return;
+      closeDrawer();
+    });
 
     document.addEventListener("keydown", (event) => {
       if (!isOpen) return;
