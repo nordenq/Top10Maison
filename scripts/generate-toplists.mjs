@@ -82,18 +82,35 @@ function extractPriceLimit(text) {
   return Number.isFinite(value) ? value : null;
 }
 
-async function fetchScraperApi(url, { autoparse = false } = {}) {
-  const apiKey = process.env.SCRAPERAPI_KEY;
-  const apiUrl = new URL("https://api.scraperapi.com/");
+function isAmazonUrl(url) {
+  return url.includes("amazon.") || url.includes("amzn.to");
+}
+
+async function fetchScrapingBee(
+  url,
+  { renderJs, countryCode = "us", premiumProxy } = {}
+) {
+  const apiKey = process.env.SCRAPINGBEE_API_KEY;
+  const apiUrl = new URL("https://app.scrapingbee.com/api/v1/");
   apiUrl.searchParams.set("api_key", apiKey);
   apiUrl.searchParams.set("url", url);
-  apiUrl.searchParams.set("country_code", "us");
-  if (autoparse) {
-    apiUrl.searchParams.set("autoparse", "true");
+  apiUrl.searchParams.set("country_code", countryCode);
+  const shouldRender =
+    typeof renderJs === "boolean"
+      ? renderJs
+      : String(process.env.SCRAPINGBEE_RENDER_JS || "") === "1";
+  const shouldUsePremium =
+    typeof premiumProxy === "boolean" ? premiumProxy : isAmazonUrl(url);
+  if (shouldRender) {
+    apiUrl.searchParams.set("render_js", "true");
+  }
+  if (shouldUsePremium) {
+    apiUrl.searchParams.set("premium_proxy", "true");
   }
   const response = await fetch(apiUrl.toString());
   if (!response.ok) {
-    throw new Error(`ScraperAPI failed (${response.status}) for ${url}`);
+    const errorText = await response.text();
+    throw new Error(`ScrapingBee failed (${response.status}) for ${url}: ${errorText}`);
   }
   return response.text();
 }
@@ -172,9 +189,27 @@ function normalizePrice(value) {
   return `$${cleaned}`;
 }
 
+function applyAssociateTag(url, tag, fallbackAsin) {
+  if (!tag || !url) return url;
+  if (!isAmazonUrl(url)) return url;
+  if (url.includes("amzn.to") && fallbackAsin) {
+    return applyAssociateTag(`https://www.amazon.com/dp/${fallbackAsin}`, tag);
+  }
+  try {
+    const parsed = new URL(url);
+    if (!parsed.searchParams.get("tag")) {
+      parsed.searchParams.set("tag", tag);
+    }
+    return parsed.toString();
+  } catch (error) {
+    const separator = url.includes("?") ? "&" : "?";
+    return `${url}${separator}tag=${encodeURIComponent(tag)}`;
+  }
+}
+
 async function fetchAmazonSearchAsins(query) {
   const searchUrl = `https://www.amazon.com/s?k=${encodeURIComponent(query)}`;
-  const html = await fetchScraperApi(searchUrl);
+  const html = await fetchScrapingBee(searchUrl);
   const asins = [...html.matchAll(/data-asin="([A-Z0-9]{10})"/g)]
     .map((match) => match[1])
     .filter((asin) => asin && asin !== "")
@@ -472,44 +507,21 @@ async function updateOpenAiImages({ categories, toplists, refresh, concurrency }
 
 async function fetchAmazonProduct(asin) {
   const url = `https://www.amazon.com/dp/${asin}`;
-  const raw = await fetchScraperApi(url, { autoparse: true });
-  try {
-    const parsed = JSON.parse(raw);
-    const data = {
-      asin,
-      title: parsed.title || parsed.product_title || null,
-      brand: parsed.brand || null,
-      price: parsed.price || parsed.current_price || null,
-      image: parsed.main_image || (parsed.images ? parsed.images[0] : null),
-      rating: parsed.average_rating || null,
-      reviewCount: parsed.total_reviews || null,
-      bullets: parsed.feature_bullets || [],
-      url: parsed.url || url
-    };
-    if (!data.title || !data.rating || !data.reviewCount) {
-      throw new Error("Missing fields from autoparse.");
-    }
-    return data;
-  } catch (error) {
-    const html =
-      error?.message === "Missing fields from autoparse."
-        ? await fetchScraperApi(url, { autoparse: false })
-        : raw;
-    const jsonLd = findProductJsonLd(parseJsonLd(html));
-    const aggregate = jsonLd?.aggregateRating;
-    const offers = Array.isArray(jsonLd?.offers) ? jsonLd.offers[0] : jsonLd?.offers;
-    return {
-      asin,
-      title: jsonLd?.name || extractTitle(html),
-      brand: jsonLd?.brand?.name || null,
-      price: offers?.price || extractPrice(html),
-      image: Array.isArray(jsonLd?.image) ? jsonLd.image[0] : jsonLd?.image || extractImage(html),
-      rating: aggregate?.ratingValue || extractRating(html),
-      reviewCount: aggregate?.reviewCount || extractReviewCount(html),
-      bullets: extractFeatureBullets(html),
-      url
-    };
-  }
+  const html = await fetchScrapingBee(url);
+  const jsonLd = findProductJsonLd(parseJsonLd(html));
+  const aggregate = jsonLd?.aggregateRating;
+  const offers = Array.isArray(jsonLd?.offers) ? jsonLd.offers[0] : jsonLd?.offers;
+  return {
+    asin,
+    title: jsonLd?.name || extractTitle(html),
+    brand: jsonLd?.brand?.name || null,
+    price: offers?.price || extractPrice(html),
+    image: Array.isArray(jsonLd?.image) ? jsonLd.image[0] : jsonLd?.image || extractImage(html),
+    rating: aggregate?.ratingValue || extractRating(html),
+    reviewCount: aggregate?.reviewCount || extractReviewCount(html),
+    bullets: extractFeatureBullets(html),
+    url
+  };
 }
 
 async function callOpenAI(messages, { temperature = 0.3, responseFormat } = {}) {
@@ -705,26 +717,29 @@ function toProductEntry({ base, ai, slug, affiliateUrl }) {
 async function main() {
   await loadEnv();
   const hasOpenAI = Boolean(process.env.OPENAI_API_KEY);
-  const hasScraper = Boolean(process.env.SCRAPERAPI_KEY);
+  const hasScrapingBee = Boolean(process.env.SCRAPINGBEE_API_KEY);
+  const associateTag = process.env.AMAZON_ASSOCIATE_TAG || process.env.AMAZON_AFFILIATE_TAG || "";
   const enableImageGeneration = String(process.env.ENABLE_OPENAI_IMAGES || "").toLowerCase() === "1";
   const refreshImages = String(process.env.REFRESH_OPENAI_IMAGES || "").toLowerCase() === "1";
   const skipGeneration = String(process.env.SKIP_AI_GENERATION || "").toLowerCase() === "1";
   const isCloudflarePages = Boolean(process.env.CF_PAGES);
   const forceGeneration = String(process.env.FORCE_AI_GENERATION || "").toLowerCase() === "1";
-  const scraperConcurrency = Number(process.env.SCRAPER_CONCURRENCY || DEFAULT_SCRAPER_CONCURRENCY);
+  const scraperConcurrency = Number(
+    process.env.SCRAPINGBEE_CONCURRENCY || process.env.SCRAPER_CONCURRENCY || DEFAULT_SCRAPER_CONCURRENCY
+  );
   const openAiConcurrency = Number(process.env.OPENAI_CONCURRENCY || DEFAULT_OPENAI_CONCURRENCY);
   const openAiImageConcurrency = Number(
     process.env.OPENAI_IMAGE_CONCURRENCY || DEFAULT_OPENAI_IMAGE_CONCURRENCY
   );
   const asinFetchLimit = Number(process.env.ASIN_FETCH_LIMIT || DEFAULT_ASIN_FETCH_LIMIT);
 
-  if (skipGeneration || (isCloudflarePages && !forceGeneration) || !hasOpenAI || !hasScraper) {
+  if (skipGeneration || (isCloudflarePages && !forceGeneration) || !hasOpenAI || !hasScrapingBee) {
     if (skipGeneration) {
       console.log("Skipping AI/product generation: SKIP_AI_GENERATION=1.");
     } else if (isCloudflarePages && !forceGeneration) {
       console.log("Skipping AI/product generation: running on Cloudflare Pages.");
     } else {
-      console.log("Skipping AI/product generation: missing OPENAI_API_KEY or SCRAPERAPI_KEY.");
+      console.log("Skipping AI/product generation: missing OPENAI_API_KEY or SCRAPINGBEE_API_KEY.");
     }
     if (enableImageGeneration || refreshImages) {
       const [categoriesRaw, toplists] = await Promise.all([
@@ -823,6 +838,11 @@ async function main() {
           existing.rating = product.rating || existing.rating;
           existing.ratingCount = product.reviewCount || existing.ratingCount;
           existing.brand = product.brand || existing.brand;
+          existing.affiliateUrl = applyAssociateTag(
+            existing.affiliateUrl || `https://www.amazon.com/dp/${product.asin}`,
+            associateTag,
+            product.asin
+          );
           finalProducts.push(existing);
         } else {
           newProducts.push(product);
@@ -848,7 +868,7 @@ async function main() {
         }
         usedSlugs.add(slug);
 
-        const affiliateUrl = `https://www.amazon.com/dp/${product.asin}`;
+        const affiliateUrl = applyAssociateTag(`https://www.amazon.com/dp/${product.asin}`, associateTag, product.asin);
         const entry = toProductEntry({ base: product, ai, slug, affiliateUrl });
         finalProducts.push(entry);
       }

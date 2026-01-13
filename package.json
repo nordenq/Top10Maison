@@ -10,6 +10,7 @@
     "build:ci": "SKIP_AI_GENERATION=1 node scripts/generate-toplists.mjs && astro build && npm run check:google-fonts",
     "preview": "astro preview",
     "astro": "astro",
+    "test:scrapingbee": "node scripts/test-scrapingbee.mjs",
     "check:google-fonts": "node scripts/check-google-fonts.js",
     "validate:content": "node scripts/validate-content.mjs",
     "postbuild": "node scripts/inline-critical.js"

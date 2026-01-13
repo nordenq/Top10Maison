@@ -5,7 +5,6 @@ import json
 import os
 import re
 import sys
-import html
 import time
 import urllib.parse
 import urllib.request
@@ -15,40 +14,28 @@ def open_url(
     url: str,
     *,
     binary: bool = False,
-    autoparse: bool = False,
     render: bool = False,
     extra_params: dict | None = None
 ) -> tuple[str, object]:
-    scraper_key = os.getenv("SCRAPERAPI_KEY")
+    scrapingbee_key = os.getenv("SCRAPINGBEE_API_KEY")
     target_url = url
     headers = {"User-Agent": "Mozilla/5.0"}
 
-    if scraper_key:
-        params = {"api_key": scraper_key, "url": url, "country_code": "us"}
-        if autoparse and not binary:
-            params["autoparse"] = "true"
+    if scrapingbee_key:
+        params = {"api_key": scrapingbee_key, "url": url, "country_code": "us"}
         if render and not binary:
-            params["render"] = "true"
+            params["render_js"] = "true"
         if "amazon." in url or "amzn.to" in url:
-            params["premium"] = "true"
+            params["premium_proxy"] = "true"
         if extra_params:
             params.update(extra_params)
-        target_url = "https://api.scraperapi.com/?" + urllib.parse.urlencode(params)
+        target_url = "https://app.scrapingbee.com/api/v1/?" + urllib.parse.urlencode(params)
         headers["Accept"] = "*/*"
 
     req = urllib.request.Request(target_url, headers=headers)
     with urllib.request.urlopen(req, timeout=60) as resp:
         data = resp.read()
         return resp.geturl(), data if binary else data.decode("utf-8", "ignore")
-
-
-def resolve_final_url(url: str) -> str:
-    if os.getenv("SCRAPERAPI_KEY"):
-        _, payload = open_url(url, extra_params={"follow_redirect": "false"}, render=True)
-        redirect_url = extract_redirect_from_html(payload)
-        return redirect_url or url
-    final_url, _ = open_url(url)
-    return final_url
 
 
 def extract_asin(url: str) -> str:
@@ -75,37 +62,13 @@ def extract_asin_from_html(html: str) -> str:
     return ""
 
 
-def extract_location_from_headers(payload: str) -> str:
-    lines = payload.splitlines()
-    for line in lines:
-        if not line.strip():
-            break
-        if line.lower().startswith("location:"):
-            return line.split(":", 1)[1].strip()
-    return ""
-
-
-def extract_redirect_from_html(payload: str) -> str:
-    match = re.search(r'href="([^"]+amazon[^"]+)"', payload, re.IGNORECASE)
-    if not match:
-        return ""
-    return html.unescape(match.group(1))
-
-
-def extract_image_url_from_autoparse(payload: str) -> str:
-    try:
-        data = json.loads(payload)
-    except json.JSONDecodeError:
-        return ""
-    if isinstance(data, dict):
-        main = data.get("mainImage")
-        if isinstance(main, str) and main.startswith("http"):
-            return main
-        images = data.get("images")
-        if isinstance(images, list) and images:
-            for item in images:
-                if isinstance(item, str) and item.startswith("http"):
-                    return item
+def extract_image_url_from_html(payload: str) -> str:
+    match = re.search(r'"hiRes"\s*:\s*"([^"]+)"', payload)
+    if match:
+        return match.group(1)
+    match = re.search(r'data-old-hires="([^"]+)"', payload)
+    if match:
+        return match.group(1)
     return ""
 
 
@@ -179,11 +142,10 @@ def main() -> int:
         last_error = None
         for attempt in range(3):
             try:
-                final_url = resolve_final_url(affiliate_url)
-                asin = extract_asin(final_url)
+                asin = extract_asin(affiliate_url)
                 if not asin:
-                    _, payload = open_url(affiliate_url, autoparse=True, render=True)
-                    image_url = extract_image_url_from_autoparse(payload)
+                    _, payload = open_url(affiliate_url, render=True)
+                    image_url = extract_image_url_from_html(payload)
                     if image_url:
                         fetch_image_from_url(image_url, dest_path)
                         success[slug] = f"/images/products/{slug}.jpg"
