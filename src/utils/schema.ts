@@ -20,6 +20,9 @@ export function buildBreadcrumbSchema(
 }
 
 export function buildProductSchema(site: URL, product: Product): SchemaGraph {
+  const offerUrl = /\.(?:jpe?g|png|webp)(?:\?.*)?$/i.test(product.affiliateUrl)
+    ? new URL(productUrl(product.slug), site).toString()
+    : product.affiliateUrl;
   const positiveNotes = product.pros?.length
     ? {
         "@type": "ItemList",
@@ -48,6 +51,10 @@ export function buildProductSchema(site: URL, product: Product): SchemaGraph {
     description: product.description,
     image: new URL(product.image, site).toString(),
     ...(product.brand ? { brand: { "@type": "Brand", name: product.brand } } : {}),
+    offers: {
+      "@type": "Offer",
+      url: offerUrl
+    },
     ...(positiveNotes ? { positiveNotes } : {}),
     ...(negativeNotes ? { negativeNotes } : {}),
     ...(typeof product.rating === "number"
@@ -175,10 +182,14 @@ export function buildFaqSchema(items: Array<{ question: string; answer: string }
   };
 }
 
-export function buildItemListSchema(items: Array<{ name: string; url: string }>): SchemaGraph {
+export function buildItemListSchema(
+  items: Array<{ name: string; url: string }>,
+  options: { ordered?: boolean } = {}
+): SchemaGraph {
   return {
     "@context": "https://schema.org",
     "@type": "ItemList",
+    ...(options.ordered ? { itemListOrder: "https://schema.org/ItemListOrderAscending" } : {}),
     itemListElement: items.map((item, index) => ({
       "@type": "ListItem",
       position: index + 1,

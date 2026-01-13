@@ -55,7 +55,7 @@ export function buildToplistFraming(args: {
   const year = args.year;
   const count = args.count;
 
-  const title = `Best ${productName} of ${year} - Top ${count} Picks for Home Use`;
+  const title = `Best ${productName} of ${year} – Top ${count} Picks for Home Use`;
   const h1 = `Best ${productName} of ${year}`;
   const schemaHeadline = `Best ${productName} of ${year}`;
   const intro = `Compare the best ${productName.toLowerCase()} for home use with this top list of ${count} picks. This comparison ranks models by performance, ease of use, and value for everyday use.`;

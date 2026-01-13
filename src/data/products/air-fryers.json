@@ -38,7 +38,9 @@
       "dash-tasti-crisp"
     ],
     "brand": "Ninja",
-    "reviewSnippet": "Glass bowl, easy cleanup, and strong crisping in a compact footprint."
+    "reviewSnippet": "Glass bowl, easy cleanup, and strong crisping in a compact footprint.",
+    "rating": 4.7,
+    "ratingCount": 1
   },
   {
     "slug": "our-place-wonder-oven",
@@ -79,7 +81,9 @@
       "ninja-crispi-glass-air-fryer"
     ],
     "brand": "Our Place",
-    "reviewSnippet": "Steam infusion keeps food moist while still crisping."
+    "reviewSnippet": "Steam infusion keeps food moist while still crisping.",
+    "rating": 4.6,
+    "ratingCount": 1
   },
   {
     "slug": "ninja-af101",
@@ -124,7 +128,9 @@
       "ninja-foodi-dualzone"
     ],
     "brand": "Ninja",
-    "reviewSnippet": "Crisp performance with simple controls at a budget price."
+    "reviewSnippet": "Crisp performance with simple controls at a budget price.",
+    "rating": 4.5,
+    "ratingCount": 1
   },
   {
     "slug": "instant-pot-duo-crisp",
@@ -165,7 +171,9 @@
       "ninja-af101"
     ],
     "brand": "Instant Pot",
-    "reviewSnippet": "A true multi-tasker that air fries well and replaces several appliances."
+    "reviewSnippet": "A true multi-tasker that air fries well and replaces several appliances.",
+    "rating": 4.5,
+    "ratingCount": 1
   },
   {
     "slug": "breville-smart-oven-air",
@@ -206,7 +214,9 @@
       "ninja-crispi-glass-air-fryer"
     ],
     "brand": "Breville",
-    "reviewSnippet": "A premium countertop oven that air fries, bakes, and roasts with consistency."
+    "reviewSnippet": "A premium countertop oven that air fries, bakes, and roasts with consistency.",
+    "rating": 4.6,
+    "ratingCount": 1
   },
   {
     "slug": "dash-tasti-crisp",
@@ -250,7 +260,9 @@
       "ninja-crispi-glass-air-fryer"
     ],
     "brand": "Dash",
-    "reviewSnippet": "Compact, quick, and ideal for small servings."
+    "reviewSnippet": "Compact, quick, and ideal for small servings.",
+    "rating": 4.4,
+    "ratingCount": 1
   },
   {
     "slug": "ninja-foodi-dualzone",
@@ -291,7 +303,9 @@
       "breville-smart-oven-air"
     ],
     "brand": "Ninja",
-    "reviewSnippet": "Dual baskets make full meals easy without batch cooking."
+    "reviewSnippet": "Dual baskets make full meals easy without batch cooking.",
+    "rating": 4.6,
+    "ratingCount": 1
   },
   {
     "slug": "cosori-turboblaze-6qt",
@@ -332,6 +346,8 @@
       "ninja-crispi-glass-air-fryer"
     ],
     "brand": "Cosori",
-    "reviewSnippet": "Adjustable fan speeds help dial in crisping for larger batches."
+    "reviewSnippet": "Adjustable fan speeds help dial in crisping for larger batches.",
+    "rating": 4.5,
+    "ratingCount": 1
   }
 ]

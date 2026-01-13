@@ -280,12 +280,8 @@ export function getProducts(): Product[] {
     assertNonEmpty(product.image, `Product ${product.slug} image`);
     assertNonEmpty(product.price, `Product ${product.slug} price`);
     assertNonEmpty(product.affiliateUrl, `Product ${product.slug} affiliateUrl`);
-    if (product.brand) {
-      assertNonEmpty(product.brand, `Product ${product.slug} brand`);
-    }
-    if (typeof product.rating !== "undefined") {
-      assert(typeof product.rating === "number", `Product ${product.slug} rating must be a number.`);
-    }
+    assertNonEmpty(product.brand ?? "", `Product ${product.slug} brand`);
+    assert(typeof product.rating === "number", `Product ${product.slug} rating must be a number.`);
     if (typeof product.ratingCount !== "undefined") {
       assert(Number.isInteger(product.ratingCount), `Product ${product.slug} ratingCount must be an integer.`);
     }
