@@ -4,10 +4,9 @@ import Breadcrumbs from "../../components/Breadcrumbs.astro";
 import { getProductData } from "../../utils/data";
 import { getDataIndex } from "../../utils/dataIndex";
 import { buildCanonical, requireSite } from "../../utils/seo";
-import { buildBreadcrumbSchema, buildFaqSchema, buildProductSchema, buildReviewSchema } from "../../utils/schema";
+import { buildBreadcrumbSchema, buildProductSchema, buildReviewSchema } from "../../utils/schema";
 import { categoryUrl, childSubcategoryUrl, productUrl, subcategoryToplistUrl, subcategoryUrl } from "../../utils/routes";
 import AffiliateButton from "../../components/AffiliateButton.astro";
-import FAQAccordion from "../../components/FAQAccordion.astro";
 
 const dataIndex = getDataIndex();
 
@@ -20,7 +19,7 @@ export function getStaticPaths() {
 
 const { slug } = Astro.params;
 const product = getProductData(slug);
-const { toplists, productMap, categoryMap, subcategoryMap, childSubcategoryMap } = dataIndex;
+const { toplists, categoryMap, subcategoryMap, childSubcategoryMap } = dataIndex;
 const relatedToplist = toplists.find((list) => list.products.includes(product.slug));
 const relatedCategory = relatedToplist ? categoryMap.get(relatedToplist.category) : null;
 const relatedSubcategory = relatedToplist
@@ -31,12 +30,6 @@ const relatedChildsubcategory = relatedToplist
       `${relatedToplist.category}:${relatedToplist.subcategory}:${relatedToplist.childsubcategory}`
     )
   : null;
-const relatedProducts = relatedToplist
-  ? relatedToplist.products
-      .filter((productSlug) => productSlug !== product.slug)
-      .map((productSlug) => productMap.get(productSlug))
-      .filter((item): item is NonNullable<typeof item> => Boolean(item))
-  : [];
 
 const pageTitle = `${product.name} Review – Pros, Cons & Who It's Best For`;
 const verdict = product.reviewSnippet ?? product.description;
@@ -68,8 +61,7 @@ const schema = [
     breadcrumbItems.map((item) => ({ name: item.name, path: item.href }))
   ),
   buildProductSchema(site, product),
-  buildReviewSchema(site, product),
-  buildFaqSchema(product.faq)
+  buildReviewSchema(site, product)
 ];
 ---
 
@@ -98,16 +90,17 @@ const schema = [
         height="500"
         onerror="this.onerror=null;this.src='/images/products/placeholder.svg';"
       />
-      <p class="mt-4 text-lg text-ink/70">{product.description}</p>
-
-      <div class="mt-6">
-        <AffiliateButton url={product.affiliateUrl} label="View on Amazon" productSlug={product.slug} />
-      </div>
 
       <section class="mt-10">
         <h2 class="text-xl font-semibold">Short verdict</h2>
         <p class="mt-3 text-ink/70">{verdict}</p>
       </section>
+
+      <p class="mt-4 text-lg text-ink/70">{product.description}</p>
+
+      <div class="mt-6">
+        <AffiliateButton url={product.affiliateUrl} label="View on Amazon" productSlug={product.slug} />
+      </div>
 
       <section class="mt-10">
         <h2 class="text-xl font-semibold">Pros and cons</h2>
@@ -170,19 +163,6 @@ const schema = [
           </p>
         </section>
       ) : null}
-
-      {relatedProducts.length ? (
-        <section class="mt-10">
-          <h2 class="text-xl font-semibold">Related products</h2>
-          <ul class="mt-3 list-disc list-inside space-y-2 text-ink/70">
-            {relatedProducts.map((item) => (
-              <li><a class="text-accent" href={productUrl(item.slug)}>{item.name}</a></li>
-            ))}
-          </ul>
-        </section>
-      ) : null}
-
-      {product.faq?.length ? <FAQAccordion items={product.faq} /> : null}
     </article>
   </section>
 </Layout>

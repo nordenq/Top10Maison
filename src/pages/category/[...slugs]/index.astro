@@ -132,6 +132,10 @@ const featuredToplists = data.childsubcategory
       }
       return true;
     });
+const featuredToplistsTitle = showChildSubcategories ? "Top lists in this subcategory" : "Featured top lists";
+const featuredToplistsIntro = showChildSubcategories
+  ? data.subcategory?.intentCopy ?? data.subcategory?.description ?? "Ranked picks to compare the best options."
+  : "Ranked picks to compare the best options for home use.";
 
 let stripeIndex = 0;
 const takeSurface = () => stripeIndex++ % 2 === 0;
@@ -175,136 +179,6 @@ if (bestToplist?.faq?.length) {
     </div>
   </section>
 
-  {showChildSubcategories ? (
-    <section class={sectionClass()}>
-      <div class="page-container">
-        <h2 class="text-2xl font-semibold">How to choose</h2>
-        <p class="mt-3 text-sm text-ink/70">
-          A quick checklist before you dive into the subcategories below.
-        </p>
-        <div class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <div class="card p-5">
-            <div class="flex items-center gap-3">
-              <span class="brand-icon">
-                <svg viewBox="0 0 24 24" class="h-5 w-5" aria-hidden="true">
-                  <path
-                    d="M4.5 8.5c0-2.2 1.8-4 4-4h7c2.2 0 4 1.8 4 4v7c0 2.2-1.8 4-4 4h-7c-2.2 0-4-1.8-4-4v-7z"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                  <path
-                    d="M8 9.5h8M8 12.5h5M8 15.5h6"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                  <circle class="accent-dot" cx="18.2" cy="7" r="1.3" fill="#2BBBAD" />
-                </svg>
-              </span>
-              <h3 class="text-lg font-semibold">Fit and capacity</h3>
-            </div>
-            <p class="mt-2 text-sm text-ink/70">
-              Match size to your kitchen space and your household. Bigger is not always better.
-            </p>
-          </div>
-          <div class="card p-5">
-            <div class="flex items-center gap-3">
-              <span class="brand-icon">
-                <svg viewBox="0 0 24 24" class="h-5 w-5" aria-hidden="true">
-                  <path
-                    d="M6 7.5h12M6 12h7M6 16.5h10"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                  <circle
-                    cx="18"
-                    cy="12"
-                    r="3"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                  <circle class="accent-dot" cx="19.5" cy="8.2" r="1.2" fill="#2BBBAD" />
-                </svg>
-              </span>
-              <h3 class="text-lg font-semibold">Ease of use</h3>
-            </div>
-            <p class="mt-2 text-sm text-ink/70">
-              Look for controls and cleanup that feel simple day to day.
-            </p>
-          </div>
-          <div class="card p-5">
-            <div class="flex items-center gap-3">
-              <span class="brand-icon">
-                <svg viewBox="0 0 24 24" class="h-5 w-5" aria-hidden="true">
-                  <path
-                    d="M7.5 4.5h6.5L18 8v11c0 .9-.7 1.5-1.5 1.5h-9C6.7 20.5 6 19.9 6 19V6c0-.8.7-1.5 1.5-1.5z"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                  <path
-                    d="M9 12l2 2 4-4"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                  <circle class="accent-dot" cx="16.8" cy="6.3" r="1.2" fill="#2BBBAD" />
-                </svg>
-              </span>
-              <h3 class="text-lg font-semibold">Performance basics</h3>
-            </div>
-            <p class="mt-2 text-sm text-ink/70">
-              Focus on consistent results, not just extra modes.
-            </p>
-          </div>
-          <div class="card p-5">
-            <div class="flex items-center gap-3">
-              <span class="brand-icon">
-                <svg viewBox="0 0 24 24" class="h-5 w-5" aria-hidden="true">
-                  <path
-                    d="M7 9h6a3 3 0 0 1 0 6H6.8A2.8 2.8 0 0 1 4 12.2V7a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v3"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                  <path
-                    d="M14 12h5M17 9v6"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                  <circle class="accent-dot" cx="19.2" cy="6.8" r="1.2" fill="#2BBBAD" />
-                </svg>
-              </span>
-              <h3 class="text-lg font-semibold">Budget vs value</h3>
-            </div>
-            <p class="mt-2 text-sm text-ink/70">
-              Decide what matters most, then spend where it counts.
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-  ) : null}
-
   {showSubcategories ? (
     <section class={sectionClass()}>
       <div class="page-container">
@@ -318,32 +192,13 @@ if (bestToplist?.faq?.length) {
     </section>
   ) : null}
 
-  {showChildSubcategories ? (
-    <section class={sectionClass()}>
-      <div class="page-container">
-        <h2 class="text-2xl font-semibold">Subcategories</h2>
-        <div class="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {data.subcategory.subcategories.map((childsubcategory) => (
-            <CategoryCard
-              category={data.category}
-              parentSubcategory={data.subcategory}
-              childsubcategory={childsubcategory}
-            />
-          ))}
-        </div>
-      </div>
-    </section>
-  ) : null}
-
   {featuredToplists.length ? (
     <section class={sectionClass()} id="featured-top-lists">
       <div class="page-container">
         <div class="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <h2 class="text-2xl font-semibold">Featured top lists</h2>
-            <p class="mt-2 text-sm text-ink/70">
-              Ranked picks to compare the best options for home use.
-            </p>
+            <h2 class="text-2xl font-semibold">{featuredToplistsTitle}</h2>
+            <p class="mt-2 text-sm text-ink/70">{featuredToplistsIntro}</p>
           </div>
         </div>
         <div class="mt-6 grid gap-6 md:grid-cols-2">
