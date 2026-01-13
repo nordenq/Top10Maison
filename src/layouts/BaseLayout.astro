@@ -41,6 +41,55 @@ const enableAnalytics = Boolean(gaId && import.meta.env.MODE === "production");
     <link rel="preconnect" href="https://pub-d2291ee7d44d475387fd51f65cd369f0.r2.dev" crossorigin />
     <link rel="dns-prefetch" href="https://pub-d2291ee7d44d475387fd51f65cd369f0.r2.dev" />
     <link rel="preload" as="font" type="font/woff2" href="/fonts/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2" crossorigin />
+    <script nonce={CSP_NONCE}>
+      if (window.trustedTypes && !window.__top10maisonScriptGuard) {
+        window.__top10maisonScriptGuard = true;
+        const allowedOrigins = new Set([
+          window.location.origin,
+          "https://pagead2.googlesyndication.com",
+          "https://fundingchoicesmessages.google.com",
+          "https://www.googletagservices.com",
+          "https://www.google.com",
+          "https://static.cloudflareinsights.com",
+          "https://www.googletagmanager.com",
+          "https://www.google-analytics.com",
+          "https://region1.google-analytics.com"
+        ]);
+        let policy = null;
+        const createPolicy = (name) =>
+          window.trustedTypes.createPolicy(name, {
+            createScriptURL: (value) => {
+              const url = new URL(value, window.location.origin);
+              if (allowedOrigins.has(url.origin)) {
+                return url.toString();
+              }
+              throw new TypeError("Untrusted script URL");
+            }
+          });
+        try {
+          policy = createPolicy("top10maison#script");
+        } catch (error) {
+          try {
+            policy = createPolicy("default");
+          } catch (innerError) {
+            policy = null;
+          }
+        }
+        const descriptor = Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype, "src");
+        if (descriptor && typeof descriptor.set === "function") {
+          Object.defineProperty(HTMLScriptElement.prototype, "src", {
+            ...descriptor,
+            set(value) {
+              if (typeof value === "string" && policy) {
+                descriptor.set.call(this, policy.createScriptURL(value));
+                return;
+              }
+              descriptor.set.call(this, value);
+            }
+          });
+        }
+      }
+    </script>
     {gscVerification ? (
       <meta name="google-site-verification" content={gscVerification} />
     ) : null}

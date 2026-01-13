@@ -46,12 +46,12 @@ const productSchema =
     : null;
 ---
 
-<article class="card card-hover group flex h-full flex-col overflow-hidden">
-  <div class="relative flex aspect-[4/3] w-full items-center justify-center overflow-hidden bg-gradient-to-br from-accent-soft to-surface">
+<article class="card card-hover group grid overflow-hidden md:grid-cols-[240px_1fr]">
+  <div class="relative flex aspect-[4/3] w-full items-center justify-center overflow-hidden bg-gradient-to-br from-accent-soft to-surface md:aspect-auto md:h-full md:px-5 md:py-6">
     <img
       src={product.image}
       alt={product.name}
-      class="h-36 w-auto max-w-[85%] object-contain sm:h-40 lg:h-44"
+      class="h-36 w-auto max-w-[85%] object-contain sm:h-40 md:h-44 lg:h-48"
       loading={loading}
       fetchpriority={fetchpriority}
       decoding="async"
@@ -69,8 +69,8 @@ const productSchema =
     </span>
   </div>
 
-  <div class="flex flex-1 flex-col p-5">
-    <h3 class="text-base font-semibold leading-snug">
+  <div class="flex flex-1 flex-col p-5 md:py-6 md:pr-6">
+    <h3 class="text-lg font-semibold leading-snug">
       {productLink ? <a class="card-link" href={productLink} data-drawer-link>{product.name}</a> : product.name}
     </h3>
     {product.brand ? <p class="mt-1 text-sm text-ink/60">By {product.brand}</p> : null}
@@ -82,7 +82,7 @@ const productSchema =
       <p class="mt-4 text-sm text-ink/70">{product.reviewSnippet ?? product.description}</p>
     ) : null}
     {product.pros?.length || product.cons?.length ? (
-      <div class="mt-4 grid gap-4 text-sm text-ink/70 sm:grid-cols-2">
+      <div class="mt-4 grid gap-4 text-sm text-ink/70 lg:grid-cols-2">
         {product.pros?.length ? (
           <div>
             <p class="text-xs font-semibold uppercase tracking-wide text-ink">Pros</p>
