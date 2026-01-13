@@ -43,6 +43,27 @@ import { CSP_NONCE } from "../utils/csp";
     let isOpen = false;
     let activeUrl = null;
     let fetchController = null;
+    let trustedHtmlPolicy = null;
+
+    const getTrustedHtml = (value) => {
+      if (!window.trustedTypes) return value;
+      if (!trustedHtmlPolicy) {
+        try {
+          trustedHtmlPolicy = window.trustedTypes.createPolicy("default", {
+            createHTML: (input) => input
+          });
+        } catch (error) {
+          try {
+            trustedHtmlPolicy = window.trustedTypes.createPolicy("top10maison-drawer", {
+              createHTML: (input) => input
+            });
+          } catch (innerError) {
+            trustedHtmlPolicy = null;
+          }
+        }
+      }
+      return trustedHtmlPolicy ? trustedHtmlPolicy.createHTML(value) : value;
+    };
 
     const setOpenState = (open) => {
       isOpen = open;
@@ -61,7 +82,8 @@ import { CSP_NONCE } from "../utils/csp";
     };
 
     const parseDrawerHtml = (html) => {
-      const doc = new DOMParser().parseFromString(html, "text/html");
+      const trustedHtml = getTrustedHtml(html);
+      const doc = new DOMParser().parseFromString(trustedHtml, "text/html");
       const fragment = doc.querySelector("[data-drawer-fragment]");
       const fragmentTitle = fragment?.querySelector("[data-drawer-title]");
       if (title && fragmentTitle?.textContent) {
