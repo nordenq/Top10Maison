@@ -1,0 +1,143 @@
+---
+import { CSP_NONCE } from "../utils/csp";
+---
+
+<div
+  class="fixed inset-0 z-50 pointer-events-none data-[state=open]:pointer-events-auto"
+  aria-hidden="true"
+  data-state="closed"
+  data-product-drawer
+>
+  <div
+    class="absolute inset-0 bg-ink/60 opacity-0 transition-opacity data-[state=open]:opacity-100"
+    data-drawer-overlay
+    data-state="closed"
+  ></div>
+  <aside
+    class="absolute right-0 top-0 h-full w-full max-w-2xl translate-x-full bg-white shadow-xl transition-transform data-[state=open]:translate-x-0"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="drawer-title"
+    data-drawer-panel
+    data-state="closed"
+  >
+    <div class="flex items-center justify-between border-b border-border px-6 py-4">
+      <h2 id="drawer-title" class="text-lg font-semibold">Product details</h2>
+      <button class="btn-ghost text-sm" type="button" data-drawer-close>Close</button>
+    </div>
+    <div class="h-full overflow-y-auto px-6 py-6" data-drawer-content>
+      <p class="text-sm text-ink/70">Loading…</p>
+    </div>
+  </aside>
+</div>
+
+<script type="module" nonce={CSP_NONCE} is:inline>
+  const drawerRoot = document.querySelector("[data-product-drawer]");
+  if (drawerRoot) {
+    const panel = drawerRoot.querySelector("[data-drawer-panel]");
+    const overlay = drawerRoot.querySelector("[data-drawer-overlay]");
+    const closeButton = drawerRoot.querySelector("[data-drawer-close]");
+    const content = drawerRoot.querySelector("[data-drawer-content]");
+    const title = drawerRoot.querySelector("#drawer-title");
+    const linkSelector = "a[data-drawer-link]";
+    let isOpen = false;
+    let activeUrl = null;
+    let fetchController = null;
+
+    const setOpenState = (open) => {
+      isOpen = open;
+      drawerRoot.dataset.state = open ? "open" : "closed";
+      drawerRoot.setAttribute("aria-hidden", open ? "false" : "true");
+      overlay.dataset.state = open ? "open" : "closed";
+      panel.dataset.state = open ? "open" : "closed";
+      if (open) {
+        closeButton?.focus();
+      }
+    };
+
+    const parseDrawerHtml = (html) => {
+      const doc = new DOMParser().parseFromString(html, "text/html");
+      const fragment = doc.querySelector("[data-drawer-fragment]");
+      const fragmentTitle = fragment?.querySelector("[data-drawer-title]");
+      if (title && fragmentTitle?.textContent) {
+        title.textContent = fragmentTitle.textContent.trim();
+      }
+      if (fragment) {
+        content.innerHTML = fragment.innerHTML;
+      } else {
+        content.innerHTML = html;
+      }
+    };
+
+    const loadDrawerContent = async (url) => {
+      if (!content) return;
+      if (fetchController) fetchController.abort();
+      fetchController = new AbortController();
+      content.innerHTML = "<p class='text-sm text-ink/70'>Loading…</p>";
+      const fetchUrl = new URL(url, window.location.origin);
+      fetchUrl.searchParams.set("drawer", "1");
+      const response = await fetch(fetchUrl.toString(), { signal: fetchController.signal });
+      if (!response.ok) throw new Error("Drawer fetch failed.");
+      const html = await response.text();
+      parseDrawerHtml(html);
+    };
+
+    const openDrawer = async (url, { push = true } = {}) => {
+      if (!url) return;
+      activeUrl = url;
+      setOpenState(true);
+      if (push) {
+        history.pushState({ drawerOpen: true, url }, "", url);
+      }
+      try {
+        await loadDrawerContent(url);
+      } catch (error) {
+        if (!(error instanceof DOMException && error.name === "AbortError")) {
+          window.location.assign(url);
+        }
+      }
+    };
+
+    const closeDrawer = ({ fromPopstate = false } = {}) => {
+      if (!isOpen) return;
+      setOpenState(false);
+      if (!fromPopstate && history.state?.drawerOpen) {
+        history.back();
+      }
+    };
+
+    document.addEventListener("click", (event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      const link = target.closest(linkSelector);
+      if (!link) return;
+      if (event.defaultPrevented || event.button !== 0) return;
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      event.preventDefault();
+      openDrawer(link.href);
+    });
+
+    overlay.addEventListener("click", () => closeDrawer());
+    closeButton.addEventListener("click", () => closeDrawer());
+
+    document.addEventListener("keydown", (event) => {
+      if (!isOpen) return;
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeDrawer();
+      }
+    });
+
+    window.addEventListener("popstate", (event) => {
+      if (event.state?.drawerOpen && event.state.url) {
+        if (event.state.url !== activeUrl) {
+          openDrawer(event.state.url, { push: false });
+        } else {
+          setOpenState(true);
+        }
+        return;
+      }
+      closeDrawer({ fromPopstate: true });
+    });
+  }
+</script>

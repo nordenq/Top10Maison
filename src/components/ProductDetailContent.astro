@@ -1,0 +1,108 @@
+---
+import Breadcrumbs from "./Breadcrumbs.astro";
+import AffiliateButton from "./AffiliateButton.astro";
+import type { Product, Toplist } from "../utils/data";
+import { childSubcategoryUrl, subcategoryToplistUrl } from "../utils/routes";
+
+const {
+  product,
+  verdict,
+  relatedToplist,
+  relatedChildsubcategory,
+  breadcrumbItems = [],
+  showBreadcrumbs = true,
+  showBackLink = true
+} = Astro.props as {
+  product: Product;
+  verdict: string;
+  relatedToplist?: Toplist | null;
+  relatedChildsubcategory?: { name: string; slug: string } | null;
+  breadcrumbItems?: Array<{ name: string; href: string }>;
+  showBreadcrumbs?: boolean;
+  showBackLink?: boolean;
+};
+---
+
+<article class="page-container" data-drawer-fragment>
+  {showBreadcrumbs ? (
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <Breadcrumbs items={breadcrumbItems} />
+      {showBackLink ? <a id="smart-back" class="btn-ghost hidden" href="/">Back</a> : null}
+    </div>
+  ) : null}
+  <h1 class="mt-4 text-3xl font-semibold" data-drawer-title>{product.name}</h1>
+  <img
+    class="mt-6 rounded-xl bg-slate-50 object-contain"
+    src={product.image}
+    alt={product.name}
+    loading="lazy"
+    decoding="async"
+    width="800"
+    height="500"
+    onerror="this.onerror=null;this.src='/images/products/placeholder.svg';"
+  />
+
+  <section class="mt-10">
+    <h2 class="text-xl font-semibold">Short verdict</h2>
+    <p class="mt-3 text-ink/70">{verdict}</p>
+  </section>
+
+  <p class="mt-4 text-lg text-ink/70">{product.description}</p>
+
+  <div class="mt-6">
+    <AffiliateButton url={product.affiliateUrl} label="View on Amazon" productSlug={product.slug} />
+  </div>
+
+  <section class="mt-10">
+    <h2 class="text-xl font-semibold">Pros and cons</h2>
+    <div class="mt-4 grid gap-6 text-sm text-ink/70 md:grid-cols-2">
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-wide text-ink">Pros</p>
+        <ul class="mt-3 list-disc list-inside space-y-2">
+          {product.pros.map((item) => (
+            <li>{item}</li>
+          ))}
+        </ul>
+      </div>
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-wide text-ink">Cons</p>
+        <ul class="mt-3 list-disc list-inside space-y-2">
+          {product.cons.map((item) => (
+            <li>{item}</li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10">
+    <h2 class="text-xl font-semibold">Who this is best for</h2>
+    <p class="mt-3 text-ink/70">{product.bestFor}</p>
+    {product.notIdealFor ? <p class="mt-2 text-sm text-ink/60">Not ideal for: {product.notIdealFor}</p> : null}
+  </section>
+
+  <section class="mt-10">
+    <h2 class="text-xl font-semibold">Key details</h2>
+    <ul class="mt-3 list-disc list-inside space-y-2 text-ink/70">
+      {Object.entries(product.specs).map(([label, value]) => (
+        <li><strong>{label}:</strong> {value}</li>
+      ))}
+    </ul>
+  </section>
+
+  {relatedToplist ? (
+    <section class="mt-10">
+      <h2 class="text-xl font-semibold">See the full list</h2>
+      <p class="mt-2 text-sm text-ink/70">
+        <a
+          class="text-accent"
+          href={relatedChildsubcategory
+            ? childSubcategoryUrl(relatedToplist.category, relatedToplist.subcategory, relatedToplist.childsubcategory)
+            : subcategoryToplistUrl(relatedToplist.category, relatedToplist.subcategory, relatedToplist.count, relatedToplist.keywordSlug)}
+        >
+          {relatedToplist.title}
+        </a>
+      </p>
+    </section>
+  ) : null}
+</article>

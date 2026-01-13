@@ -4,6 +4,7 @@ import Breadcrumbs from "../../../components/Breadcrumbs.astro";
 import CategoryCard from "../../../components/CategoryCard.astro";
 import FAQAccordion from "../../../components/FAQAccordion.astro";
 import ProductGridSection from "../../../components/ProductGridSection.astro";
+import ProductDetailDrawer from "../../../components/ProductDetailDrawer.astro";
 import { getBestToplistForChild, getCategoryData } from "../../../utils/data";
 import { getDataIndex } from "../../../utils/dataIndex";
 import { buildCanonical, requireSite } from "../../../utils/seo";
@@ -186,6 +187,23 @@ if (bestToplist?.faq?.length) {
         <div class="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {data.category.subcategories.map((subcategory) => (
             <CategoryCard category={data.category} subcategory={subcategory} />
+          ))}
+        </div>
+      </div>
+    </section>
+  ) : null}
+
+  {showChildSubcategories ? (
+    <section class={sectionClass()}>
+      <div class="page-container">
+        <h2 class="text-2xl font-semibold">Subcategories</h2>
+        <div class="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {data.subcategory.subcategories.map((childsubcategory) => (
+            <CategoryCard
+              category={data.category}
+              parentSubcategory={data.subcategory}
+              childsubcategory={childsubcategory}
+            />
           ))}
         </div>
       </div>
@@ -387,5 +405,7 @@ if (bestToplist?.faq?.length) {
       </div>
     </section>
   ) : null}
+
+  {bestToplist ? <ProductDetailDrawer /> : null}
 
 </Layout>
