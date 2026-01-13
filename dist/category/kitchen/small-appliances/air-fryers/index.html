@@ -186,6 +186,11 @@ We analyze review data, specs, and pricing, then apply editorial checks to keep 
       }
     };
 
+    const replaceDrawerContent = (source) => {
+      const nodes = Array.from(source.childNodes).map((node) => document.importNode(node, true));
+      content.replaceChildren(...nodes);
+    };
+
     const parseDrawerHtml = (html) => {
       const doc = new DOMParser().parseFromString(html, "text/html");
       const fragment = doc.querySelector("[data-drawer-fragment]");
@@ -194,17 +199,20 @@ We analyze review data, specs, and pricing, then apply editorial checks to keep 
         title.textContent = fragmentTitle.textContent.trim();
       }
       if (fragment) {
-        content.innerHTML = fragment.innerHTML;
-      } else {
-        content.innerHTML = html;
+        replaceDrawerContent(fragment);
+        return;
       }
+      replaceDrawerContent(doc.body);
     };
 
     const loadDrawerContent = async (url) => {
       if (!content) return;
       if (fetchController) fetchController.abort();
       fetchController = new AbortController();
-      content.innerHTML = "<p class='text-sm text-ink/70'>Loading…</p>";
+      const loading = document.createElement("p");
+      loading.className = "text-sm text-ink/70";
+      loading.textContent = "Loading…";
+      content.replaceChildren(loading);
       const fetchUrl = new URL(url, window.location.origin);
       fetchUrl.searchParams.set("drawer", "1");
       const response = await fetch(fetchUrl.toString(), { signal: fetchController.signal });
@@ -232,6 +240,7 @@ We analyze review data, specs, and pricing, then apply editorial checks to keep 
     const closeDrawer = ({ fromPopstate = false } = {}) => {
       if (!isOpen) return;
       setOpenState(false);
+      activeUrl = null;
       if (!fromPopstate && history.state?.drawerOpen) {
         history.back();
       }
@@ -272,6 +281,9 @@ We analyze review data, specs, and pricing, then apply editorial checks to keep 
         } else {
           setOpenState(true);
         }
+        return;
+      }
+      if (isOpen && activeUrl && window.location.href === activeUrl) {
         return;
       }
       closeDrawer({ fromPopstate: true });

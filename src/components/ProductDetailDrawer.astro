@@ -55,6 +55,11 @@ import { CSP_NONCE } from "../utils/csp";
       }
     };
 
+    const replaceDrawerContent = (source) => {
+      const nodes = Array.from(source.childNodes).map((node) => document.importNode(node, true));
+      content.replaceChildren(...nodes);
+    };
+
     const parseDrawerHtml = (html) => {
       const doc = new DOMParser().parseFromString(html, "text/html");
       const fragment = doc.querySelector("[data-drawer-fragment]");
@@ -63,17 +68,20 @@ import { CSP_NONCE } from "../utils/csp";
         title.textContent = fragmentTitle.textContent.trim();
       }
       if (fragment) {
-        content.innerHTML = fragment.innerHTML;
-      } else {
-        content.innerHTML = html;
+        replaceDrawerContent(fragment);
+        return;
       }
+      replaceDrawerContent(doc.body);
     };
 
     const loadDrawerContent = async (url) => {
       if (!content) return;
       if (fetchController) fetchController.abort();
       fetchController = new AbortController();
-      content.innerHTML = "<p class='text-sm text-ink/70'>Loading…</p>";
+      const loading = document.createElement("p");
+      loading.className = "text-sm text-ink/70";
+      loading.textContent = "Loading…";
+      content.replaceChildren(loading);
       const fetchUrl = new URL(url, window.location.origin);
       fetchUrl.searchParams.set("drawer", "1");
       const response = await fetch(fetchUrl.toString(), { signal: fetchController.signal });
@@ -101,6 +109,7 @@ import { CSP_NONCE } from "../utils/csp";
     const closeDrawer = ({ fromPopstate = false } = {}) => {
       if (!isOpen) return;
       setOpenState(false);
+      activeUrl = null;
       if (!fromPopstate && history.state?.drawerOpen) {
         history.back();
       }
@@ -108,8 +117,9 @@ import { CSP_NONCE } from "../utils/csp";
 
     document.addEventListener("click", (event) => {
       const target = event.target;
-      if (!(target instanceof Element)) return;
-      const link = target.closest(linkSelector);
+      const element = target instanceof Element ? target : target?.parentElement;
+      if (!element) return;
+      const link = element.closest(linkSelector);
       if (!link) return;
       if (event.defaultPrevented || event.button !== 0) return;
       if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
@@ -141,6 +151,9 @@ import { CSP_NONCE } from "../utils/csp";
         } else {
           setOpenState(true);
         }
+        return;
+      }
+      if (isOpen && activeUrl && window.location.href === activeUrl) {
         return;
       }
       closeDrawer({ fromPopstate: true });
