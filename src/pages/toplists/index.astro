@@ -6,9 +6,10 @@ import { buildCanonical, requireSite } from "../../utils/seo";
 import { buildBreadcrumbSchema } from "../../utils/schema";
 import { childSubcategoryUrl } from "../../utils/routes";
 import { getToplistDisplay } from "../../utils/toplistDisplay";
+import TopListRow from "../../components/TopListRow.astro";
 
 const dataIndex = getDataIndex();
-const { categories, toplists, categoryMap, subcategoryMap, childSubcategoryMap } = dataIndex;
+const { categories, toplists, categoryMap, subcategoryMap } = dataIndex;
 
 const site = requireSite(Astro.site);
 const title = "Top Lists";
@@ -22,13 +23,18 @@ const breadcrumbItems = [
 const schema = [buildBreadcrumbSchema(site, breadcrumbItems)];
 const breadcrumbLinks = breadcrumbItems.map((item) => ({ name: item.name, href: item.path }));
 
-const latestToplists = [...toplists]
-  .sort((a, b) => {
-    const aTime = a.schemaDatePublished ? Date.parse(a.schemaDatePublished) : 0;
-    const bTime = b.schemaDatePublished ? Date.parse(b.schemaDatePublished) : 0;
-    return (Number.isFinite(bTime) ? bTime : 0) - (Number.isFinite(aTime) ? aTime : 0);
-  })
-  .slice(0, 12);
+const sortedToplists = [...toplists].sort((a, b) => {
+  const aCategory = categoryMap.get(a.category)?.name ?? a.category;
+  const bCategory = categoryMap.get(b.category)?.name ?? b.category;
+  if (aCategory !== bCategory) return aCategory.localeCompare(bCategory);
+  const aSub = subcategoryMap.get(`${a.category}:${a.subcategory}`)?.name ?? a.subcategory;
+  const bSub = subcategoryMap.get(`${b.category}:${b.subcategory}`)?.name ?? b.subcategory;
+  if (aSub !== bSub) return aSub.localeCompare(bSub);
+  return (a.title ?? "").localeCompare(b.title ?? "");
+});
+
+const buildToplistSnippet = (count: number, productName: string, useCase: string) =>
+  `Top ${count} ${productName.toLowerCase()} ranked for ${useCase.toLowerCase()}.`;
 ---
 
 <Layout title={title} description={description} canonical={canonical} schema={schema} ogImage={categories[0]?.image ?? "/logo.svg"}>
@@ -37,155 +43,31 @@ const latestToplists = [...toplists]
       <Breadcrumbs items={breadcrumbLinks} />
       <h1 class="mt-4 text-3xl font-semibold">Top lists</h1>
       <p class="mt-3 text-lg text-ink/70">
-        Start with the latest top lists below, built from AI-assisted review and trend signals, then editor-reviewed.
+        A directory of our rankings across categories. Use the category path to find the right list quickly.
       </p>
-      <div class="mt-6 flex flex-wrap gap-2">
-        {categories.map((category) => (
-          <a
-            class="rounded-full border border-border bg-surface px-4 py-2 text-sm font-medium text-ink/80 transition-colors hover:border-accent hover:text-accent"
-            href={`#cat-${category.slug}`}
-          >
-            {category.name}
-          </a>
-        ))}
-      </div>
     </div>
   </section>
 
-  <section id="latest-top-lists" class="section">
+  <section class="section">
     <div class="page-container">
-      <h2 class="text-2xl font-semibold">Latest top lists</h2>
-      <p class="mt-2 text-sm text-ink/70">
-        Fresh shortlists shaped by AI-assisted review and trend signals, editor-reviewed.
-      </p>
-      <div class="mt-6 grid gap-6 md:grid-cols-2">
-        {latestToplists.map((list, index) => {
-          const childKey = `${list.category}:${list.subcategory}:${list.childsubcategory}`;
-          const child = childSubcategoryMap.get(childKey);
+      <h2 class="text-2xl font-semibold">All rankings</h2>
+      <ul class="mt-4">
+        {sortedToplists.map((list) => {
           const category = categoryMap.get(list.category);
           const subcategory = subcategoryMap.get(`${list.category}:${list.subcategory}`);
           const display = getToplistDisplay(list, dataIndex);
-          const image =
-            list.image ??
-            child?.image ??
-            subcategory?.image ??
-            category?.image ??
-            "/logo.svg";
-          const imageSrcset =
-            list.imageSrcset ??
-            child?.imageSrcset ??
-            subcategory?.imageSrcset ??
-            category?.imageSrcset;
-          const isLcp = index === 0;
+          const label = `${category?.name ?? "Category"} \u2192 ${subcategory?.name ?? "Subcategory"}`;
           return (
-            <a
-              class="card card-hover grid gap-4 overflow-hidden md:grid-cols-[200px_1fr]"
+            <TopListRow
+              title={display.schemaHeadline}
               href={childSubcategoryUrl(list.category, list.subcategory, list.childsubcategory)}
-            >
-              <img
-                class="h-full w-full object-cover"
-                src={image}
-                alt={display.schemaHeadline}
-                loading={isLcp ? "eager" : "lazy"}
-                fetchpriority={isLcp ? "high" : undefined}
-                decoding="async"
-                srcset={imageSrcset}
-                sizes="(max-width: 768px) 100vw, 200px"
-                width="400"
-                height="300"
-              />
-              <div class="p-5">
-                <p class="text-xs font-semibold uppercase tracking-[0.25em] text-ink/70">
-                  {child?.name ?? subcategory?.name ?? category?.name ?? "Top list"}
-                </p>
-                <h3 class="mt-2 text-lg font-semibold">{display.schemaHeadline}</h3>
-                <p class="mt-2 text-sm text-ink/70">{list.metaDescription}</p>
-              </div>
-            </a>
+              categoryLabel={label}
+              description={buildToplistSnippet(list.count, display.productName, display.useCase)}
+              year={display.year}
+            />
           );
         })}
-      </div>
-    </div>
-  </section>
-
-  <section class="section bg-soft">
-    <div class="page-container space-y-12">
-      {categories.map((category) => {
-        const catLists = toplists.filter((list) => list.category === category.slug);
-        if (!catLists.length) return null;
-        const bySub = new Map();
-        for (const list of catLists) {
-          const key = `${list.category}:${list.subcategory}`;
-          const existing = bySub.get(key);
-          if (!existing) bySub.set(key, [list]);
-          else existing.push(list);
-        }
-        const groups = [...bySub.entries()].sort((a, b) => a[0].localeCompare(b[0]));
-        return (
-          <div id={`cat-${category.slug}`} class="scroll-mt-24">
-            <div class="flex flex-wrap items-baseline justify-between gap-3">
-              <h2 class="text-2xl font-semibold">{category.name}</h2>
-              <a class="text-sm font-semibold text-accent" href={`/category/${category.slug}/`}>Browse category →</a>
-            </div>
-            <div class="mt-6 space-y-10">
-              {groups.map(([key, lists]) => {
-                const sub = subcategoryMap.get(key);
-                const subName = sub?.name ?? "Subcategory";
-                const sorted = [...lists].sort((a, b) => (b.performanceScore ?? 0) - (a.performanceScore ?? 0));
-                return (
-                  <div class="card p-6">
-                    <h3 class="text-xl font-semibold">{subName}</h3>
-                    <div class="mt-5 grid gap-6 md:grid-cols-2">
-                      {sorted.slice(0, 4).map((list, index) => {
-                        const childKey = `${list.category}:${list.subcategory}:${list.childsubcategory}`;
-                        const child = childSubcategoryMap.get(childKey);
-                        const display = getToplistDisplay(list, dataIndex);
-                        const image =
-                          list.image ??
-                          child?.image ??
-                          sub?.image ??
-                          category.image ??
-                          "/logo.svg";
-                        const imageSrcset =
-                          list.imageSrcset ??
-                          child?.imageSrcset ??
-                          sub?.imageSrcset ??
-                          category.imageSrcset;
-                        const isLcp = false;
-                        return (
-                          <a
-                            class="card card-hover grid gap-4 overflow-hidden md:grid-cols-[200px_1fr]"
-                            href={childSubcategoryUrl(list.category, list.subcategory, list.childsubcategory)}
-                          >
-                            <img
-                              class="h-full w-full object-cover"
-                              src={image}
-                              alt={display.schemaHeadline}
-                              loading={isLcp ? "eager" : "lazy"}
-                              decoding="async"
-                              srcset={imageSrcset}
-                              sizes="(max-width: 768px) 100vw, 200px"
-                              width="400"
-                              height="300"
-                            />
-                            <div class="p-5">
-                              <p class="text-xs font-semibold uppercase tracking-[0.25em] text-ink/70">
-                                {child?.name ?? subName}
-                              </p>
-                              <h4 class="mt-2 text-lg font-semibold">{display.schemaHeadline}</h4>
-                              <p class="mt-2 text-sm text-ink/70">{list.metaDescription}</p>
-                            </div>
-                          </a>
-                        );
-                      })}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        );
-      })}
+      </ul>
     </div>
   </section>
 </Layout>

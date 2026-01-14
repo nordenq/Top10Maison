@@ -1,4 +1,6 @@
 ---
+import FAQ from "./FAQ.astro";
+
 const { items, title = "FAQ", id, class: className = "" } = Astro.props as {
   items: Array<{ question: string; answer: string }>;
   title?: string;
@@ -9,14 +11,6 @@ const { items, title = "FAQ", id, class: className = "" } = Astro.props as {
 
 <section class={`section${className ? ` ${className}` : ""}`} id={id}>
   <div class="page-container">
-    <h2 class="text-2xl font-semibold">{title}</h2>
-    <div class="mt-4 space-y-3">
-      {items.map((item) => (
-        <details class="card card-hover p-4">
-          <summary class="cursor-pointer text-sm font-semibold text-ink">{item.question}</summary>
-          <p class="mt-2 text-sm text-ink/70">{item.answer}</p>
-        </details>
-      ))}
-    </div>
+    <FAQ items={items} title={title} />
   </div>
 </section>

@@ -1,7 +1,6 @@
 ---
 import Layout from "../../../layouts/BaseLayout.astro";
 import Breadcrumbs from "../../../components/Breadcrumbs.astro";
-import CategoryCard from "../../../components/CategoryCard.astro";
 import ProductGridSection from "../../../components/ProductGridSection.astro";
 import ProductDrawer from "../../../components/ProductDrawer.astro";
 import ArticleToc from "../../../components/ArticleToc.astro";
@@ -10,14 +9,16 @@ import BuyingGuide from "../../../components/BuyingGuide.astro";
 import FeaturesThatMatter from "../../../components/FeaturesThatMatter.astro";
 import FAQ from "../../../components/FAQ.astro";
 import AudienceSplit from "../../../components/AudienceSplit.astro";
+import TopListRow from "../../../components/TopListRow.astro";
 import { getBestToplistForChild, getCategoryData } from "../../../utils/data";
 import { getDataIndex } from "../../../utils/dataIndex";
 import { buildCanonical, requireSite } from "../../../utils/seo";
 import { buildArticleSchema, buildBreadcrumbSchema, buildFaqSchema, buildItemListSchema } from "../../../utils/schema";
 import { categoryUrl, subcategoryUrl, childSubcategoryUrl, productUrl } from "../../../utils/routes";
+import { getToplistDisplay } from "../../../utils/toplistDisplay";
 
 const dataIndex = getDataIndex();
-const { toplists } = dataIndex;
+const { toplists, categoryMap, subcategoryMap, childSubcategoryMap } = dataIndex;
 
 export function getStaticPaths() {
   const { categories } = getDataIndex();
@@ -123,19 +124,28 @@ const faqItems =
 const relatedToplists = bestToplist
   ? toplists.filter((list) => list.category === bestToplist.category && list.slug !== bestToplist.slug)
   : [];
-const featuredToplists = data.childsubcategory
-  ? []
-  : toplists.filter((list) => {
-      if (list.category !== data.category.slug) return false;
-      if (data.subcategory) {
-        return list.subcategory === data.subcategory.slug;
-      }
-      return true;
-    });
-const featuredToplistsTitle = showChildSubcategories ? "Top lists in this subcategory" : "Featured top lists";
-const featuredToplistsIntro = showChildSubcategories
-  ? data.subcategory?.intentCopy ?? data.subcategory?.description ?? "Ranked picks to compare the best options."
-  : "Ranked picks to compare the best options for home use.";
+const categoryToplists = toplists.filter((list) => list.category === data.category.slug);
+const subcategoryToplists = data.subcategory
+  ? categoryToplists.filter((list) => list.subcategory === data.subcategory?.slug)
+  : [];
+const buildToplistSnippet = (count: number, productName: string, useCase: string) =>
+  `Top ${count} ${productName.toLowerCase()} ranked for ${useCase.toLowerCase()}.`;
+
+const categoryGroups = new Map<string, typeof categoryToplists>();
+for (const list of categoryToplists) {
+  const key = `${list.category}:${list.subcategory}`;
+  const existing = categoryGroups.get(key);
+  if (existing) {
+    existing.push(list);
+  } else {
+    categoryGroups.set(key, [list]);
+  }
+}
+const categoryGroupEntries = [...categoryGroups.entries()].sort((a, b) => {
+  const aName = subcategoryMap.get(a[0])?.name ?? a[0];
+  const bName = subcategoryMap.get(b[0])?.name ?? b[0];
+  return aName.localeCompare(bName);
+});
 const formatCriteriaList = (items: string[]) => {
   if (items.length === 1) return items[0];
   if (items.length === 2) return `${items[0]} and ${items[1]}`;
@@ -155,7 +165,7 @@ const guideSectionClass = (tone: "page" | "soft") => {
   const wantsSoft = tone === "soft";
   const useSoft = wantsSoft && !lastGuideWasSoft;
   lastGuideWasSoft = useSoft;
-  return `section${useSoft ? " bg-soft" : ""}`;
+  return `section${useSoft ? " section--soft" : ""}`;
 };
 const tocItems = bestToplist
   ? [
@@ -213,55 +223,104 @@ if (faqItems.length) {
   </section>
 
   {showSubcategories ? (
-    <section class="section bg-soft">
-      <div class="page-container">
-        <h2 class="text-2xl font-semibold">Subcategories</h2>
-        <div class="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {data.category.subcategories.map((subcategory) => (
-            <CategoryCard category={data.category} subcategory={subcategory} />
-          ))}
-        </div>
+    <section class="section">
+      <div class="page-container space-y-8">
+        <h2 class="text-2xl font-semibold">Rankings by subcategory</h2>
+        {categoryGroupEntries.map(([key, lists]) => {
+          const sub = subcategoryMap.get(key);
+          const subName = sub?.name ?? "Subcategory";
+          const subSlug = lists[0]?.subcategory;
+          const sorted = [...lists].sort((a, b) => (b.performanceScore ?? 0) - (a.performanceScore ?? 0));
+          return (
+            <div>
+              <div class="flex flex-wrap items-baseline justify-between gap-3">
+                <h3 class="text-xl font-semibold">{subName}</h3>
+                {subSlug ? (
+                  <a
+                    class="text-sm font-semibold text-ink/70 transition-colors hover:text-accent"
+                    href={subcategoryUrl(data.category.slug, subSlug)}
+                  >
+                    Explore {subName} →
+                  </a>
+                ) : null}
+              </div>
+              <ul class="mt-3">
+                {sorted.map((list) => {
+                  const display = getToplistDisplay(list, dataIndex);
+                  return (
+                    <TopListRow
+                      title={display.schemaHeadline}
+                      href={childSubcategoryUrl(list.category, list.subcategory, list.childsubcategory)}
+                      description={buildToplistSnippet(list.count, display.productName, display.useCase)}
+                      year={display.year}
+                    />
+                  );
+                })}
+              </ul>
+            </div>
+          );
+        })}
       </div>
     </section>
   ) : null}
 
   {showChildSubcategories ? (
-    <section class="section bg-soft">
+    <section class="section" id="subcategory-rankings">
       <div class="page-container">
-        <h2 class="text-2xl font-semibold">Subcategories</h2>
-        <div class="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {data.subcategory.subcategories.map((childsubcategory) => (
-            <CategoryCard
-              category={data.category}
-              parentSubcategory={data.subcategory}
-              childsubcategory={childsubcategory}
-            />
-          ))}
-        </div>
-      </div>
-    </section>
-  ) : null}
-
-  {featuredToplists.length ? (
-    <section class="section" id="featured-top-lists">
-      <div class="page-container">
-        <div class="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <h2 class="text-2xl font-semibold">{featuredToplistsTitle}</h2>
-            <p class="mt-2 text-sm text-ink/70">{featuredToplistsIntro}</p>
-          </div>
+        <div class="flex flex-wrap items-end justify-between gap-3">
+          <h2 class="text-2xl font-semibold">Rankings in {data.subcategory.name}</h2>
         </div>
         <div class="mt-6 grid gap-6 md:grid-cols-2">
-          {featuredToplists.map((list) => (
-            <a
-              class="card card-hover p-5"
-              href={childSubcategoryUrl(list.category, list.subcategory, list.childsubcategory)}
-            >
-              <p class="text-xs font-semibold uppercase tracking-[0.2em] text-ink/70">Top list</p>
-              <h3 class="mt-2 text-lg font-semibold">{list.title}</h3>
-              <p class="mt-2 text-sm text-ink/70">{list.metaDescription}</p>
-            </a>
-          ))}
+          {subcategoryToplists.map((list, index) => {
+            const childKey = `${list.category}:${list.subcategory}:${list.childsubcategory}`;
+            const child = childSubcategoryMap.get(childKey);
+            const category = categoryMap.get(list.category);
+            const subcategory = subcategoryMap.get(`${list.category}:${list.subcategory}`);
+            const display = getToplistDisplay(list, dataIndex);
+            const image =
+              list.image ??
+              child?.image ??
+              subcategory?.image ??
+              category?.image ??
+              "/logo.svg";
+            const imageSrcset =
+              list.imageSrcset ??
+              child?.imageSrcset ??
+              subcategory?.imageSrcset ??
+              category?.imageSrcset;
+            const isLcp = index === 0;
+            return (
+              <a
+                class="toplist-card card card-hover grid gap-4 overflow-hidden md:grid-cols-[200px_1fr]"
+                href={childSubcategoryUrl(list.category, list.subcategory, list.childsubcategory)}
+              >
+                <div class="toplist-card__image">
+                  <img
+                    class="h-full w-full object-cover"
+                    src={image}
+                    alt={display.schemaHeadline}
+                    loading={isLcp ? "eager" : "lazy"}
+                    fetchpriority={isLcp ? "high" : undefined}
+                    decoding="async"
+                    srcset={imageSrcset}
+                    sizes="(max-width: 768px) 100vw, 200px"
+                    width="400"
+                    height="300"
+                  />
+                </div>
+                <div class="p-5">
+                  <p class="text-xs font-semibold uppercase tracking-[0.25em] text-ink/70">
+                    {child?.name ?? subcategory?.name ?? category?.name ?? "Top list"}
+                  </p>
+                  <h3 class="mt-2 text-lg font-semibold">{display.schemaHeadline}</h3>
+                  <p class="mt-2 text-sm text-ink/70">{list.metaDescription}</p>
+                  <span class="mt-4 inline-flex text-sm font-semibold text-ink/70 transition-colors hover:text-accent">
+                    View ranking →
+                  </span>
+                </div>
+              </a>
+            );
+          })}
         </div>
       </div>
     </section>
@@ -307,7 +366,7 @@ if (faqItems.length) {
       ) : null}
 
       {guide?.featuresThatMatter?.matters?.length && guide?.featuresThatMatter?.ignore?.length ? (
-        <section class={guideSectionClass("soft")}>
+        <section class={guideSectionClass("page")}>
           <div class="page-container">
             <FeaturesThatMatter
               matters={guide.featuresThatMatter.matters}
@@ -333,7 +392,7 @@ if (faqItems.length) {
       ) : null}
 
       {hasAudienceSplit ? (
-        <section class={guideSectionClass("soft")}>
+        <section class={guideSectionClass("page")}>
           <div class="page-container">
             <AudienceSplit forList={whoForItems} skipList={whoSkipItems} />
           </div>

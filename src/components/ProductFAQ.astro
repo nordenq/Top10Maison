@@ -1,5 +1,6 @@
 ---
 import type { ProductFaqItem } from "../utils/productFaq";
+import FAQ from "./FAQ.astro";
 
 const { items, title = "Product FAQ" } = Astro.props as {
   items: ProductFaqItem[];
@@ -9,23 +10,4 @@ const { items, title = "Product FAQ" } = Astro.props as {
 const shouldRender = Array.isArray(items) && items.length >= 3;
 ---
 
-{shouldRender ? (
-  <section>
-    <h2 class="text-base font-semibold text-ink">{title}</h2>
-    <div class="mt-4 divide-y divide-border">
-      {items.map((item) => (
-        <details class="group py-3">
-          <summary class="flex cursor-pointer items-center justify-between text-sm font-medium text-ink focus-visible:outline-none">
-            <span>{item.question}</span>
-            <span class="ml-4 inline-flex h-4 w-4 items-center justify-center text-ink/60 transition-transform group-open:rotate-180">
-              <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                <path d="M5.6 7.8a1 1 0 0 1 1.4 0L10 10.8l3-3a1 1 0 1 1 1.4 1.4l-3.7 3.7a1 1 0 0 1-1.4 0L5.6 9.2a1 1 0 0 1 0-1.4z" />
-              </svg>
-            </span>
-          </summary>
-          <p class="mt-2 text-xs text-ink/60">{item.answer}</p>
-        </details>
-      ))}
-    </div>
-  </section>
-) : null}
+{shouldRender ? <FAQ items={items} title={title} titleClass="text-base" /> : null}

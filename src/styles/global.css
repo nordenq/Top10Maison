@@ -7,7 +7,7 @@
 
 @layer base {
   :root {
-    --bg-page: #f8fbf9;
+    --bg-page: #ffffff;
     --bg-soft: #eef4f1;
     --tag-font-size: 0.85rem;
     --tag-line-height: 1;
@@ -91,6 +91,23 @@
 @layer components {
   .section {
     @apply py-4 md:py-6;
+  }
+
+  .section--soft {
+    @apply bg-soft;
+  }
+
+  @media (max-width: 640px) {
+    .toplist-card__image {
+      height: 240px;
+      overflow: hidden;
+    }
+
+    .toplist-card__image img {
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+    }
   }
 
   .page-container {

@@ -98,7 +98,7 @@ const glanceItems = glanceKeys
   {relatedToplist ? (
     <section>
       <a
-        class="text-sm font-semibold text-accent"
+        class="text-sm font-semibold text-ink/70 transition-colors hover:text-accent"
         href={relatedChildsubcategory
           ? childSubcategoryUrl(relatedToplist.category, relatedToplist.subcategory, relatedToplist.childsubcategory)
           : subcategoryToplistUrl(relatedToplist.category, relatedToplist.subcategory, relatedToplist.count, relatedToplist.keywordSlug)}

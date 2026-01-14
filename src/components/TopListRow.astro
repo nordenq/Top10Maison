@@ -1,0 +1,34 @@
+---
+const {
+  title,
+  href,
+  categoryLabel,
+  description,
+  year
+} = Astro.props as {
+  title: string;
+  href: string;
+  categoryLabel?: string;
+  description?: string;
+  year?: number;
+};
+---
+
+<li class="border-b border-border/60 py-3 last:border-b-0">
+  <div class="flex flex-wrap items-baseline justify-between gap-2">
+    <a class="text-base font-semibold text-ink transition-colors hover:text-accent" href={href}>
+      {title}
+    </a>
+    {year ? (
+      <span class="inline-flex items-center rounded-full border border-border bg-surface px-2 py-0.5 text-xs font-medium text-ink/60">
+        {year}
+      </span>
+    ) : null}
+  </div>
+  {categoryLabel ? (
+    <p class="mt-1 text-xs font-semibold uppercase tracking-[0.18em] text-ink/50">
+      {categoryLabel}
+    </p>
+  ) : null}
+  {description ? <p class="mt-2 text-sm text-ink/70">{description}</p> : null}
+</li>

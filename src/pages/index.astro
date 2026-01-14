@@ -33,16 +33,20 @@ const schema = [buildBreadcrumbSchema(site, [{ name: "Home", path: "/" }])];
   schema={schema}
   ogImage={ogImage}
 >
-  <section class="section">
+  <section class="section section--soft">
     <div class="page-container">
       <p class="text-xs font-semibold uppercase tracking-[0.3em] text-ink/70">For your home</p>
-      <h1 class="mt-3 text-4xl font-semibold md:text-5xl">Choose faster with clear top lists.</h1>
+      <h1 class="mt-3 text-4xl font-semibold md:text-5xl">
+        Find the best products for your home,
+        <span class="block">all in one place.</span>
+      </h1>
       <p class="mt-4 text-lg text-ink/70">
-        Ranked picks for your home—practical, consistent, and easy to compare.
+        Top10Maison brings together top-rated products across categories, using review data and consistent criteria
+        so you can explore, compare, and choose with confidence.
       </p>
       <div class="mt-6 flex flex-wrap gap-3">
-        <a class="btn" href="/categories/">Browse categories</a>
-        <a class="btn-ghost" href="/toplists/">Start browsing</a>
+        <a class="btn" href="/categories/">Browse home categories</a>
+        <a class="btn-ghost" href="/toplists/">Explore top lists</a>
       </div>
     </div>
   </section>
@@ -76,21 +80,23 @@ const schema = [buildBreadcrumbSchema(site, [{ name: "Home", path: "/" }])];
           const isLcp = index === 0;
           return (
             <a
-              class="card card-hover grid gap-4 overflow-hidden md:grid-cols-[200px_1fr]"
+              class="toplist-card card card-hover grid gap-4 overflow-hidden md:grid-cols-[200px_1fr]"
               href={childSubcategoryUrl(list.category, list.subcategory, list.childsubcategory)}
             >
-              <img
-                class="h-full w-full object-cover"
-                src={image}
-                alt={display.schemaHeadline}
-                loading={isLcp ? "eager" : "lazy"}
-                fetchpriority={isLcp ? "high" : undefined}
-                decoding="async"
-                srcset={imageSrcset}
-                sizes="(max-width: 768px) 100vw, 200px"
-                width="400"
-                height="300"
-              />
+              <div class="toplist-card__image">
+                <img
+                  class="h-full w-full object-cover"
+                  src={image}
+                  alt={display.schemaHeadline}
+                  loading={isLcp ? "eager" : "lazy"}
+                  fetchpriority={isLcp ? "high" : undefined}
+                  decoding="async"
+                  srcset={imageSrcset}
+                  sizes="(max-width: 768px) 100vw, 200px"
+                  width="400"
+                  height="300"
+                />
+              </div>
               <div class="p-5">
                 <p class="text-xs font-semibold uppercase tracking-[0.25em] text-ink/70">
                   {child?.name ?? subcategory?.name ?? category?.name ?? "Top list"}
@@ -105,14 +111,14 @@ const schema = [buildBreadcrumbSchema(site, [{ name: "Home", path: "/" }])];
     </div>
   </section>
 
-  <section id="top-categories" class="section bg-soft">
+  <section id="top-categories" class="section section--soft">
     <div class="page-container">
       <div class="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h2 class="text-2xl font-semibold">Top categories</h2>
           <p class="mt-2 text-sm text-ink/70">Browse by room</p>
         </div>
-        <a class="text-sm font-semibold text-accent" href="/categories/">View all</a>
+        <a class="text-sm font-semibold text-ink/70 transition-colors hover:text-accent" href="/categories/">View all</a>
       </div>
       <div class="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {categories.map((category, index) => (
