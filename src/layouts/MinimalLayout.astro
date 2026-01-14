@@ -1,0 +1,116 @@
+---
+import "../styles/global.css";
+import SEO from "../components/SEO.astro";
+import { CSP_NONCE } from "../utils/csp";
+
+const {
+  title,
+  description,
+  canonical,
+  schema = [],
+  ogImage,
+  ogType,
+  robots,
+  metaRefresh
+} = Astro.props as {
+  title: string;
+  description: string;
+  canonical: string;
+  schema?: Array<Record<string, unknown>>;
+  ogImage?: string;
+  ogType?: string;
+  robots?: string;
+  metaRefresh?: string;
+};
+
+const gaId = import.meta.env.PUBLIC_GA_ID;
+const gscVerification = import.meta.env.PUBLIC_GSC_VERIFICATION;
+const enableAnalytics = Boolean(gaId && import.meta.env.MODE === "production");
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {metaRefresh ? <meta http-equiv="refresh" content={metaRefresh} /> : null}
+    <meta name="theme-color" content="#F8FBF9" />
+    <link rel="preconnect" href="https://pub-d2291ee7d44d475387fd51f65cd369f0.r2.dev" crossorigin />
+    <link rel="dns-prefetch" href="https://pub-d2291ee7d44d475387fd51f65cd369f0.r2.dev" />
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2" crossorigin />
+    <script nonce={CSP_NONCE}>
+      if (window.trustedTypes && !window.__top10maisonScriptGuard) {
+        window.__top10maisonScriptGuard = true;
+        const allowedOrigins = new Set([
+          window.location.origin,
+          "https://pagead2.googlesyndication.com",
+          "https://fundingchoicesmessages.google.com",
+          "https://www.googletagservices.com",
+          "https://www.google.com",
+          "https://static.cloudflareinsights.com",
+          "https://www.googletagmanager.com",
+          "https://www.google-analytics.com",
+          "https://region1.google-analytics.com"
+        ]);
+        let policy = null;
+        const createPolicy = (name) =>
+          window.trustedTypes.createPolicy(name, {
+            createScriptURL: (value) => {
+              const url = new URL(value, window.location.origin);
+              if (allowedOrigins.has(url.origin)) {
+                return url.toString();
+              }
+              throw new TypeError("Untrusted script URL");
+            }
+          });
+        try {
+          policy = createPolicy("top10maison#script");
+        } catch (error) {
+          try {
+            policy = createPolicy("default");
+          } catch (innerError) {
+            policy = null;
+          }
+        }
+        const descriptor = Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype, "src");
+        if (descriptor && typeof descriptor.set === "function") {
+          Object.defineProperty(HTMLScriptElement.prototype, "src", {
+            ...descriptor,
+            set(value) {
+              if (typeof value === "string" && policy) {
+                descriptor.set.call(this, policy.createScriptURL(value));
+                return;
+              }
+              descriptor.set.call(this, value);
+            }
+          });
+        }
+      }
+    </script>
+    {gscVerification ? (
+      <meta name="google-site-verification" content={gscVerification} />
+    ) : null}
+    {enableAnalytics ? <meta name="ga-id" content={gaId} /> : null}
+    <SEO
+      title={title}
+      description={description}
+      canonical={canonical}
+      schema={schema}
+      ogImage={ogImage}
+      ogType={ogType}
+      robots={robots}
+    />
+    <meta name="google-adsense-account" content="ca-pub-3680083929895808" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+    <link rel="robots" href="/robots.txt" />
+  </head>
+  <body class="min-h-screen flex flex-col">
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <main id="main-content" class="flex-1">
+      <slot />
+    </main>
+    <script src="/scripts/site.js" type="module"></script>
+    {enableAnalytics ? <script src="/scripts/analytics.js" type="module"></script> : null}
+  </body>
+</html>

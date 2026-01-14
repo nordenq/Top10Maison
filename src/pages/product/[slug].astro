@@ -1,12 +1,11 @@
 ---
-import Layout from "../../layouts/BaseLayout.astro";
+import Layout from "../../layouts/MinimalLayout.astro";
 import { getProductData } from "../../utils/data";
 import { getDataIndex } from "../../utils/dataIndex";
 import { buildCanonical, requireSite } from "../../utils/seo";
 import { buildBreadcrumbSchema, buildProductSchema, buildReviewSchema } from "../../utils/schema";
 import { categoryUrl, childSubcategoryUrl, productUrl, subcategoryToplistUrl, subcategoryUrl } from "../../utils/routes";
 import ProductDetailLayout from "../../components/ProductDetailLayout.astro";
-import ProductDrawerContent from "../../components/ProductDrawerContent.astro";
 
 const dataIndex = getDataIndex();
 
@@ -38,7 +37,6 @@ const verdictCombined =
   product.reviewSnippet && product.reviewSnippet.trim() !== descriptionText.trim()
     ? `${product.reviewSnippet} ${descriptionText}`
     : verdict;
-const shortVerdict = verdict.split(/(?<=\.)\s+/)[0] ?? verdict;
 const isDrawer = Astro.url.searchParams.get("drawer") === "1";
 
 const site = requireSite(Astro.site);
@@ -90,11 +88,17 @@ const backLink = relatedToplist
 ---
 
 {isDrawer ? (
-  <ProductDrawerContent
-    product={product}
-    shortVerdict={shortVerdict}
-    relatedToplist={relatedToplist}
-    relatedChildsubcategory={relatedChildsubcategory}
+  <ProductDetailLayout
+    title={product.name}
+    image={product.image}
+    verdict={verdictCombined}
+    ctaUrl={product.affiliateUrl}
+    pros={product.pros}
+    cons={product.cons}
+    bestFor={[product.bestFor]}
+    notFor={[product.notIdealFor]}
+    specs={Object.entries(product.specs).map(([label, value]) => ({ label, value }))}
+    backLink={backLink}
   />
 ) : (
   <Layout
