@@ -32,7 +32,7 @@ const latestToplists = [...toplists]
 ---
 
 <Layout title={title} description={description} canonical={canonical} schema={schema} ogImage={categories[0]?.image ?? "/logo.svg"}>
-  <section class="section bg-surface">
+  <section class="section">
     <div class="page-container">
       <Breadcrumbs items={breadcrumbLinks} />
       <h1 class="mt-4 text-3xl font-semibold">Top lists</h1>
@@ -108,7 +108,7 @@ const latestToplists = [...toplists]
     </div>
   </section>
 
-  <section class="section bg-surface">
+  <section class="section bg-soft">
     <div class="page-container space-y-12">
       {categories.map((category) => {
         const catLists = toplists.filter((list) => list.category === category.slug);

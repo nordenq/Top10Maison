@@ -1,13 +1,13 @@
 ---
-const { items, title = "FAQ", id, surface = false } = Astro.props as {
+const { items, title = "FAQ", id, class: className = "" } = Astro.props as {
   items: Array<{ question: string; answer: string }>;
   title?: string;
   id?: string;
-  surface?: boolean;
+  class?: string;
 };
 ---
 
-<section class={`section${surface ? " bg-surface" : ""}`} id={id}>
+<section class={`section${className ? ` ${className}` : ""}`} id={id}>
   <div class="page-container">
     <h2 class="text-2xl font-semibold">{title}</h2>
     <div class="mt-4 space-y-3">

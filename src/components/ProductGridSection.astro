@@ -10,7 +10,7 @@ const {
   startRank = 1,
   id,
   eagerCount = 1,
-  surface = false,
+  class: className = "",
   embedded = false
 } = Astro.props as {
   title: string;
@@ -20,7 +20,7 @@ const {
   startRank?: number;
   id?: string;
   eagerCount?: number;
-  surface?: boolean;
+  class?: string;
   embedded?: boolean;
 };
 ---
@@ -52,7 +52,7 @@ const {
     </div>
   </section>
 ) : (
-  <section class={`section${surface ? " bg-surface" : ""}`} id={id}>
+  <section class={`section${className ? ` ${className}` : ""}`} id={id}>
     <div class="page-container">
       <h2 class="text-2xl font-semibold">{title}</h2>
       {intro ? <p class="mt-3 text-sm text-ink/70">{intro}</p> : null}

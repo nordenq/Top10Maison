@@ -150,12 +150,13 @@ const whoForItems = bestToplist?.whoShouldBuy ?? [];
 const whoSkipItems = guide?.whoShouldSkip ?? [];
 const hasAudienceSplit = whoForItems.length || whoSkipItems.length;
 
-let stripeIndex = 0;
-const takeSurface = () => stripeIndex++ % 2 === 0;
-const sectionClass = (extra = "") => `section${takeSurface() ? " bg-surface" : ""}${extra ? ` ${extra}` : ""}`;
-let articleStripeIndex = 0;
-const articleSectionClass = () =>
-  `rounded-2xl border border-border p-6 ${articleStripeIndex++ % 2 === 0 ? "bg-surface" : "bg-accent-soft/20"}`;
+let lastGuideWasSoft = false;
+const guideSectionClass = (tone: "page" | "soft") => {
+  const wantsSoft = tone === "soft";
+  const useSoft = wantsSoft && !lastGuideWasSoft;
+  lastGuideWasSoft = useSoft;
+  return `section${useSoft ? " bg-soft" : ""}`;
+};
 const tocItems = bestToplist
   ? [
       { id: "top-picks", label: "Top picks" },
@@ -201,7 +202,7 @@ if (faqItems.length) {
   schema={[...schema, collectionSchema]}
   ogImage={ogImage}
 >
-  <section class={sectionClass()}>
+  <section class="section">
     <div class="page-container">
       <Breadcrumbs items={breadcrumbLinks} />
       <h1 class="mt-4 text-3xl font-semibold">
@@ -212,7 +213,7 @@ if (faqItems.length) {
   </section>
 
   {showSubcategories ? (
-    <section class={sectionClass()}>
+    <section class="section bg-soft">
       <div class="page-container">
         <h2 class="text-2xl font-semibold">Subcategories</h2>
         <div class="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -225,7 +226,7 @@ if (faqItems.length) {
   ) : null}
 
   {showChildSubcategories ? (
-    <section class={sectionClass()}>
+    <section class="section bg-soft">
       <div class="page-container">
         <h2 class="text-2xl font-semibold">Subcategories</h2>
         <div class="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -242,7 +243,7 @@ if (faqItems.length) {
   ) : null}
 
   {featuredToplists.length ? (
-    <section class={sectionClass()} id="featured-top-lists">
+    <section class="section" id="featured-top-lists">
       <div class="page-container">
         <div class="flex flex-wrap items-end justify-between gap-4">
           <div>
@@ -267,97 +268,109 @@ if (faqItems.length) {
   ) : null}
 
   {bestToplist ? (
-    <section class={sectionClass()} id="toplist-article">
-      <div class="page-container">
-        <div class="space-y-6">
-          {tocItems.length ? <ArticleToc items={tocItems} /> : null}
+    <>
+      <section class={guideSectionClass("page")} id="toplist-article">
+        <div class="page-container">
           <div class="space-y-6">
-            <div class={articleSectionClass()}>
-              <ProductGridSection
-                title={`Top Picks: Best ${data.childsubcategory.name}`}
-                intro={topPicksIntro}
-                products={bestToplistProductsWithBadges}
-                schema
-                id="top-picks"
-                embedded
-              />
-            </div>
-
-            {guide?.quickSummary?.length ? (
-              <div>
-                <QuickSummary bullets={guide.quickSummary} />
-              </div>
-            ) : null}
-
-            {guide?.buyerProfiles?.length || guide?.howToChoose?.length ? (
-              <div>
-                <BuyingGuide
-                  title={`How to choose the right ${productName}`}
-                  profiles={guide?.buyerProfiles ?? []}
-                  sections={guide?.howToChoose ?? []}
-                  id="how-to-choose"
-                />
-              </div>
-            ) : null}
-
-            {guide?.featuresThatMatter?.matters?.length && guide?.featuresThatMatter?.ignore?.length ? (
-              <div class={articleSectionClass()}>
-                <FeaturesThatMatter
-                  matters={guide.featuresThatMatter.matters}
-                  ignore={guide.featuresThatMatter.ignore}
-                />
-              </div>
-            ) : null}
-
-            {guide?.commonMistakes?.length ? (
-              <div class="border-t border-border/60 pt-6">
-                <section id="common-mistakes">
-                  <h2 class="text-2xl font-semibold text-ink">Common mistakes to avoid</h2>
-                  <ul class="mt-4 list-clean space-y-2 text-sm text-ink/70">
-                    {guide.commonMistakes.map((item) => (
-                      <li>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </div>
-            ) : null}
-
-            {hasAudienceSplit ? (
-              <div>
-                <AudienceSplit forList={whoForItems} skipList={whoSkipItems} />
-              </div>
-            ) : null}
-
-            {bestToplist?.howWePicked?.length ? (
-              <div class="border-t border-border/60 pt-6">
-                <section id="how-we-picked">
-                  <h2 class="text-2xl font-semibold text-ink">How we picked</h2>
-                  <p class="mt-2 text-sm text-ink/60">
-                    We analyze review data, specs, capacity, and availability, then apply editorial checks to keep
-                    comparisons consistent.
-                  </p>
-                  <ul class="mt-4 list-clean space-y-2 text-sm text-ink/70">
-                    {bestToplist.howWePicked.map((item) => (
-                      <li>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </div>
-            ) : null}
-
-            {faqItems.length ? (
-              <div class="border-t border-border/60 pt-6">
-                <FAQ items={faqItems} />
-              </div>
-            ) : null}
+            {tocItems.length ? <ArticleToc items={tocItems} /> : null}
+            <ProductGridSection
+              title={`Top Picks: Best ${data.childsubcategory.name}`}
+              intro={topPicksIntro}
+              products={bestToplistProductsWithBadges}
+              schema
+              id="top-picks"
+              embedded
+            />
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      {guide?.quickSummary?.length ? (
+        <section class={guideSectionClass("soft")}>
+          <div class="page-container">
+            <QuickSummary bullets={guide.quickSummary} />
+          </div>
+        </section>
+      ) : null}
+
+      {guide?.buyerProfiles?.length || guide?.howToChoose?.length ? (
+        <section class={guideSectionClass("page")}>
+          <div class="page-container">
+            <BuyingGuide
+              title={`How to choose the right ${productName}`}
+              profiles={guide?.buyerProfiles ?? []}
+              sections={guide?.howToChoose ?? []}
+              id="how-to-choose"
+            />
+          </div>
+        </section>
+      ) : null}
+
+      {guide?.featuresThatMatter?.matters?.length && guide?.featuresThatMatter?.ignore?.length ? (
+        <section class={guideSectionClass("soft")}>
+          <div class="page-container">
+            <FeaturesThatMatter
+              matters={guide.featuresThatMatter.matters}
+              ignore={guide.featuresThatMatter.ignore}
+            />
+          </div>
+        </section>
+      ) : null}
+
+      {guide?.commonMistakes?.length ? (
+        <section class={guideSectionClass("page")}>
+          <div class="page-container">
+            <section id="common-mistakes">
+              <h2 class="text-2xl font-semibold text-ink">Common mistakes to avoid</h2>
+              <ul class="mt-4 list-clean space-y-2 text-sm text-ink/70">
+                {guide.commonMistakes.map((item) => (
+                  <li>{item}</li>
+                ))}
+              </ul>
+            </section>
+          </div>
+        </section>
+      ) : null}
+
+      {hasAudienceSplit ? (
+        <section class={guideSectionClass("soft")}>
+          <div class="page-container">
+            <AudienceSplit forList={whoForItems} skipList={whoSkipItems} />
+          </div>
+        </section>
+      ) : null}
+
+      {bestToplist?.howWePicked?.length ? (
+        <section class={guideSectionClass("page")}>
+          <div class="page-container">
+            <section id="how-we-picked">
+              <h2 class="text-2xl font-semibold text-ink">How we picked</h2>
+              <p class="mt-2 text-sm text-ink/60">
+                We analyze review data, specs, capacity, and availability, then apply editorial checks to keep
+                comparisons consistent.
+              </p>
+              <ul class="mt-4 list-clean space-y-2 text-sm text-ink/70">
+                {bestToplist.howWePicked.map((item) => (
+                  <li>{item}</li>
+                ))}
+              </ul>
+            </section>
+          </div>
+        </section>
+      ) : null}
+
+      {faqItems.length ? (
+        <section class={guideSectionClass("page")}>
+          <div class="page-container">
+            <FAQ items={faqItems} />
+          </div>
+        </section>
+      ) : null}
+    </>
   ) : null}
 
   {relatedToplists.length ? (
-    <section class={sectionClass()} id="related-top-lists">
+    <section class="section" id="related-top-lists">
       <div class="page-container">
         <h2 class="text-2xl font-semibold">Related top lists</h2>
         <div class="mt-4 grid gap-4 md:grid-cols-2">

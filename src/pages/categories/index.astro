@@ -38,7 +38,7 @@ const ogImage = categories[0]?.image ?? "/logo.svg";
 ---
 
 <Layout title={title} description={description} canonical={canonical} schema={schema} ogImage={ogImage}>
-  <section class="section bg-surface">
+  <section class="section">
     <div class="page-container">
       <Breadcrumbs items={breadcrumbLinks} />
       <h1 class="mt-4 text-3xl font-semibold">All categories</h1>
@@ -48,7 +48,7 @@ const ogImage = categories[0]?.image ?? "/logo.svg";
     </div>
   </section>
 
-  <section class="section">
+  <section class="section bg-soft">
     <div class="page-container">
       <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {categories.map((category, index) => (

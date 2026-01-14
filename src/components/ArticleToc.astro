@@ -1,45 +1,21 @@
 ---
-const { items, title = "In this article" } = Astro.props as {
+const { items, title = "In this guide" } = Astro.props as {
   items: Array<{ id: string; label: string }>;
   title?: string;
 };
 ---
 
 <nav aria-label={title}>
-  <div class="lg:hidden">
-    <details class="card p-3">
-      <summary class="cursor-pointer text-xs font-semibold uppercase tracking-[0.18em] text-ink/60">
-        {title}
-      </summary>
-      <ul class="toc-row mt-3">
-        {items.map((item) => (
-          <li>
-            <a
-              class="toc-pill"
-              href={`#${item.id}`}
-            >
-              {item.label}
-            </a>
-          </li>
-        ))}
-      </ul>
-    </details>
-  </div>
-  <div class="hidden lg:block">
-    <div class="rounded-2xl border border-border bg-surface px-3 py-2">
-      <p class="text-xs font-semibold uppercase tracking-[0.18em] text-ink/60">{title}</p>
-      <ul class="toc-row mt-3">
-        {items.map((item) => (
-          <li>
-            <a
-              class="toc-pill"
-              href={`#${item.id}`}
-            >
-              {item.label}
-            </a>
-          </li>
-        ))}
-      </ul>
-    </div>
-  </div>
+  <details class="reading-guide">
+    <summary class="reading-guide__summary">
+      <span class="reading-guide__label">{title}</span>
+    </summary>
+    <ul class="reading-guide__links">
+      {items.map((item) => (
+        <li>
+          <a href={`#${item.id}`}>{item.label}</a>
+        </li>
+      ))}
+    </ul>
+  </details>
 </nav>

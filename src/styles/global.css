@@ -7,6 +7,8 @@
 
 @layer base {
   :root {
+    --bg-page: #f8fbf9;
+    --bg-soft: #eef4f1;
     --tag-font-size: 0.85rem;
     --tag-line-height: 1;
     --tag-padding-y: 0.35rem;
@@ -25,13 +27,9 @@
   }
 
   body {
-    @apply bg-background text-ink font-sans antialiased;
+    @apply bg-page text-ink font-sans antialiased;
     font-size: 18px;
     font-size-adjust: 0.52;
-    background-image:
-      radial-gradient(900px 400px at 10% -10%, rgba(43, 187, 173, 0.12), transparent 60%),
-      radial-gradient(900px 400px at 95% 0%, rgba(247, 166, 168, 0.16), transparent 55%);
-    background-attachment: fixed;
   }
 
   h1,
@@ -115,22 +113,90 @@
     @apply inline-flex items-center whitespace-nowrap;
   }
 
-  .toc-row {
-    @apply flex gap-2 overflow-x-auto whitespace-nowrap pb-1 list-none p-0 m-0;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
+  .reading-guide {
+    @apply flex flex-wrap items-baseline gap-3 text-sm text-ink/70;
+    margin-bottom: 2rem;
   }
 
-  .toc-row::-webkit-scrollbar {
+  .reading-guide__summary {
+    @apply inline-flex items-center whitespace-nowrap;
+    list-style: none;
+  }
+
+  .reading-guide__label {
+    @apply font-semibold text-ink;
+  }
+
+  .reading-guide__summary::-webkit-details-marker {
     display: none;
   }
 
-  .toc-row > li {
-    @apply flex-none;
+  .reading-guide__summary::marker {
+    content: "";
   }
 
-  .toc-pill {
-    @apply inline-flex items-center justify-center rounded-full bg-accent-soft px-3 py-2 text-xs text-ink hover:bg-accent-soft/70;
+  .reading-guide__links {
+    @apply flex flex-wrap gap-x-2 gap-y-1 list-none p-0 m-0;
+  }
+
+  .reading-guide__links a {
+    @apply text-ink/70;
+  }
+
+  @media (min-width: 641px) {
+    .reading-guide__summary::after {
+      content: "";
+    }
+
+    .reading-guide__summary {
+      cursor: default;
+    }
+
+    .reading-guide:not([open]) > .reading-guide__links {
+      display: flex;
+    }
+
+    .reading-guide__links li::after {
+      content: "\00B7";
+      margin-left: 0.5rem;
+      color: rgba(31, 36, 40, 0.4);
+    }
+
+    .reading-guide__links li:last-child::after {
+      content: "";
+    }
+  }
+
+  @media (max-width: 640px) {
+    .reading-guide {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.25rem;
+    }
+
+    .reading-guide__summary {
+      width: 100%;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+
+    .reading-guide__summary::after {
+      content: "\25BE";
+      font-size: 0.75rem;
+      color: rgba(31, 36, 40, 0.6);
+    }
+
+    .reading-guide__links {
+      display: none;
+    }
+
+    .reading-guide[open] .reading-guide__links {
+      display: block;
+    }
+
+    .reading-guide__links li {
+      margin: 0.25rem 0;
+    }
   }
 
   .brand-icon {
