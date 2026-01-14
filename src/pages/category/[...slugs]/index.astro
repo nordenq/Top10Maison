@@ -141,13 +141,49 @@ const topPicksIntro = bestToplist?.quickCompareCriteria?.length
 const whoForItems = bestToplist?.whoShouldBuy ?? [];
 const whoSkipItems = guide?.whoShouldSkip ?? [];
 const hasAudienceSplit = whoForItems.length || whoSkipItems.length;
-
+const showBuyingGuide = Boolean(guide?.buyerProfiles?.length || guide?.howToChoose?.length);
+const showFeatures = Boolean(
+  guide?.featuresThatMatter?.matters?.length && guide?.featuresThatMatter?.ignore?.length
+);
+const showCommonMistakes = Boolean(guide?.commonMistakes?.length);
+const showHowWePicked = Boolean(bestToplist?.howWePicked?.length);
+const showFaq = Boolean(faqItems.length);
+const guideSectionOrder = [
+  { key: "buyingGuide", show: showBuyingGuide },
+  { key: "features", show: showFeatures },
+  { key: "commonMistakes", show: showCommonMistakes },
+  { key: "audience", show: hasAudienceSplit },
+  { key: "howWePicked", show: showHowWePicked },
+  { key: "faq", show: showFaq }
+];
+const separatorBefore: Record<string, boolean> = {};
+let hasPrevGuide = false;
+for (const section of guideSectionOrder) {
+  if (section.show) {
+    separatorBefore[section.key] = hasPrevGuide;
+    hasPrevGuide = true;
+  }
+}
+const separatorAfter: Record<string, boolean> = {};
+let hasNextGuide = false;
+for (const section of [...guideSectionOrder].reverse()) {
+  if (section.show) {
+    separatorAfter[section.key] = hasNextGuide;
+    hasNextGuide = true;
+  }
+}
 let lastGuideWasSoft = false;
 const guideSectionClass = (tone: "page" | "soft") => {
   const wantsSoft = tone === "soft";
   const useSoft = wantsSoft && !lastGuideWasSoft;
   lastGuideWasSoft = useSoft;
   return `section${useSoft ? " section--soft" : ""}`;
+};
+let highlightUsed = false;
+const highlightSectionClass = () => {
+  if (highlightUsed) return "section";
+  highlightUsed = true;
+  return "section section--soft";
 };
 const tocItems = bestToplist
   ? [
@@ -296,15 +332,27 @@ if (faqItems.length) {
       </section>
 
       {guide?.quickSummary?.length ? (
-        <section class={guideSectionClass("page")}>
+        <section class={highlightSectionClass()}>
           <div class="page-container">
             <QuickSummary bullets={guide.quickSummary} />
           </div>
         </section>
       ) : null}
 
-      {guide?.buyerProfiles?.length || guide?.howToChoose?.length ? (
-        <section class={guideSectionClass("page")}>
+      {showBuyingGuide ? (
+        <>
+          {separatorBefore.buyingGuide ? (
+            <section class="section section--divider" aria-hidden="true">
+              <div class="page-container">
+                <div class="guide-sep">· · ·</div>
+              </div>
+            </section>
+          ) : null}
+          <section
+            class={`${guideSectionClass("page")} ${separatorBefore.buyingGuide ? "pt-0 md:pt-0" : ""} ${
+              separatorAfter.buyingGuide ? "pb-0 md:pb-0" : ""
+            }`}
+          >
           <div class="page-container">
             <BuyingGuide
               title={`How to choose the right ${productName}`}
@@ -313,22 +361,48 @@ if (faqItems.length) {
               id="how-to-choose"
             />
           </div>
-        </section>
+          </section>
+        </>
       ) : null}
 
-      {guide?.featuresThatMatter?.matters?.length && guide?.featuresThatMatter?.ignore?.length ? (
-        <section class={guideSectionClass("page")}>
+      {showFeatures ? (
+        <>
+          {separatorBefore.features ? (
+            <section class="section section--divider" aria-hidden="true">
+              <div class="page-container">
+                <div class="guide-sep">· · ·</div>
+              </div>
+            </section>
+          ) : null}
+          <section
+            class={`${guideSectionClass("page")} ${separatorBefore.features ? "pt-0 md:pt-0" : ""} ${
+              separatorAfter.features ? "pb-0 md:pb-0" : ""
+            }`}
+          >
           <div class="page-container">
             <FeaturesThatMatter
               matters={guide.featuresThatMatter.matters}
               ignore={guide.featuresThatMatter.ignore}
             />
           </div>
-        </section>
+          </section>
+        </>
       ) : null}
 
-      {guide?.commonMistakes?.length ? (
-        <section class={guideSectionClass("page")}>
+      {showCommonMistakes ? (
+        <>
+          {separatorBefore.commonMistakes ? (
+            <section class="section section--divider" aria-hidden="true">
+              <div class="page-container">
+                <div class="guide-sep">· · ·</div>
+              </div>
+            </section>
+          ) : null}
+          <section
+            class={`${guideSectionClass("page")} ${separatorBefore.commonMistakes ? "pt-0 md:pt-0" : ""} ${
+              separatorAfter.commonMistakes ? "pb-0 md:pb-0" : ""
+            }`}
+          >
           <div class="page-container">
             <section id="common-mistakes">
               <h2 class="text-2xl font-semibold text-ink">Common mistakes to avoid</h2>
@@ -339,19 +413,45 @@ if (faqItems.length) {
               </ul>
             </section>
           </div>
-        </section>
+          </section>
+        </>
       ) : null}
 
       {hasAudienceSplit ? (
-        <section class={guideSectionClass("page")}>
+        <>
+          {separatorBefore.audience ? (
+            <section class="section section--divider" aria-hidden="true">
+              <div class="page-container">
+                <div class="guide-sep">· · ·</div>
+              </div>
+            </section>
+          ) : null}
+          <section
+            class={`${guideSectionClass("page")} ${separatorBefore.audience ? "pt-0 md:pt-0" : ""} ${
+              separatorAfter.audience ? "pb-0 md:pb-0" : ""
+            }`}
+          >
           <div class="page-container">
             <AudienceSplit forList={whoForItems} skipList={whoSkipItems} />
           </div>
-        </section>
+          </section>
+        </>
       ) : null}
 
-      {bestToplist?.howWePicked?.length ? (
-        <section class={guideSectionClass("page")}>
+      {showHowWePicked ? (
+        <>
+          {separatorBefore.howWePicked ? (
+            <section class="section section--divider" aria-hidden="true">
+              <div class="page-container">
+                <div class="guide-sep">· · ·</div>
+              </div>
+            </section>
+          ) : null}
+          <section
+            class={`${guideSectionClass("page")} ${separatorBefore.howWePicked ? "pt-0 md:pt-0" : ""} ${
+              separatorAfter.howWePicked ? "pb-0 md:pb-0" : ""
+            }`}
+          >
           <div class="page-container">
             <section id="how-we-picked">
               <h2 class="text-2xl font-semibold text-ink">How we picked</h2>
@@ -366,21 +466,35 @@ if (faqItems.length) {
               </ul>
             </section>
           </div>
-        </section>
+          </section>
+        </>
       ) : null}
 
       {faqItems.length ? (
-        <section class={guideSectionClass("page")}>
+        <>
+          {separatorBefore.faq ? (
+            <section class="section section--divider" aria-hidden="true">
+              <div class="page-container">
+                <div class="guide-sep">· · ·</div>
+              </div>
+            </section>
+          ) : null}
+          <section
+            class={`${guideSectionClass("page")} ${separatorBefore.faq ? "pt-0 md:pt-0" : ""} ${
+              separatorAfter.faq ? "pb-0 md:pb-0" : ""
+            }`}
+          >
           <div class="page-container">
             <FAQ items={faqItems} />
           </div>
-        </section>
+          </section>
+        </>
       ) : null}
     </>
   ) : null}
 
   {relatedToplists.length ? (
-    <section class="section" id="related-top-lists">
+    <section class={highlightSectionClass()} id="related-top-lists">
       <div class="page-container">
         <h2 class="text-2xl font-semibold">Related top lists</h2>
         <div class="mt-4 grid gap-4 md:grid-cols-2">

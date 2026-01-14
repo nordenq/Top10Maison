@@ -97,6 +97,7 @@ All FAQs (guide + product) must:
 
 ### Buying Guide / Top List Pages
 - Hero: `bg-soft`
+- One short highlight band (Quick Summary or Related Top Lists): optional `bg-soft`
 - Content sections: white
 - Editorial sections ("Why", "How we picked"): optional tint (max 2)
 - Product lists: always white

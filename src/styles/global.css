@@ -97,6 +97,14 @@
     @apply bg-soft;
   }
 
+  .section--divider {
+    @apply py-0;
+  }
+
+  .guide-sep {
+    @apply flex items-center justify-center py-3 text-sm text-ink/50 tracking-[0.45em] md:py-4;
+  }
+
   @media (max-width: 640px) {
     .toplist-card__image {
       height: 240px;
