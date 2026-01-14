@@ -23,6 +23,8 @@ Rules:
 - Never tint text-heavy sections.
 - Never tint product cards.
 - Never tint FAQ sections.
+  - Exception: compact directory lists with 1–2 line items may use `bg-soft` to frame scanning.
+  - Exception: page hero blocks with a short title + subtitle may use `bg-soft`.
 
 ## 2. Green Usage Rules
 
@@ -73,16 +75,28 @@ All FAQs (guide + product) must:
 - Featured sections: alternating white / tinted
 - Never more than 2 tinted sections total
 
+### Top Lists Index
+- Hero: `bg-soft`
+- Directory list: white (text-first, no images)
+- Compact list rows are used only on this page.
+
 ### Category Pages
-- Hero: white
-- Category cards: white
-- Optional ONE tinted grouping section
+- Hero: `bg-soft`
+- Subcategory cards: white
+- Do not use compact list rows here.
+
+### Categories Index
+- Hero: `bg-soft`
+- Category grid: white
 
 ### Subcategory Pages
-- Same rules as Category pages
+- Hero: `bg-soft`
+- Rankings grid: white
 - No additional tint usage
+- Rankings grid uses image cards; this is the first level where images appear.
 
 ### Buying Guide / Top List Pages
+- Hero: `bg-soft`
 - Content sections: white
 - Editorial sections ("Why", "How we picked"): optional tint (max 2)
 - Product lists: always white
@@ -107,7 +121,7 @@ Lintable convention:
 ### Do / Don’t
 
 Do:
-- Use `bg-soft` only to frame a major editorial block.
+- Use `bg-soft` to frame a major section (editorial or compact directory list).
 - Keep product lists and FAQs on white.
 - Keep cards white and flat inside any section.
 

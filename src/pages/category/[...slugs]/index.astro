@@ -1,6 +1,7 @@
 ---
 import Layout from "../../../layouts/BaseLayout.astro";
 import Breadcrumbs from "../../../components/Breadcrumbs.astro";
+import CategoryCard from "../../../components/CategoryCard.astro";
 import ProductGridSection from "../../../components/ProductGridSection.astro";
 import ProductDrawer from "../../../components/ProductDrawer.astro";
 import ArticleToc from "../../../components/ArticleToc.astro";
@@ -9,7 +10,6 @@ import BuyingGuide from "../../../components/BuyingGuide.astro";
 import FeaturesThatMatter from "../../../components/FeaturesThatMatter.astro";
 import FAQ from "../../../components/FAQ.astro";
 import AudienceSplit from "../../../components/AudienceSplit.astro";
-import TopListRow from "../../../components/TopListRow.astro";
 import { getBestToplistForChild, getCategoryData } from "../../../utils/data";
 import { getDataIndex } from "../../../utils/dataIndex";
 import { buildCanonical, requireSite } from "../../../utils/seo";
@@ -128,24 +128,6 @@ const categoryToplists = toplists.filter((list) => list.category === data.catego
 const subcategoryToplists = data.subcategory
   ? categoryToplists.filter((list) => list.subcategory === data.subcategory?.slug)
   : [];
-const buildToplistSnippet = (count: number, productName: string, useCase: string) =>
-  `Top ${count} ${productName.toLowerCase()} ranked for ${useCase.toLowerCase()}.`;
-
-const categoryGroups = new Map<string, typeof categoryToplists>();
-for (const list of categoryToplists) {
-  const key = `${list.category}:${list.subcategory}`;
-  const existing = categoryGroups.get(key);
-  if (existing) {
-    existing.push(list);
-  } else {
-    categoryGroups.set(key, [list]);
-  }
-}
-const categoryGroupEntries = [...categoryGroups.entries()].sort((a, b) => {
-  const aName = subcategoryMap.get(a[0])?.name ?? a[0];
-  const bName = subcategoryMap.get(b[0])?.name ?? b[0];
-  return aName.localeCompare(bName);
-});
 const formatCriteriaList = (items: string[]) => {
   if (items.length === 1) return items[0];
   if (items.length === 2) return `${items[0]} and ${items[1]}`;
@@ -212,7 +194,7 @@ if (faqItems.length) {
   schema={[...schema, collectionSchema]}
   ogImage={ogImage}
 >
-  <section class="section">
+  <section class="section section--soft">
     <div class="page-container">
       <Breadcrumbs items={breadcrumbLinks} />
       <h1 class="mt-4 text-3xl font-semibold">
@@ -224,42 +206,13 @@ if (faqItems.length) {
 
   {showSubcategories ? (
     <section class="section">
-      <div class="page-container space-y-8">
-        <h2 class="text-2xl font-semibold">Rankings by subcategory</h2>
-        {categoryGroupEntries.map(([key, lists]) => {
-          const sub = subcategoryMap.get(key);
-          const subName = sub?.name ?? "Subcategory";
-          const subSlug = lists[0]?.subcategory;
-          const sorted = [...lists].sort((a, b) => (b.performanceScore ?? 0) - (a.performanceScore ?? 0));
-          return (
-            <div>
-              <div class="flex flex-wrap items-baseline justify-between gap-3">
-                <h3 class="text-xl font-semibold">{subName}</h3>
-                {subSlug ? (
-                  <a
-                    class="text-sm font-semibold text-ink/70 transition-colors hover:text-accent"
-                    href={subcategoryUrl(data.category.slug, subSlug)}
-                  >
-                    Explore {subName} →
-                  </a>
-                ) : null}
-              </div>
-              <ul class="mt-3">
-                {sorted.map((list) => {
-                  const display = getToplistDisplay(list, dataIndex);
-                  return (
-                    <TopListRow
-                      title={display.schemaHeadline}
-                      href={childSubcategoryUrl(list.category, list.subcategory, list.childsubcategory)}
-                      description={buildToplistSnippet(list.count, display.productName, display.useCase)}
-                      year={display.year}
-                    />
-                  );
-                })}
-              </ul>
-            </div>
-          );
-        })}
+      <div class="page-container">
+        <h2 class="text-2xl font-semibold">Subcategories</h2>
+        <div class="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {data.category.subcategories.map((subcategory) => (
+            <CategoryCard category={data.category} subcategory={subcategory} />
+          ))}
+        </div>
       </div>
     </section>
   ) : null}
@@ -267,9 +220,7 @@ if (faqItems.length) {
   {showChildSubcategories ? (
     <section class="section" id="subcategory-rankings">
       <div class="page-container">
-        <div class="flex flex-wrap items-end justify-between gap-3">
-          <h2 class="text-2xl font-semibold">Rankings in {data.subcategory.name}</h2>
-        </div>
+        <h2 class="text-2xl font-semibold">Rankings in {data.subcategory.name}</h2>
         <div class="mt-6 grid gap-6 md:grid-cols-2">
           {subcategoryToplists.map((list, index) => {
             const childKey = `${list.category}:${list.subcategory}:${list.childsubcategory}`;
@@ -345,7 +296,7 @@ if (faqItems.length) {
       </section>
 
       {guide?.quickSummary?.length ? (
-        <section class={guideSectionClass("soft")}>
+        <section class={guideSectionClass("page")}>
           <div class="page-container">
             <QuickSummary bullets={guide.quickSummary} />
           </div>
