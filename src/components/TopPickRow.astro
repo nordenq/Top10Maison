@@ -1,6 +1,6 @@
 ---
 import { CSP_NONCE } from "../utils/csp";
-import ImageStage from "./ImageStage.astro";
+import ProductImageStage from "./ProductImageStage.astro";
 
 export interface Props {
   image: string;
@@ -60,25 +60,15 @@ const productSchema =
     : null;
 ---
 
-<article class="card card-hover grid gap-6 p-5 md:grid-cols-[280px_1fr] md:p-7">
-  <div class="relative">
-    <ImageStage
-      src={image}
-      alt={title}
-      eager={loading === "eager"}
-      fetchpriority={fetchpriority}
-    />
-    {badge ? (
-      <span class="tag absolute left-3 bottom-3 bg-accent font-semibold text-white px-4 py-2 text-sm md:text-base">
-        {badge}
-      </span>
-    ) : null}
-    {typeof rank === "number" ? (
-      <span class="tag absolute right-3 bottom-3 bg-surface/90 font-semibold text-ink px-4 py-2 text-sm md:text-base">
-        #{rank}
-      </span>
-    ) : null}
-  </div>
+<article class="card card-hover grid gap-6 p-5 md:grid-cols-[minmax(220px,_280px)_1fr] md:items-stretch md:p-7">
+  <ProductImageStage
+    src={image}
+    alt={title}
+    loading={loading}
+    fetchpriority={fetchpriority}
+    tag={badge}
+    rank={rank}
+  />
 
   <div class="flex flex-1 flex-col">
     <h3 class="text-lg font-semibold leading-snug">

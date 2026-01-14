@@ -1,7 +1,7 @@
 ---
 import type { Product, Toplist } from "../utils/data";
 import AffiliateButton from "./AffiliateButton.astro";
-import ImageStage from "./ImageStage.astro";
+import ProductImageStage from "./ProductImageStage.astro";
 import { childSubcategoryUrl, subcategoryToplistUrl } from "../utils/routes";
 
 const {
@@ -34,7 +34,7 @@ const glanceItems = glanceKeys
   <span class="sr-only" data-drawer-verdict>{shortVerdict}</span>
 
   <section class="card p-5">
-    <ImageStage src={product.image} alt={product.name} />
+    <ProductImageStage src={product.image} alt={product.name} />
     <div class="mt-4">
       <AffiliateButton url={product.affiliateUrl} label="View on Amazon" productSlug={product.slug} />
     </div>

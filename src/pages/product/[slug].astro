@@ -3,9 +3,11 @@ import Layout from "../../layouts/MinimalLayout.astro";
 import { getProductData } from "../../utils/data";
 import { getDataIndex } from "../../utils/dataIndex";
 import { buildCanonical, requireSite } from "../../utils/seo";
-import { buildBreadcrumbSchema, buildProductSchema, buildReviewSchema } from "../../utils/schema";
+import { buildBreadcrumbSchema, buildFaqSchema, buildProductSchema, buildReviewSchema } from "../../utils/schema";
 import { categoryUrl, childSubcategoryUrl, productUrl, subcategoryToplistUrl, subcategoryUrl } from "../../utils/routes";
+import ProductDrawer from "../../components/ProductDrawer.astro";
 import ProductDetailLayout from "../../components/ProductDetailLayout.astro";
+import { buildProductFaqs } from "../../utils/productFaq";
 
 const dataIndex = getDataIndex();
 
@@ -37,6 +39,7 @@ const verdictCombined =
   product.reviewSnippet && product.reviewSnippet.trim() !== descriptionText.trim()
     ? `${product.reviewSnippet} ${descriptionText}`
     : verdict;
+const shortVerdict = verdict.split(/(?<=\.)\s+/)[0] ?? verdict;
 const isDrawer = Astro.url.searchParams.get("drawer") === "1";
 
 const site = requireSite(Astro.site);
@@ -68,6 +71,11 @@ const schema = [
   buildProductSchema(site, product),
   buildReviewSchema(site, product)
 ];
+const categoryLabel = relatedChildsubcategory?.name ?? relatedSubcategory?.name ?? relatedCategory?.name ?? undefined;
+const productFaqItems = buildProductFaqs(product, categoryLabel);
+if (productFaqItems.length >= 3) {
+  schema.push(buildFaqSchema(productFaqItems));
+}
 const backLink = relatedToplist
   ? {
       label: relatedToplist.title,
@@ -99,6 +107,7 @@ const backLink = relatedToplist
     notFor={[product.notIdealFor]}
     specs={Object.entries(product.specs).map(([label, value]) => ({ label, value }))}
     backLink={backLink}
+    faqItems={productFaqItems}
   />
 ) : (
   <Layout
@@ -110,18 +119,26 @@ const backLink = relatedToplist
     ogType="product"
   >
     <section class="section">
-      <ProductDetailLayout
+      <ProductDrawer
+        open
         title={product.name}
-        image={product.image}
-        verdict={verdictCombined}
-        ctaUrl={product.affiliateUrl}
-        pros={product.pros}
-        cons={product.cons}
-        bestFor={[product.bestFor]}
-        notFor={[product.notIdealFor]}
-        specs={Object.entries(product.specs).map(([label, value]) => ({ label, value }))}
-        backLink={backLink}
-      />
+        verdict={shortVerdict}
+        fallbackUrl={backLink.href}
+      >
+        <ProductDetailLayout
+          title={product.name}
+          image={product.image}
+          verdict={verdictCombined}
+          ctaUrl={product.affiliateUrl}
+          pros={product.pros}
+          cons={product.cons}
+          bestFor={[product.bestFor]}
+          notFor={[product.notIdealFor]}
+          specs={Object.entries(product.specs).map(([label, value]) => ({ label, value }))}
+          backLink={backLink}
+          faqItems={productFaqItems}
+        />
+      </ProductDrawer>
     </section>
   </Layout>
 )}

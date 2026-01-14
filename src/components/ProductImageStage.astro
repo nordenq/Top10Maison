@@ -1,0 +1,38 @@
+---
+const { src, alt, rank, tag, loading = "lazy", fetchpriority, width = 800, height = 800 } = Astro.props as {
+  src: string;
+  alt: string;
+  rank?: number;
+  tag?: string;
+  loading?: "lazy" | "eager";
+  fetchpriority?: "high" | "low";
+  width?: number;
+  height?: number;
+};
+---
+
+<div class="product-image-frame">
+  <div class="image-skeleton" aria-hidden="true"></div>
+  <img
+    src={src}
+    alt={alt}
+    loading={loading}
+    decoding="async"
+    width={width}
+    height={height}
+    fetchpriority={fetchpriority}
+    onerror="this.onerror=null;this.src='/images/products/placeholder.svg';"
+    onload="this.previousElementSibling && this.previousElementSibling.remove()"
+  />
+
+  {tag ? (
+    <span class="absolute bottom-3 left-3 z-10 rounded-full bg-emerald-900 px-4 py-1.5 text-sm font-semibold text-white shadow-sm">
+      {tag}
+    </span>
+  ) : null}
+  {typeof rank === "number" ? (
+    <span class="absolute bottom-3 right-3 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-base font-bold text-white shadow-sm">
+      #{rank}
+    </span>
+  ) : null}
+</div>

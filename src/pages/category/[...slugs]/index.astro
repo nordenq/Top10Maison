@@ -284,13 +284,13 @@ if (faqItems.length) {
             </div>
 
             {guide?.quickSummary?.length ? (
-              <div class={articleSectionClass()}>
+              <div>
                 <QuickSummary bullets={guide.quickSummary} />
               </div>
             ) : null}
 
             {guide?.buyerProfiles?.length || guide?.howToChoose?.length ? (
-              <div class={articleSectionClass()}>
+              <div>
                 <BuyingGuide
                   title={`How to choose the right ${productName}`}
                   profiles={guide?.buyerProfiles ?? []}
@@ -310,7 +310,7 @@ if (faqItems.length) {
             ) : null}
 
             {guide?.commonMistakes?.length ? (
-              <div class={articleSectionClass()}>
+              <div class="border-t border-border/60 pt-6">
                 <section id="common-mistakes">
                   <h2 class="text-2xl font-semibold text-ink">Common mistakes to avoid</h2>
                   <ul class="mt-4 list-clean space-y-2 text-sm text-ink/70">
@@ -323,16 +323,16 @@ if (faqItems.length) {
             ) : null}
 
             {hasAudienceSplit ? (
-              <div class={articleSectionClass()}>
+              <div>
                 <AudienceSplit forList={whoForItems} skipList={whoSkipItems} />
               </div>
             ) : null}
 
             {bestToplist?.howWePicked?.length ? (
-              <div class={articleSectionClass()}>
+              <div class="border-t border-border/60 pt-6">
                 <section id="how-we-picked">
                   <h2 class="text-2xl font-semibold text-ink">How we picked</h2>
-                  <p class="mt-2 text-sm text-ink/70">
+                  <p class="mt-2 text-sm text-ink/60">
                     We analyze review data, specs, capacity, and availability, then apply editorial checks to keep
                     comparisons consistent.
                   </p>
@@ -346,7 +346,7 @@ if (faqItems.length) {
             ) : null}
 
             {faqItems.length ? (
-              <div class={articleSectionClass()}>
+              <div class="border-t border-border/60 pt-6">
                 <FAQ items={faqItems} />
               </div>
             ) : null}
