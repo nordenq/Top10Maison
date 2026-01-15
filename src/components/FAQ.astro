@@ -6,13 +6,25 @@ const { items, id = "faq", title = "FAQ", titleClass = "text-2xl", intro } = Ast
   titleClass?: string;
   intro?: string;
 };
+
+const requiredQuestion = "How are these rankings created?";
+const requiredAnswer =
+  "Rankings are created using data-based review technology that analyzes publicly available product information, review trends, and availability. Each list follows the same evaluation criteria to ensure fair comparisons.";
+
+const normalizedItems = Array.isArray(items) ? items : [];
+const hasRequired = normalizedItems.some(
+  (item) => (item.question ?? "").trim().toLowerCase() === requiredQuestion.toLowerCase()
+);
+const mergedItems = hasRequired
+  ? normalizedItems
+  : [{ question: requiredQuestion, answer: requiredAnswer }, ...normalizedItems];
 ---
 
 <section id={id}>
   <h2 class={`${titleClass} font-semibold text-ink`}>{title}</h2>
   {intro ? <p class="mt-2 text-sm text-ink/70">{intro}</p> : null}
   <div class="mt-4 divide-y divide-border">
-    {items.map((item) => (
+    {mergedItems.map((item) => (
       <details class="group py-3">
         <summary class="flex cursor-pointer items-center justify-between text-sm font-medium text-ink focus-visible:outline-none focus-visible:text-accent">
           <span>{item.question}</span>

@@ -48,6 +48,9 @@ const detailItems = specs.filter((item) => item.label && item.value);
           <p class="text-base font-medium leading-relaxed text-ink/80 sm:text-lg" data-drawer-verdict>
             {heroVerdict}
           </p>
+          <p class="text-sm leading-relaxed text-ink/60">
+            This summary reflects publicly available data analyzed using our review framework.
+          </p>
           {verdictRemainder ? (
             <p class="text-sm leading-relaxed text-ink/70">{verdictRemainder}</p>
           ) : null}

@@ -4,7 +4,7 @@ import { getPageMeta } from "../utils/meta";
 
 const { title, description, canonical } = getPageMeta(Astro.site, {
   title: "About",
-  description: "How Top10Maison ranks products using review data, consistent criteria, and editorial review.",
+  description: "How Top10Maison publishes clear, data-based rankings using a consistent evaluation framework.",
   path: "/about/"
 });
 ---
@@ -15,24 +15,29 @@ const { title, description, canonical } = getPageMeta(Astro.site, {
       <div>
         <h1 class="text-3xl font-semibold">About Top10Maison</h1>
         <p class="mt-3 text-sm text-ink/70">
-          Top10Maison publishes top lists and buying guidance to help you choose faster for your home.
+          Top10Maison publishes clear, data-based product rankings to help you choose faster for your home.
         </p>
         <p class="mt-3 text-sm text-ink/70">
-          We focus on clear, practical comparisons built from publicly available product information, review data,
-          and availability. Each list follows a consistent set of criteria so rankings stay fair and repeatable
-          across categories.
+          Our review technology analyzes publicly available product information — including specifications,
+          verified reviews, and pricing signals — to identify consistent performers across categories.
         </p>
         <p class="mt-3 text-sm text-ink/70">
-          Our goal is simple: to publish shortlists that reflect everyday household needs, without unnecessary
-          complexity or hype.
+          We do not evaluate products hands-on. Instead, we rely on structured data and a transparent evaluation
+          framework to compare products on equal footing.
+        </p>
+        <p class="mt-3 text-sm text-ink/70">
+          Every ranking is reviewed for clarity and fairness before publication.
         </p>
       </div>
 
       <div class="card p-6">
         <h2 class="text-xl font-semibold">Methodology</h2>
         <p class="mt-2 text-sm text-ink/70">
-          Rankings are created using the same framework across all categories. We do not perform hands-on testing.
-          Instead, we rely on consistent evaluation factors to compare products on equal footing.
+          Top10Maison publishes clear, data-based product rankings built from publicly available information and
+          reviewed for clarity and fairness.
+        </p>
+        <p class="mt-3 text-sm text-ink/70">
+          Each category uses the same data-based evaluation framework to compare products fairly and consistently.
         </p>
         <p class="mt-3 text-sm text-ink/70">Factors may include:</p>
         <ul class="mt-3 list-clean space-y-2 text-sm text-ink/70">
@@ -46,13 +51,11 @@ const { title, description, canonical } = getPageMeta(Astro.site, {
       <div class="card p-6">
         <h2 class="text-xl font-semibold">Editorial review</h2>
         <p class="mt-2 text-sm text-ink/70">
-          We use data-assisted analysis to surface review patterns and trend signals, then apply editorial review
-          to finalize each shortlist. This approach helps keep comparisons grounded in real-world feedback while
-          avoiding marketing-driven claims.
+          We use data-based review technology to surface consistent signals from publicly available information.
+          An editorial review then checks each page for clarity and fairness.
         </p>
         <p class="mt-3 text-sm text-ink/70">
-          Data helps identify patterns, and editors review each list before publication to ensure the rankings
-          remain practical and easy to understand.
+          This process keeps rankings consistent across categories and avoids relying on marketing language.
         </p>
       </div>
 
@@ -63,8 +66,8 @@ const { title, description, canonical } = getPageMeta(Astro.site, {
           purchase.
         </p>
         <p class="mt-3 text-sm text-ink/70">
-          This does not affect how products are scored, ranked, or selected. Affiliate relationships do not
-          influence editorial decisions, criteria, or placement.
+          This does not affect how products are ranked. Affiliate relationships do not influence the evaluation
+          framework or editorial review.
         </p>
       </div>
     </div>

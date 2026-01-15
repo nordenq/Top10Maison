@@ -20,9 +20,8 @@ export function buildBreadcrumbSchema(
 }
 
 export function buildProductSchema(site: URL, product: Product): SchemaGraph {
-  const offerUrl = /\.(?:jpe?g|png|webp)(?:\?.*)?$/i.test(product.affiliateUrl)
-    ? new URL(productUrl(product.slug), site).toString()
-    : product.affiliateUrl;
+  const isLikelyImageUrl = /\.(?:jpe?g|png|webp)(?:\?.*)?$/i.exec(product.affiliateUrl) !== null;
+  const offerUrl = isLikelyImageUrl ? new URL(productUrl(product.slug), site).toString() : product.affiliateUrl;
   const positiveNotes = product.pros?.length
     ? {
         "@type": "ItemList",

@@ -78,10 +78,15 @@ const title = data.childsubcategory && bestToplistTitle
 const pageDescription = data.childsubcategory && bestToplistDescription
   ? bestToplistDescription
   : data.childsubcategory?.description ?? data.subcategory?.description ?? data.category.description;
-const introParagraph =
-  bestToplist && data.childsubcategory
-    ? `Compare the best ${productName.toLowerCase()} for home use in this top ${bestToplist.count} list, ranked by performance, ease of use, and value.`
-    : pageDescription;
+const categoryFrameworkIntro =
+  "Each category uses the same data-based evaluation framework to compare products fairly and consistently.";
+const rankingIntro =
+  "This ranking is built using data-based review technology that analyzes publicly available product information, review trends, and availability. Each product is compared using the same evaluation criteria.";
+const rankingSummaryNote =
+  "Product summaries are based on public information and reviewed for clarity before publication.";
+const introParagraph = bestToplist && data.childsubcategory
+  ? rankingIntro
+  : `${categoryFrameworkIntro} ${pageDescription}`;
 const ogImage =
   data.childsubcategory?.image ??
   data.subcategory?.image ??
@@ -119,8 +124,16 @@ const collectionSchema = {
 };
 
 const guide = data.childsubcategory?.guide ?? null;
-const faqItems =
+const requiredFaqQuestion = "How are these rankings created?";
+const requiredFaqAnswer =
+  "Rankings are created using data-based review technology that analyzes publicly available product information, review trends, and availability. Each list follows the same evaluation criteria to ensure fair comparisons.";
+const rawFaqItems =
   data.childsubcategory?.faq?.length ? data.childsubcategory.faq : bestToplist?.faq ?? [];
+const faqItems = rawFaqItems.some(
+  (item) => (item.question ?? "").trim().toLowerCase() === requiredFaqQuestion.toLowerCase()
+)
+  ? rawFaqItems
+  : [{ question: requiredFaqQuestion, answer: requiredFaqAnswer }, ...rawFaqItems];
 const relatedToplists = bestToplist
   ? toplists.filter((list) => list.category === bestToplist.category && list.slug !== bestToplist.slug)
   : [];
@@ -237,6 +250,9 @@ if (faqItems.length) {
         {data.childsubcategory && bestToplist?.h1 ? bestToplist.h1 : title}
       </h1>
       <p class="mt-3 text-lg text-ink/70">{introParagraph}</p>
+      {bestToplist && data.childsubcategory ? (
+        <p class="mt-3 text-sm text-ink/70">{rankingSummaryNote}</p>
+      ) : null}
     </div>
   </section>
 

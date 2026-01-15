@@ -14,7 +14,7 @@ const { categories, toplists, categoryMap, subcategoryMap } = dataIndex;
 const site = requireSite(Astro.site);
 const title = "Top Lists";
 const description =
-  "Browse our latest top lists with ranked picks based on review data, trend signals, and editorial review.";
+  "Browse rankings built using data-based review technology and a consistent evaluation framework.";
 const canonical = buildCanonical(site, "/toplists/");
 const breadcrumbItems = [
   { name: "Home", path: "/" },
@@ -43,7 +43,7 @@ const buildToplistSnippet = (count: number, productName: string, useCase: string
       <Breadcrumbs items={breadcrumbLinks} />
       <h1 class="mt-4 text-3xl font-semibold">Top lists</h1>
       <p class="mt-3 text-lg text-ink/70">
-        A directory of our rankings across categories. Use the category path to find the right list quickly.
+        A directory of rankings across categories. Use the category path to find the right list quickly.
       </p>
     </div>
   </section>
