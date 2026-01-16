@@ -1,0 +1,11 @@
+---
+const canonical = "/privacy-policy/";
+---
+
+<Fragment slot="head">
+  <link rel="canonical" href={canonical} />
+  <meta http-equiv="refresh" content={`0;url=${canonical}`} />
+</Fragment>
+
+<p>If you are not redirected automatically, go to <a href={canonical}>Privacy Policy</a>.</p>
+<!-- If older links point to /legal/, this redirect will send users to the privacy policy. -->

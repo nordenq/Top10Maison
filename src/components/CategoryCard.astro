@@ -2,13 +2,12 @@
 import type { Category, ChildSubcategory, Subcategory } from "../utils/data";
 import { categoryUrl, childSubcategoryUrl, subcategoryUrl } from "../utils/routes";
 
-const { category, subcategory, childsubcategory, parentSubcategory, loading = "lazy", fetchpriority } = Astro.props as {
+const { category, subcategory, childsubcategory, parentSubcategory, loading = "lazy" } = Astro.props as {
   category: Category;
   subcategory?: Subcategory;
   childsubcategory?: ChildSubcategory;
   parentSubcategory?: Subcategory;
   loading?: "lazy" | "eager";
-  fetchpriority?: "high" | "low";
 };
 
 const href = childsubcategory && parentSubcategory
@@ -29,11 +28,11 @@ const imageSrcset = childsubcategory?.imageSrcset ?? subcategory?.imageSrcset ??
       src={image}
       alt={title}
       loading={loading}
-      fetchpriority={fetchpriority}
       srcset={imageSrcset}
       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 350px"
       width="640"
       height="360"
+      decoding="async"
     />
   </div>
   <div class="flex flex-1 flex-col gap-2 p-4">

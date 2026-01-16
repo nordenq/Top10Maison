@@ -39,6 +39,9 @@ export const GET: APIRoute = ({ site }) => {
     }
   }
 
+  // Surface the 404 page with very low priority for completeness.
+  setUrl(new URL("/404", site).toString(), 0.1);
+
   for (const category of categories) {
     setUrl(new URL(categoryUrl(category.slug), site).toString(), 0.8);
     for (const subcategory of category.subcategories) {

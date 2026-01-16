@@ -40,10 +40,14 @@ function initMenu() {
     return;
   }
 
+  menuButton.setAttribute('aria-expanded', 'false');
+  menuButton.setAttribute('aria-label', 'Open menu');
+
   function setMenuState(isOpen) {
     mobileMenu.classList.toggle('hidden', !isOpen);
     mobileMenu.setAttribute('aria-hidden', (!isOpen).toString());
     menuButton.setAttribute('aria-expanded', isOpen.toString());
+    menuButton.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
     if (isOpen) {
       const firstLink = mobileMenu.querySelector('a, summary');
       if (firstLink instanceof HTMLElement) {

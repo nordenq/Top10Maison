@@ -21,24 +21,51 @@ const { title, description, canonical } = getPageMeta(Astro.site, {
       </div>
 
       <div class="card p-6">
-        <form class="grid gap-4" action="#" method="post">
-          <label class="grid gap-2 text-sm font-semibold">
+        <form class="grid gap-4" action="#" method="post" novalidate>
+          <label class="grid gap-2 text-sm font-semibold" for="contact-name">
             Name
-            <input class="rounded-xl border border-border px-3 py-2" type="text" name="name" placeholder="Your name" />
+            <input
+              id="contact-name"
+              class="rounded-xl border border-border px-3 py-2"
+              type="text"
+              name="name"
+              placeholder="Your name"
+              required
+              aria-required="true"
+              aria-describedby="contact-name-hint"
+            />
           </label>
-          <label class="grid gap-2 text-sm font-semibold">
+          <p id="contact-name-hint" class="text-xs text-ink/60">Required</p>
+
+          <label class="grid gap-2 text-sm font-semibold" for="contact-email">
             Email
-            <input class="rounded-xl border border-border px-3 py-2" type="email" name="email" placeholder="you@example.com" />
+            <input
+              id="contact-email"
+              class="rounded-xl border border-border px-3 py-2"
+              type="email"
+              name="email"
+              placeholder="you@example.com"
+              required
+              aria-required="true"
+              aria-describedby="contact-email-hint"
+            />
           </label>
-          <label class="grid gap-2 text-sm font-semibold">
+          <p id="contact-email-hint" class="text-xs text-ink/60">Required. We only use your email to reply.</p>
+
+          <label class="grid gap-2 text-sm font-semibold" for="contact-message">
             Message
             <textarea
+              id="contact-message"
               class="rounded-xl border border-border px-3 py-2"
               name="message"
               rows="6"
               placeholder="How can we help?"
+              required
+              aria-required="true"
+              aria-describedby="contact-message-hint"
             ></textarea>
           </label>
+          <p id="contact-message-hint" class="text-xs text-ink/60">Required. Please include enough detail to help us respond.</p>
           <button type="submit" class="btn w-fit">Send message</button>
         </form>
         <p class="mt-4 text-sm text-ink/70">

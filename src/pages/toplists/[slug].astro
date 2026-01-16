@@ -1,0 +1,41 @@
+---
+import Layout from "../../layouts/BaseLayout.astro";
+import { getDataIndex } from "../../utils/dataIndex";
+import { childSubcategoryUrl } from "../../utils/routes";
+import { buildCanonical, requireSite } from "../../utils/seo";
+
+export function getStaticPaths() {
+  const { toplists } = getDataIndex();
+  return toplists.map((list) => ({ params: { slug: list.slug } }));
+}
+
+const { slug } = Astro.params;
+const dataIndex = getDataIndex();
+const list = dataIndex.toplists.find((item) => item.slug === slug);
+
+if (!list) {
+  return Astro.redirect("/404", 302);
+}
+
+const site = requireSite(Astro.site);
+const targetPath = childSubcategoryUrl(list.category, list.subcategory, list.childsubcategory);
+const description = `The canonical URL for this top list is /toplists/${list.slug}/. View the full guide at ${targetPath}.`;
+---
+
+<Layout
+  title={`${list.title} | Top10Maison`}
+  description={description}
+  canonical={buildCanonical(site, `/toplists/${list.slug}/`)}
+  robots="noindex,follow"
+>
+  <section class="section">
+    <div class="mx-auto w-full max-w-3xl text-center">
+      <h1 class="text-2xl font-semibold">This top list has moved</h1>
+      <p class="mt-3 text-sm text-ink/70">
+        We flattened our URLs under /toplists/. Use the link below to view the full guide.
+      </p>
+      <a class="btn mt-6" href={targetPath}>Continue to the full guide</a>
+      <p class="mt-3 text-xs text-ink/60">Guide path: {targetPath}</p>
+    </div>
+  </section>
+</Layout>

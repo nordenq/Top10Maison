@@ -17,7 +17,6 @@ export interface Props {
   rank?: number;
   schema?: boolean;
   loading?: "lazy" | "eager";
-  fetchpriority?: "high" | "low";
 }
 
 const {
@@ -34,8 +33,7 @@ const {
   reviewUrl,
   rank,
   schema = false,
-  loading = "lazy",
-  fetchpriority
+  loading = "lazy"
 } = Astro.props as Props;
 
 const productSchema =
@@ -65,7 +63,6 @@ const productSchema =
     src={image}
     alt={title}
     loading={loading}
-    fetchpriority={fetchpriority}
     tag={badge}
     rank={rank}
   />

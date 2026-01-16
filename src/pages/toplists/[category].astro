@@ -1,0 +1,132 @@
+---
+import Layout from "../../layouts/BaseLayout.astro";
+import Breadcrumbs from "../../components/Breadcrumbs.astro";
+import { getDataIndex } from "../../utils/dataIndex";
+import { buildCanonical, requireSite } from "../../utils/seo";
+import { buildBreadcrumbSchema } from "../../utils/schema";
+import { categoryUrl, childSubcategoryUrl, subcategoryUrl, toplistUrl } from "../../utils/routes";
+import { getToplistDisplay } from "../../utils/toplistDisplay";
+
+export function getStaticPaths() {
+  const { categories, toplists } = getDataIndex();
+  const allowed = new Set(toplists.map((list) => list.category));
+  return categories
+    .filter((category) => allowed.has(category.slug))
+    .map((category) => ({ params: { category: category.slug } }));
+}
+
+const site = requireSite(Astro.site);
+const { category: categorySlug } = Astro.params;
+const dataIndex = getDataIndex();
+const category = dataIndex.categoryMap.get(categorySlug ?? "");
+
+if (!category) {
+  return Astro.redirect("/toplists/", 302);
+}
+
+const lists = dataIndex.toplists.filter((list) => list.category === category.slug);
+
+if (lists.length === 0) {
+  return Astro.redirect("/toplists/", 302);
+}
+
+const title = `${category.name} Top Lists 2026 | Top10Maison`;
+const description = `${category.name} rankings and buyer guides for 2026. Explore curated top lists across ${category.name.toLowerCase()} subcategories to find the right products faster.`;
+const canonical = buildCanonical(site, `/toplists/${category.slug}/`);
+const ogImage = category.image ?? "/logo.svg";
+const ogType = "website";
+
+const breadcrumbItems = [
+  { name: "Home", path: "/" },
+  { name: "Top Lists", path: "/toplists/" },
+  { name: category.name, path: `/toplists/${category.slug}/` }
+];
+const schema = [buildBreadcrumbSchema(site, breadcrumbItems)];
+const breadcrumbLinks = breadcrumbItems.map((item) => ({ name: item.name, href: item.path }));
+
+const sortedLists = lists.slice().sort((a, b) => {
+  const aSub = dataIndex.subcategoryMap.get(`${a.category}:${a.subcategory}`)?.name ?? a.subcategory;
+  const bSub = dataIndex.subcategoryMap.get(`${b.category}:${b.subcategory}`)?.name ?? b.subcategory;
+  if (aSub !== bSub) return aSub.localeCompare(bSub);
+  const aChild = dataIndex.childSubcategoryMap.get(`${a.category}:${a.subcategory}:${a.childsubcategory}`)?.name ?? a.childsubcategory;
+  const bChild = dataIndex.childSubcategoryMap.get(`${b.category}:${b.subcategory}:${b.childsubcategory}`)?.name ?? b.childsubcategory;
+  if (aChild !== bChild) return aChild.localeCompare(bChild);
+  return a.metaTitle.localeCompare(b.metaTitle);
+});
+
+const buildHref = (list) =>
+  toplistUrl(list.category, list.subcategory, list.childsubcategory, list.count, list.keywordSlug);
+
+const getCardImage = (list) =>
+  list.image ??
+  dataIndex.childSubcategoryMap.get(`${list.category}:${list.subcategory}:${list.childsubcategory}`)?.image ??
+  dataIndex.subcategoryMap.get(`${list.category}:${list.subcategory}`)?.image ??
+  category.image ??
+  "/logo.svg";
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonical={canonical}
+  schema={schema}
+  ogImage={ogImage}
+  ogType={ogType}
+>
+  <section class="section section--soft">
+    <div class="page-container">
+      <Breadcrumbs items={breadcrumbLinks} />
+      <h1 class="mt-4 text-3xl font-semibold">{category.name} top lists</h1>
+      <p class="mt-3 text-lg text-ink/70">
+        Discover every {category.name.toLowerCase()} ranking we publish. Jump into subcategories, compare picks, and find the right fit for your home.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="page-container">
+      <ul class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {sortedLists.map((list) => {
+          const display = getToplistDisplay(list, dataIndex);
+          const subcategory = dataIndex.subcategoryMap.get(`${list.category}:${list.subcategory}`);
+          const child = dataIndex.childSubcategoryMap.get(`${list.category}:${list.subcategory}:${list.childsubcategory}`);
+          const labelParts = [subcategory?.name, child?.name].filter(Boolean);
+          const label = labelParts.join(" / ");
+          return (
+            <li class="card card-hover h-full overflow-hidden" key={list.slug}>
+              <a class="block h-full" href={buildHref(list)}>
+                <img
+                  src={getCardImage(list)}
+                  alt={display.productName}
+                  class="aspect-[4/3] w-full object-cover"
+                  loading="lazy"
+                  decoding="async"
+                  width="640"
+                  height="480"
+                />
+                <div class="p-4 space-y-2">
+                  <p class="text-xs font-semibold uppercase tracking-[0.18em] text-ink/50">{label}</p>
+                  <h2 class="text-lg font-semibold text-ink">{display.cardTitle}</h2>
+                  <p class="text-sm text-ink/70">{display.intro}</p>
+                  <p class="text-xs text-ink/60">{display.year}</p>
+                </div>
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--soft">
+    <div class="page-container space-y-3">
+      <h2 class="text-xl font-semibold">More ways to browse</h2>
+      <div class="flex flex-wrap gap-3 text-sm text-accent">
+        <a class="underline" href={categoryUrl(category.slug)}>View category overview</a>
+        {category.subcategories.map((sub) => (
+          <a class="underline" href={subcategoryUrl(category.slug, sub.slug)}>{sub.name} subcategory</a>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>

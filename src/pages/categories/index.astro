@@ -10,8 +10,9 @@ import { buildBreadcrumbSchema, buildItemListSchema } from "../../utils/schema";
 const { categories } = getDataIndex();
 
 const site = requireSite(Astro.site);
-const title = "All Categories";
-const description = "Browse every Top10Maison category and drill down into subcategories to find the right top list.";
+const title = "Categories - Home & Kitchen Rankings 2026 | Top10Maison";
+const description =
+  "Browse 2026 buyer-focused categories covering kitchen appliances, cleaning gear, climate control, and smart home picks. Drill into subcategories to jump to the right top list.";
 const canonical = buildCanonical(site, "/categories/");
 const breadcrumbItems = [
   { name: "Home", path: "/" },
@@ -34,10 +35,18 @@ const schema = [
   }
 ];
 const breadcrumbLinks = breadcrumbItems.map((item) => ({ name: item.name, href: item.path }));
-const ogImage = categories[0]?.image ?? "/logo.svg";
+const ogImage = categories[0]?.image ?? "/images/categories/hero.webp";
+const ogType = "website";
 ---
 
-<Layout title={title} description={description} canonical={canonical} schema={schema} ogImage={ogImage}>
+<Layout
+  title={title}
+  description={description}
+  canonical={canonical}
+  schema={schema}
+  ogImage={ogImage}
+  ogType={ogType}
+>
   <section class="section section--soft">
     <div class="page-container">
       <Breadcrumbs items={breadcrumbLinks} />
@@ -55,7 +64,6 @@ const ogImage = categories[0]?.image ?? "/logo.svg";
           <CategoryCard
             category={category}
             loading={index < 3 ? "eager" : "lazy"}
-            fetchpriority={index === 0 ? "high" : undefined}
           />
         ))}
       </div>

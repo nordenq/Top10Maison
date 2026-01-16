@@ -21,12 +21,8 @@ const { category, subcategory, n, slug } = Astro.params;
 const toplist = getTopListData(category, subcategory, n, slug);
 
 const site = requireSite(Astro.site);
-const redirectPath = childSubcategoryUrl(
-  toplist.category.slug,
-  toplist.subcategory.slug,
-  toplist.childsubcategory.slug
-);
-const redirectUrl = buildCanonical(site, redirectPath);
+const newPath = `/toplists/${toplist.list.slug}/`;
+const redirectUrl = buildCanonical(site, newPath);
 const description = `This top list has moved to ${redirectUrl}. You are being redirected.`;
 ---
 
@@ -35,13 +31,15 @@ const description = `This top list has moved to ${redirectUrl}. You are being re
   description={description}
   canonical={redirectUrl}
   robots="noindex,follow"
-  metaRefresh={`0; url=${redirectUrl}`}
 >
+  <Fragment slot="head">
+    <meta http-equiv="refresh" content={`0;url=${redirectUrl}`} />
+  </Fragment>
   <section class="section">
     <div class="mx-auto w-full max-w-3xl text-center">
       <h1 class="text-2xl font-semibold">This top list has moved</h1>
       <p class="mt-3 text-sm text-ink/70">
-        We now use category pages for browsing. You’ll be redirected automatically.
+        We now use flat /toplists/ URLs. You’ll be redirected automatically.
       </p>
       <a class="btn mt-6" href={redirectUrl}>Continue</a>
       <p class="mt-3 text-xs text-ink/60">

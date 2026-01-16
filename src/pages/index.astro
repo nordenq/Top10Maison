@@ -88,7 +88,6 @@ const schema = [buildBreadcrumbSchema(site, [{ name: "Home", path: "/" }])];
                   src={image}
                   alt={display.schemaHeadline}
                   loading={isLcp ? "eager" : "lazy"}
-                  fetchpriority={isLcp ? "high" : undefined}
                   decoding="async"
                   srcset={imageSrcset}
                   sizes="(max-width: 768px) 100vw, 200px"
@@ -124,7 +123,6 @@ const schema = [buildBreadcrumbSchema(site, [{ name: "Home", path: "/" }])];
           <CategoryCard
             category={category}
             loading={index < 3 ? "eager" : "lazy"}
-            fetchpriority={index === 0 ? "high" : undefined}
           />
         ))}
       </div>

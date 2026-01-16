@@ -42,7 +42,7 @@ const detailItems = specs.filter((item) => item.label && item.value);
   <div class="mx-auto w-full max-w-5xl space-y-6">
     <section class="card p-5 md:p-7">
       <div class="grid gap-6 md:grid-cols-[minmax(220px,_280px)_1fr] md:items-stretch">
-        <ProductImageStage src={image} alt={title} loading="eager" fetchpriority="high" />
+        <ProductImageStage src={image} alt={title} loading="eager" />
         <div class="flex flex-col gap-4">
           <h1 class="text-3xl font-semibold text-ink" data-drawer-title>{title}</h1>
           <p class="text-base font-medium leading-relaxed text-ink/80 sm:text-lg" data-drawer-verdict>

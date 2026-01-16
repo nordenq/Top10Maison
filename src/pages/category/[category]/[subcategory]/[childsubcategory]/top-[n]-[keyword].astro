@@ -1,7 +1,6 @@
 ---
 import Layout from "../../../../../layouts/BaseLayout.astro";
 import { getDataIndex } from "../../../../../utils/dataIndex";
-import { childSubcategoryUrl } from "../../../../../utils/routes";
 import { buildCanonical, requireSite } from "../../../../../utils/seo";
 
 export function getStaticPaths() {
@@ -19,7 +18,18 @@ export function getStaticPaths() {
 
 const { category, subcategory, childsubcategory, n, keyword } = Astro.params;
 const site = requireSite(Astro.site);
-const redirectUrl = buildCanonical(site, childSubcategoryUrl(category, subcategory, childsubcategory));
+const { toplists } = getDataIndex();
+const match = toplists.find(
+  (list) =>
+    list.category === category &&
+    list.subcategory === subcategory &&
+    list.childsubcategory === childsubcategory &&
+    String(list.count) === String(n) &&
+    list.keywordSlug === keyword
+);
+
+const redirectPath = match ? `/toplists/${match.slug}/` : "/toplists/";
+const redirectUrl = buildCanonical(site, redirectPath);
 const description = `This top list now lives at ${redirectUrl}. You are being redirected.`;
 ---
 
@@ -28,8 +38,10 @@ const description = `This top list now lives at ${redirectUrl}. You are being re
   description={description}
   canonical={redirectUrl}
   robots="noindex,follow"
-  metaRefresh={`0; url=${redirectUrl}`}
 >
+  <Fragment slot="head">
+    <meta http-equiv="refresh" content={`0;url=${redirectUrl}`} />
+  </Fragment>
   <section class="section">
     <div class="mx-auto w-full max-w-3xl text-center">
       <h1 class="text-2xl font-semibold">This top list has moved</h1>

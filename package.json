@@ -12,17 +12,18 @@
     "astro": "astro",
     "check:google-fonts": "node scripts/check-google-fonts.js",
     "validate:content": "node scripts/validate-content.mjs",
-    "postbuild": "node scripts/inline-critical.js"
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.888.0",
-    "astro": "^4.11.0",
+    "astro": "^5.16.11",
     "sharp": "^0.34.4"
   },
   "devDependencies": {
     "@astrojs/tailwind": "^6.0.2",
+    "@playwright/test": "^1.42.0",
+    "astro-critters": "^2.2.1",
     "autoprefixer": "^10.4.23",
-    "critters": "^0.0.20",
     "tailwindcss": "^3.4.19"
   }
 }

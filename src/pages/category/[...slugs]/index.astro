@@ -303,7 +303,6 @@ if (faqItems.length) {
                     src={image}
                     alt={display.schemaHeadline}
                     loading={isLcp ? "eager" : "lazy"}
-                    fetchpriority={isLcp ? "high" : undefined}
                     decoding="async"
                     srcset={imageSrcset}
                     sizes="(max-width: 768px) 100vw, 200px"

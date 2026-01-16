@@ -19,10 +19,9 @@ export interface Props {
   rank: number;
   schema?: boolean;
   loading?: "lazy" | "eager";
-  fetchpriority?: "high" | "low";
 }
 
-const { product, rank, schema = false, loading = "lazy", fetchpriority } = Astro.props as Props;
+const { product, rank, schema = false, loading = "lazy" } = Astro.props as Props;
 const reviewUrl = product.slug ? `/product/${product.slug}/` : undefined;
 ---
 
@@ -41,5 +40,4 @@ const reviewUrl = product.slug ? `/product/${product.slug}/` : undefined;
   rank={rank}
   schema={schema}
   loading={loading}
-  fetchpriority={fetchpriority}
 />

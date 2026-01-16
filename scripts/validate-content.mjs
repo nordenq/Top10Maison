@@ -133,6 +133,7 @@ for (const toplist of toplists) {
   assertNonEmpty(toplist.metaDescription, `Toplist ${toplist.slug} metaDescription`, errors);
   assertMaxLength(toplist.metaTitle, 60, `Toplist ${toplist.slug} metaTitle`, errors);
   assertMaxLength(toplist.metaDescription, 155, `Toplist ${toplist.slug} metaDescription`, errors);
+  assertNonEmpty(toplist.image, `Toplist ${toplist.slug} image (ogImage)`, errors);
   assertArray(toplist.products, `Toplist ${toplist.slug} products`, errors);
   assert(Array.isArray(toplist.howWePicked) && toplist.howWePicked.length > 0, `Toplist ${toplist.slug} howWePicked must not be empty.`, errors);
   assert(Array.isArray(toplist.whoShouldBuy) && toplist.whoShouldBuy.length > 0, `Toplist ${toplist.slug} whoShouldBuy must not be empty.`, errors);
