@@ -7,6 +7,9 @@ export type AmazonProduct = {
   image: string | null;
   price: string | null;
   rating: number | null;
+  ratingCount?: number | null;
+  brand?: string | null;
+  specs?: Record<string, string> | null;
   url?: string;
 };
 
@@ -69,6 +72,9 @@ export function sanitizeProduct(input: Partial<AmazonProduct> & { asin: string }
     image: input.image ?? null,
     price: input.price ?? null,
     rating: typeof input.rating === "number" ? input.rating : null,
+    ratingCount: typeof input.ratingCount === "number" ? input.ratingCount : null,
+    brand: input.brand ?? null,
+    specs: input.specs && typeof input.specs === "object" ? (input.specs as Record<string, string>) : null,
     url: input.url
   };
 }

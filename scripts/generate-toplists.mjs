@@ -88,7 +88,8 @@ function normalizeAmazonProduct(input) {
     price: input.price ?? null,
     image: input.image ?? null,
     rating: typeof input.rating === "number" ? input.rating : null,
-    reviewCount: typeof input.reviewCount === "number" ? input.reviewCount : null,
+    reviewCount: typeof input.reviewCount === "number" ? input.reviewCount : typeof input.ratingCount === "number" ? input.ratingCount : null,
+    specs: input.specs && typeof input.specs === "object" ? input.specs : undefined,
     bullets: Array.isArray(input.bullets) ? input.bullets : [],
     reviewHighlights: Array.isArray(input.reviewHighlights) ? input.reviewHighlights : [],
     url: input.url ?? `https://www.amazon.com/dp/${input.asin}`

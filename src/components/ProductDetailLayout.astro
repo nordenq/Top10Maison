@@ -35,16 +35,101 @@ const verdictText = verdict.trim();
 const verdictSentences = verdictText.split(/(?<=\.)\s+/);
 const heroVerdict = verdictSentences[0] ?? verdictText;
 const verdictRemainder = verdictSentences.slice(1).join(" ").trim();
-const detailItems = specs.filter((item) => item.label && item.value);
+const shortenTitle = (value: string, maxLength = 90, maxSegments = 3) => {
+  const segments = value
+    .split("|")
+    .map((part) => part.trim())
+    .filter(Boolean);
+
+  const cleaned = (segments.length ? segments.slice(0, maxSegments).join(" · ") : value.trim()) || value.trim();
+  return cleaned.length > maxLength ? `${cleaned.slice(0, maxLength - 3).trim()}...` : cleaned;
+};
+
+const displayTitle = shortenTitle(title);
+const normalizeLabel = (input: string) =>
+  input
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "");
+
+const toTitleCase = (input: string) =>
+  input
+    .split(/[_\s]+/)
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+
+const labelMap: Record<string, string> = {
+  brand: "Brand",
+  model_name: "Model",
+  item_model_number: "Model number",
+  capacity: "Capacity",
+  size: "Size",
+  product_dimensions: "Dimensions",
+  item_weight: "Weight",
+  special_feature: "Special feature",
+  temperature_range: "Max temperature",
+  power_source: "Power source",
+  customer_reviews: "Customer reviews",
+  included_components: "What's included",
+  color: "Color",
+  output_wattage: "Wattage"
+};
+
+const preferredOrder = [
+  "brand",
+  "model_name",
+  "item_model_number",
+  "capacity",
+  "size",
+  "product_dimensions",
+  "item_weight",
+  "special_feature",
+  "temperature_range",
+  "power_source",
+  "customer_reviews",
+  "included_components"
+];
+
+const MAX_DETAILS = 8;
+
+const normalizedSpecs = specs
+  .map(({ label, value }) => {
+    const key = normalizeLabel(label);
+    return {
+      key,
+      label: labelMap[key] ?? toTitleCase(label || key),
+      value: (value ?? "").toString().trim()
+    };
+  })
+  .filter((item) => item.label && item.value);
+
+const seen = new Set<string>();
+const prioritized = preferredOrder
+  .map((key) => normalizedSpecs.find((item) => item.key === key))
+  .filter((item): item is NonNullable<typeof item> => Boolean(item))
+  .filter((item) => {
+    if (seen.has(item.key)) return false;
+    seen.add(item.key);
+    return true;
+  });
+
+const remaining = normalizedSpecs.filter((item) => {
+  if (seen.has(item.key)) return false;
+  seen.add(item.key);
+  return true;
+});
+
+const detailItems = [...prioritized, ...remaining].slice(0, MAX_DETAILS);
 ---
 
 <article class="page-container" data-drawer-fragment>
   <div class="mx-auto w-full max-w-5xl space-y-6">
     <section class="card p-5 md:p-7">
       <div class="grid gap-6 md:grid-cols-[minmax(220px,_280px)_1fr] md:items-stretch">
-        <ProductImageStage src={image} alt={title} loading="eager" />
+        <ProductImageStage src={image} alt={displayTitle} loading="eager" />
         <div class="flex flex-col gap-4">
-          <h1 class="text-3xl font-semibold text-ink" data-drawer-title>{title}</h1>
+          <h1 class="text-3xl font-semibold text-ink" data-drawer-title>{displayTitle}</h1>
           <p class="text-base font-medium leading-relaxed text-ink/80 sm:text-lg" data-drawer-verdict>
             {heroVerdict}
           </p>
