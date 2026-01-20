@@ -4,8 +4,6 @@ import path from "node:path";
 const ROOT = process.cwd();
 const PRODUCTS_PATH = path.join(ROOT, "src", "data", "products", "air-fryers.json");
 const API_ENDPOINT = process.env.AMAZON_PRODUCT_API_URL || "http://localhost:4321/api/amazon-products";
-const OXY_URL = process.env.OXYLABS_BASE_URL || "https://realtime.oxylabs.io/v1/queries";
-const OXY_GEO = process.env.OXYLABS_GEO || "10001"; // Oxylabs requires postal/ZIP for amazon.com
 
 async function loadEnv() {
   const envPath = path.join(ROOT, ".env");
@@ -36,48 +34,6 @@ function extractAsin(url = "") {
   return match ? match[1] : null;
 }
 
-function pickPrice(result = {}) {
-  const price =
-    result?.buybox_winner?.price?.value ??
-    result?.price?.value ??
-    result?.price ??
-    result?.price_str;
-  if (price == null) return null;
-  if (typeof price === "number") return price.toString();
-  if (typeof price === "string") return price;
-  return null;
-}
-
-function pickRating(result = {}) {
-  const rating = result?.rating ?? result?.rating_value ?? result?.rating?.value;
-  const parsed = typeof rating === "number" ? rating : Number(rating);
-  return Number.isFinite(parsed) ? parsed : null;
-}
-
-function pickRatingCount(result = {}) {
-  const count =
-    result?.reviews_count ??
-    result?.reviews_total ??
-    result?.reviews ??
-    result?.total_reviews ??
-    result?.rating_count;
-  const parsed = typeof count === "number" ? count : Number(count);
-  return Number.isFinite(parsed) ? parsed : null;
-}
-
-function pickSpecs(result = {}) {
-  const candidates = [result.product_details, result.tech_spec, result.specifications, result.details];
-  for (const cand of candidates) {
-    if (cand && typeof cand === "object" && !Array.isArray(cand) && Object.keys(cand).length > 0) {
-      const entries = Object.entries(cand)
-        .map(([key, value]) => [String(key).trim(), typeof value === "string" ? value : value?.toString?.() || ""])
-        .filter(([, v]) => v && v.trim());
-      if (entries.length) return Object.fromEntries(entries);
-    }
-  }
-  return null;
-}
-
 async function resolveAsinFromAffiliate(url) {
   if (!url || !url.includes("amzn.to")) return null;
   const controller = new AbortController();
@@ -100,59 +56,20 @@ async function resolveAsinFromAffiliate(url) {
 }
 
 async function fetchProduct(asin) {
-  // Try project API first
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15000);
   try {
     const url = new URL(API_ENDPOINT);
     url.searchParams.set("asin", asin);
-    const res = await fetch(url.toString(), { timeout: 15000 });
-    if (res.ok) return res.json();
-  } catch (error) {
-    // fall through
+    const res = await fetch(url.toString(), { signal: controller.signal });
+    if (!res.ok) {
+      const text = await res.text().catch(() => "<no body>");
+      throw new Error(`Product API ${res.status}: ${text.slice(0, 300)}`);
+    }
+    return res.json();
+  } finally {
+    clearTimeout(timeout);
   }
-
-  // Fallback: call Oxylabs directly
-  const user = process.env.OXYLABS_USER;
-  const pass = process.env.OXYLABS_PASS;
-  if (!user || !pass) {
-    throw new Error("Missing OXYLABS_USER/OXYLABS_PASS for direct fetch");
-  }
-
-  const auth = Buffer.from(`${user}:${pass}`).toString("base64");
-  const resp = await fetch(OXY_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Basic ${auth}`
-    },
-    body: JSON.stringify({
-      source: "amazon_product",
-      query: asin,
-      domain: "com",
-      geo_location: OXY_GEO,
-      parse: true
-    })
-  });
-
-  if (!resp.ok) {
-    const body = await resp.text().catch(() => "<no body>");
-    throw new Error(`Oxylabs ${resp.status} ${resp.statusText}: ${body.slice(0, 500)}`);
-  }
-
-  const payload = await resp.json();
-  const result = payload?.results?.[0];
-  const content = result?.content ?? {};
-
-  return {
-    asin,
-    title: content.title ?? content.product?.title ?? null,
-    image: content.main_image ?? content.image ?? content.image_url ?? null,
-    price: pickPrice(content),
-    rating: pickRating(content),
-    ratingCount: pickRatingCount(content),
-    brand: content.brand ?? content.product?.brand ?? null,
-    specs: pickSpecs(content),
-    url: result?.url ?? `https://www.amazon.com/dp/${asin}`
-  };
 }
 
 async function main() {

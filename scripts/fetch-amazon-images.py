@@ -6,6 +6,7 @@ import os
 import re
 import time
 import urllib.request
+import urllib.error
 
 
 def open_url(
@@ -38,6 +39,32 @@ def fetch_image(asin: str, dest_path: str) -> None:
     _, data = open_url(img_url, binary=True)
     with open(dest_path, "wb") as handle:
         handle.write(data)
+
+
+def fetch_product_from_api(asin: str) -> dict | None:
+    endpoint = os.environ.get("AMAZON_PRODUCT_API_URL", "http://localhost:4321/api/amazon-products")
+    url = f"{endpoint}?asin={asin}"
+    try:
+        _, data = open_url(url, binary=False)
+        return json.loads(data)
+    except Exception:
+        return None
+
+
+def fetch_image_from_api(asin: str, dest_path: str) -> bool:
+    product = fetch_product_from_api(asin)
+    if not product:
+        return False
+    image_url = product.get("image")
+    if not image_url:
+        return False
+    try:
+        _, data = open_url(image_url, binary=True)
+        with open(dest_path, "wb") as handle:
+            handle.write(data)
+        return True
+    except Exception:
+        return False
 
 
 def load_products(path: str) -> list:
@@ -96,6 +123,10 @@ def main() -> int:
         if args.only_missing and os.path.exists(dest_path):
             continue
         last_error = None
+        # Prefer image from the API (Oxylabs-backed)
+        if fetch_image_from_api(asin, dest_path):
+            success[slug] = f"/images/products/{slug}.jpg"
+            continue
         for attempt in range(3):
             try:
                 fetch_image(asin, dest_path)
