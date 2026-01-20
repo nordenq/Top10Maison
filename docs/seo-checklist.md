@@ -12,3 +12,4 @@
 - ✅ Page included in sitemap; noindex only when intentional
 - ✅ Performance: target LCP < 2.5s, CLS < 0.1; test with Lighthouse/PageSpeed
 - ✅ Mobile menu and interactive elements expose clear focus states and accessible labels
+- ✅ Environment configured from `.env.sample` (GA/GSC IDs, Oxylabs credentials, Amazon affiliate tag)
