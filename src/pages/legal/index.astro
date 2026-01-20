@@ -1,11 +1,27 @@
 ---
-const canonical = "/privacy-policy/";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getPageMeta } from "../../utils/meta";
+
+const { title, description, canonical } = getPageMeta(Astro.site, {
+  title: "Redirecting to Privacy Policy",
+  description: "This page now lives at our Privacy Policy.",
+  path: "/privacy-policy/"
+});
 ---
 
-<Fragment slot="head">
-  <link rel="canonical" href={canonical} />
-  <meta http-equiv="refresh" content={`0;url=${canonical}`} />
-</Fragment>
-
-<p>If you are not redirected automatically, go to <a href={canonical}>Privacy Policy</a>.</p>
-<!-- If older links point to /legal/, this redirect will send users to the privacy policy. -->
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={canonical}
+  metaRefresh={`0;url=${canonical}`}
+  robots="noindex"
+>
+  <section class="section">
+    <div class="page-container space-y-3">
+      <p class="text-sm text-ink/70">Redirecting you to the Privacy Policy…</p>
+      <p class="text-sm text-ink/70">
+        If you are not redirected automatically, visit <a class="text-accent" href={canonical}>Privacy Policy</a>.
+      </p>
+    </div>
+  </section>
+</BaseLayout>

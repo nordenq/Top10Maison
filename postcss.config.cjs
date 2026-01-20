@@ -16,7 +16,7 @@ const lintCompatPlugin = () => ({
 
       rule.walkDecls("-webkit-appearance", (decl) => {
         if (!hasAppearance) {
-          decl.after({ prop: "appearance", value: decl.value });
+          decl.cloneAfter({ prop: "appearance" });
           hasAppearance = true;
         }
       });
