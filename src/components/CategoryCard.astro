@@ -1,5 +1,6 @@
 ---
 import type { Category, ChildSubcategory, Subcategory } from "../utils/data";
+import { Image } from "astro:assets";
 import { categoryUrl, childSubcategoryUrl, subcategoryUrl } from "../utils/routes";
 
 const { category, subcategory, childsubcategory, parentSubcategory, loading = "lazy" } = Astro.props as {
@@ -18,27 +19,27 @@ const href = childsubcategory && parentSubcategory
 const title = childsubcategory?.name ?? subcategory?.name ?? category.name;
 const description = childsubcategory?.description ?? subcategory?.description ?? category.description;
 const image = childsubcategory?.image ?? subcategory?.image ?? category.image ?? "/logo.svg";
-const imageSrcset = childsubcategory?.imageSrcset ?? subcategory?.imageSrcset ?? category.imageSrcset;
 ---
 
 <a class="card card-hover group flex h-full flex-col overflow-hidden" href={href}>
   <div class="relative">
-    <img
+    <Image
       class="h-44 w-full object-cover"
       src={image}
       alt={title}
       loading={loading}
-      srcset={imageSrcset}
+      widths={[320, 480, 720]}
       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 350px"
-      width="640"
-      height="360"
+      aspectRatio={16 / 9}
       decoding="async"
+      width={640}
+      height={360}
     />
   </div>
   <div class="flex flex-1 flex-col gap-2 p-4">
     <div class="flex items-center justify-between">
       <h3 class="text-lg font-semibold">{title}</h3>
-      <span class="text-lg text-accent transition group-hover:text-ink">→</span>
+      <span class="text-lg text-accent transition group-hover:text-ink" aria-hidden="true">→</span>
     </div>
     <p class="text-sm text-ink/70">{description}</p>
   </div>

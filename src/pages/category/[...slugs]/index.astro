@@ -1,6 +1,7 @@
 ---
 import Layout from "../../../layouts/BaseLayout.astro";
 import Breadcrumbs from "../../../components/Breadcrumbs.astro";
+import { Image } from "astro:assets";
 import CategoryCard from "../../../components/CategoryCard.astro";
 import ProductGridSection from "../../../components/ProductGridSection.astro";
 import ProductDrawer from "../../../components/ProductDrawer.astro";
@@ -12,7 +13,7 @@ import FAQ from "../../../components/FAQ.astro";
 import AudienceSplit from "../../../components/AudienceSplit.astro";
 import { getBestToplistForChild, getCategoryData } from "../../../utils/data";
 import { getDataIndex } from "../../../utils/dataIndex";
-import { buildCanonical, requireSite } from "../../../utils/seo";
+import { buildCanonical, buildPageTitle, requireSite } from "../../../utils/seo";
 import { buildArticleSchema, buildBreadcrumbSchema, buildFaqSchema, buildItemListSchema } from "../../../utils/schema";
 import { categoryUrl, subcategoryUrl, childSubcategoryUrl, productUrl } from "../../../utils/routes";
 import { getToplistDisplay } from "../../../utils/toplistDisplay";
@@ -69,15 +70,18 @@ const bestToplist = data.childsubcategory
 const schema = [buildBreadcrumbSchema(site, breadcrumbItems)];
 const breadcrumbLinks = breadcrumbItems.map((item) => ({ name: item.name, href: item.path }));
 
+const year = "2026";
 const productName = data.childsubcategory?.name ?? data.subcategory?.name ?? data.category.name;
 const bestToplistTitle = bestToplist?.metaTitle ?? bestToplist?.title;
 const bestToplistDescription = bestToplist?.metaDescription;
-const title = data.childsubcategory && bestToplistTitle
-  ? bestToplistTitle
-  : data.childsubcategory?.name ?? data.subcategory?.name ?? data.category.name;
-const pageDescription = data.childsubcategory && bestToplistDescription
-  ? bestToplistDescription
-  : data.childsubcategory?.description ?? data.subcategory?.description ?? data.category.description;
+const baseTitle = data.childsubcategory?.name ?? data.subcategory?.name ?? data.category.name;
+const title = buildPageTitle({ bestToplistTitle, baseTitle, year });
+const baseDescription =
+  (data.childsubcategory && bestToplistDescription
+    ? bestToplistDescription
+    : data.childsubcategory?.description ?? data.subcategory?.description ?? data.category.description) ||
+  `${baseTitle} rankings`;
+const pageDescription = `${baseDescription} Updated for ${year}.`;
 const categoryFrameworkIntro =
   "Each category uses the same data-based evaluation framework to compare products fairly and consistently.";
 const rankingIntro =
@@ -286,28 +290,24 @@ if (faqItems.length) {
               subcategory?.image ??
               category?.image ??
               "/logo.svg";
-            const imageSrcset =
-              list.imageSrcset ??
-              child?.imageSrcset ??
-              subcategory?.imageSrcset ??
-              category?.imageSrcset;
-            const isLcp = index === 0;
+          const isLcp = index === 0;
             return (
               <a
                 class="toplist-card card card-hover grid gap-4 overflow-hidden md:grid-cols-[200px_1fr]"
                 href={childSubcategoryUrl(list.category, list.subcategory, list.childsubcategory)}
               >
                 <div class="toplist-card__image">
-                  <img
+                  <Image
                     class="h-full w-full object-cover"
                     src={image}
                     alt={display.schemaHeadline}
                     loading={isLcp ? "eager" : "lazy"}
-                    decoding="async"
-                    srcset={imageSrcset}
+                    widths={[240, 360, 480, 640]}
                     sizes="(max-width: 768px) 100vw, 200px"
-                    width="400"
-                    height="300"
+                    aspectRatio={4 / 3}
+                    decoding="async"
+                    width={400}
+                    height={300}
                   />
                 </div>
                 <div class="p-5">
