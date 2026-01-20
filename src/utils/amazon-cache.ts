@@ -7,10 +7,10 @@ export type AmazonProduct = {
   image: string | null;
   price: string | null;
   rating: number | null;
-  ratingCount?: number | null;
-  brand?: string | null;
-  specs?: Record<string, string> | null;
-  url?: string;
+  ratingCount: number | null;
+  brand: string | null;
+  specs: Record<string, string> | null;
+  url: string;
 };
 
 const CACHE_PATH = process.env.AMAZON_CACHE_PATH || path.join(process.cwd(), ".cache", "amazon-products.json");
@@ -75,6 +75,6 @@ export function sanitizeProduct(input: Partial<AmazonProduct> & { asin: string }
     ratingCount: typeof input.ratingCount === "number" ? input.ratingCount : null,
     brand: input.brand ?? null,
     specs: input.specs && typeof input.specs === "object" ? (input.specs as Record<string, string>) : null,
-    url: input.url
+    url: input.url ?? `https://www.amazon.com/dp/${input.asin}`
   };
 }
