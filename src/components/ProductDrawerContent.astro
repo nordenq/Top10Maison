@@ -8,12 +8,14 @@ const {
   product,
   shortVerdict,
   relatedToplist,
-  relatedChildsubcategory
+  relatedChildsubcategory,
+  affiliateLabel
 } = Astro.props as {
   product: Product;
   shortVerdict: string;
   relatedToplist?: Toplist | null;
   relatedChildsubcategory?: { name: string; slug: string } | null;
+  affiliateLabel?: string;
 };
 
 const glanceKeys = [
@@ -39,7 +41,7 @@ const glanceItems = glanceKeys
       This summary reflects publicly available data analyzed using our review framework.
     </p>
     <div class="mt-4">
-      <AffiliateButton url={product.affiliateUrl} label="View on Amazon" productSlug={product.slug} />
+      <AffiliateButton url={product.affiliateUrl} label={affiliateLabel} productSlug={product.slug} />
     </div>
   </section>
 

@@ -5,9 +5,9 @@
   "private": true,
   "scripts": {
     "dev": "astro dev",
-    "build": "node scripts/generate-toplists.mjs && astro build",
-    "generate": "node scripts/generate-toplists.mjs",
-    "build:ci": "SKIP_AI_GENERATION=1 node scripts/generate-toplists.mjs && astro build && npm run check:google-fonts",
+    "build": "node --loader ts-node/esm scripts/generate-toplists.mjs && astro build",
+    "generate": "node --loader ts-node/esm scripts/generate-toplists.mjs",
+    "build:ci": "SKIP_AI_GENERATION=1 node --loader ts-node/esm scripts/generate-toplists.mjs && astro build && npm run check:google-fonts",
     "preview": "astro preview",
     "astro": "astro",
     "check:google-fonts": "node scripts/check-google-fonts.js",
@@ -20,10 +20,12 @@
     "sharp": "^0.34.4"
   },
   "devDependencies": {
+    "@astrojs/critters": "^4.0.0",
+    "@astrojs/image": "^0.18.0",
     "@astrojs/tailwind": "^6.0.2",
     "@playwright/test": "^1.42.0",
-    "astro-critters": "^2.2.1",
     "autoprefixer": "^10.4.23",
-    "tailwindcss": "^3.4.19"
+    "tailwindcss": "^3.4.19",
+    "ts-node": "^10.9.2"
   }
 }

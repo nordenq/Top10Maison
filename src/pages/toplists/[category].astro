@@ -1,4 +1,5 @@
 ---
+import { Image } from "@astrojs/image/components";
 import Layout from "../../layouts/BaseLayout.astro";
 import Breadcrumbs from "../../components/Breadcrumbs.astro";
 import { getDataIndex } from "../../utils/dataIndex";
@@ -95,14 +96,16 @@ const getCardImage = (list) =>
           return (
             <li class="card card-hover h-full overflow-hidden" key={list.slug}>
               <a class="block h-full" href={buildHref(list)}>
-                <img
+                <Image
                   src={getCardImage(list)}
                   alt={display.productName}
                   class="aspect-[4/3] w-full object-cover"
                   loading="lazy"
-                  decoding="async"
-                  width="640"
-                  height="480"
+                  width={640}
+                  height={480}
+                  widths={[320, 640, 960]}
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  formats={["avif", "webp", "jpeg"]}
                 />
                 <div class="p-4 space-y-2">
                   <p class="text-xs font-semibold uppercase tracking-[0.18em] text-ink/50">{label}</p>

@@ -50,7 +50,7 @@ function pickSpecs(result: any): Record<string, string> | null {
   return null;
 }
 
-async function fetchAmazonProduct(asin: string): Promise<AmazonProduct> {
+async function fetchOxylabsProduct(asin: string): Promise<AmazonProduct> {
   const user = import.meta.env.OXYLABS_USER;
   const password = import.meta.env.OXYLABS_PASS;
   const endpoint = import.meta.env.OXYLABS_BASE_URL || DEFAULT_OXY_URL;
@@ -121,7 +121,7 @@ export const GET: APIRoute = async ({ request }) => {
       });
     }
 
-    const product = sanitizeProduct(await fetchAmazonProduct(asin));
+    const product = sanitizeProduct(await fetchOxylabsProduct(asin));
     await setCachedProduct(asin, product);
 
     return new Response(JSON.stringify(product), {
@@ -130,6 +130,13 @@ export const GET: APIRoute = async ({ request }) => {
     });
   } catch (error) {
     console.error("amazon-products error", error);
-    return new Response(JSON.stringify({ error: "Failed to fetch product" }), { status: 500 });
+    const fallback = sanitizeProduct({
+      asin,
+      url: `https://www.amazon.com/dp/${asin}`
+    });
+    return new Response(JSON.stringify(fallback), {
+      status: 200,
+      headers: { "Content-Type": "application/json" }
+    });
   }
 };
