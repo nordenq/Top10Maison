@@ -86,6 +86,10 @@
     outline: 2px solid #2563eb;
     outline-offset: 2px;
   }
+
+  button {
+    appearance: button;
+  }
 }
 
 @layer components {
