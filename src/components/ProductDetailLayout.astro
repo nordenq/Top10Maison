@@ -10,6 +10,7 @@ const {
   image,
   verdict,
   ctaUrl,
+  affiliateLabel = "View on Amazon",
   pros,
   cons,
   bestFor,
@@ -22,6 +23,7 @@ const {
   image: string;
   verdict: string;
   ctaUrl: string;
+  affiliateLabel?: string;
   pros: string[];
   cons: string[];
   bestFor: string[];
@@ -46,6 +48,7 @@ const shortenTitle = (value: string, maxLength = 90, maxSegments = 3) => {
 };
 
 const displayTitle = shortenTitle(title);
+const isAmazon = ctaUrl.includes("amazon.") || ctaUrl.includes("amzn.to");
 const normalizeLabel = (input: string) =>
   input
     .toLowerCase()
@@ -145,9 +148,9 @@ const detailItems = [...prioritized, ...remaining].slice(0, MAX_DETAILS);
               href={ctaUrl}
               rel="nofollow sponsored"
               target="_blank"
-              data-affiliate="amazon"
+              data-affiliate={isAmazon ? "amazon" : undefined}
             >
-              View on Amazon
+              {affiliateLabel}
             </a>
           </div>
         </div>

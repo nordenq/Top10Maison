@@ -1,14 +1,28 @@
-# SEO publishing checklist
+# SEO & Publishing Checklist
 
-- ✅ Unique title (< 60 characters) with primary keyword and current year
-- ✅ Meta description (< 155 characters) that summarizes the page and encourages clicks
-- ✅ Canonical URL set via `getPageMeta`
-- ✅ OpenGraph & Twitter images set via `ogImage` (correct dimensions, under 1 MB)
-- ✅ Structured data present (breadcrumbs; product, article, or collection schema as appropriate)
-- ✅ Alt text for all meaningful images; mark decorative images with `aria-hidden="true"`
-- ✅ Logical heading order (one H1, descending H2/H3)
-- ✅ Internal links to related categories, top lists, and products; avoid orphan pages
-- ✅ No thin, unreviewed AI content; human review required
-- ✅ Page included in sitemap; noindex only when intentional
-- ✅ Performance: target LCP < 2.5s, CLS < 0.1; test with Lighthouse/PageSpeed
-- ✅ Mobile menu and interactive elements expose clear focus states and accessible labels
+Use this checklist before publishing new categories, top lists, or product pages.
+
+## Content & metadata
+- [ ] Unique, descriptive title that includes the current year when relevant.
+- [ ] Meta description summarizes the page in 1–2 sentences and includes the year when applicable.
+- [ ] Canonical URL matches the public route.
+- [ ] OG image set (use the hero or category image for the page).
+- [ ] Structured data is present (Breadcrumbs, Article/Product/Collection when appropriate).
+- [ ] No AI-generated copy is published without human review and edits.
+
+## Accessibility & UX
+- [ ] Headings follow a logical hierarchy (single H1).
+- [ ] All meaningful images have descriptive alt text.
+- [ ] Decorative icons are marked `aria-hidden="true"`.
+- [ ] Forms include associated labels and helpful hint text.
+- [ ] Links and buttons have clear labels (avoid “click here”).
+
+## Internal linking
+- [ ] Link to parent category or top-list directory.
+- [ ] Link to related lists or products where relevant.
+- [ ] Breadcrumbs are present and accurate.
+
+## Quality & compliance
+- [ ] Facts, specs, and pricing are verified or clearly sourced from public product data.
+- [ ] Affiliate links use `rel="nofollow sponsored"`.
+- [ ] Ensure no secrets are committed (use `.env.sample` and `.env.example`).

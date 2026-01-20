@@ -1,4 +1,6 @@
 ---
+import { Image } from "astro:assets";
+
 const { src, alt, rank, tag, loading = "lazy", width = 800, height = 800 } = Astro.props as {
   src: string;
   alt: string;
@@ -8,17 +10,21 @@ const { src, alt, rank, tag, loading = "lazy", width = 800, height = 800 } = Ast
   width?: number;
   height?: number;
 };
+
+const widths = [Math.round(width / 2), width, width * 2];
 ---
 
 <div class="product-image-frame">
   <div class="image-skeleton" aria-hidden="true"></div>
-  <img
+  <Image
     src={src}
     alt={alt}
     loading={loading}
-    decoding="async"
     width={width}
     height={height}
+    widths={widths}
+    sizes="(max-width: 768px) 100vw, 400px"
+    formats={["avif", "webp", "jpeg"]}
     onerror="this.onerror=null;this.src='/images/products/placeholder.svg';"
     onload="this.previousElementSibling && this.previousElementSibling.remove()"
   />

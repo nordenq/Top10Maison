@@ -40,6 +40,17 @@ def fetch_image(asin: str, dest_path: str) -> None:
         handle.write(data)
 
 
+def fetch_api_image(asin: str, api_base: str) -> str:
+    api_url = f"{api_base}?asin={asin}"
+    _, payload = open_url(api_url)
+    try:
+        data = json.loads(payload)
+    except json.JSONDecodeError:
+        return ""
+    image = data.get("image") if isinstance(data, dict) else ""
+    return image or ""
+
+
 def load_products(path: str) -> list:
     with open(path, "r", encoding="utf-8") as handle:
         return json.load(handle)
@@ -52,7 +63,7 @@ def save_products(path: str, products: list) -> None:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Fetch Amazon product images using affiliate URLs.")
+    parser = argparse.ArgumentParser(description="Fetch product images via the local Oxylabs-backed API.")
     parser.add_argument("--only-missing", action="store_true", help="Only fetch when image file is missing.")
     parser.add_argument("--slugs", nargs="*", help="Limit to specific product slugs.")
     args = parser.parse_args()
@@ -66,6 +77,8 @@ def main() -> int:
         return 1
 
     os.makedirs("public/images/products", exist_ok=True)
+
+    api_base = os.environ.get("AMAZON_PRODUCT_API_URL", "http://localhost:4321/api/amazon-products")
 
     success = {}
     failures = []
@@ -95,6 +108,15 @@ def main() -> int:
         dest_path = os.path.join("public/images/products", f"{slug}.jpg")
         if args.only_missing and os.path.exists(dest_path):
             continue
+        api_image = ""
+        try:
+            api_image = fetch_api_image(asin, api_base)
+        except Exception:
+            api_image = ""
+        if api_image:
+            success[slug] = api_image
+            continue
+
         last_error = None
         for attempt in range(3):
             try:

@@ -1,4 +1,5 @@
 ---
+import { Image } from "astro:assets";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getDataIndex } from "../utils/dataIndex";
 import { buildCanonical, requireSite } from "../utils/seo";
@@ -71,11 +72,6 @@ const schema = [buildBreadcrumbSchema(site, [{ name: "Home", path: "/" }])];
             subcategory?.image ??
             category?.image ??
             "/logo.svg";
-          const imageSrcset =
-            list.imageSrcset ??
-            child?.imageSrcset ??
-            subcategory?.imageSrcset ??
-            category?.imageSrcset;
           const isLcp = index === 0;
           return (
             <a
@@ -83,16 +79,16 @@ const schema = [buildBreadcrumbSchema(site, [{ name: "Home", path: "/" }])];
               href={childSubcategoryUrl(list.category, list.subcategory, list.childsubcategory)}
             >
               <div class="toplist-card__image">
-                <img
+                <Image
                   class="h-full w-full object-cover"
                   src={image}
                   alt={display.schemaHeadline}
                   loading={isLcp ? "eager" : "lazy"}
-                  decoding="async"
-                  srcset={imageSrcset}
                   sizes="(max-width: 768px) 100vw, 200px"
-                  width="400"
-                  height="300"
+                  width={400}
+                  height={300}
+                  widths={[200, 400, 600]}
+                  formats={["avif", "webp", "jpeg"]}
                 />
               </div>
               <div class="p-5">

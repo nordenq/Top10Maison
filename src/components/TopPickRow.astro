@@ -13,6 +13,7 @@ export interface Props {
   pros?: string[];
   cons?: string[];
   ctaUrl: string;
+  affiliateLabel?: string;
   reviewUrl?: string;
   rank?: number;
   schema?: boolean;
@@ -30,11 +31,14 @@ const {
   pros = [],
   cons = [],
   ctaUrl,
+  affiliateLabel = "View on Amazon",
   reviewUrl,
   rank,
   schema = false,
   loading = "lazy"
 } = Astro.props as Props;
+
+const isAmazon = ctaUrl.includes("amazon.") || ctaUrl.includes("amzn.to");
 
 const shortenTitle = (value: string, maxLength = 90, maxSegments = 3) => {
   const segments = value
@@ -135,8 +139,9 @@ const productSchema =
           target="_blank"
           rel="nofollow sponsored noopener"
           class="btn text-sm"
+          data-affiliate={isAmazon ? "amazon" : undefined}
         >
-          View on Amazon
+          {affiliateLabel}
         </a>
         {reviewUrl ? <a class="btn-ghost text-sm" href={reviewUrl} data-drawer-link>Read review</a> : null}
       </div>

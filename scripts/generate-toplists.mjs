@@ -4,6 +4,7 @@ import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import sharp from "sharp";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { getCachedProduct, sanitizeProduct, setCachedProduct } from "../src/utils/amazon-cache.ts";
 
 const ROOT = process.cwd();
 const DATA_DIR = path.join(ROOT, "src", "data");
@@ -11,7 +12,6 @@ const PRODUCTS_DIR = path.join(DATA_DIR, "products");
 const TOPLISTS_DIR = path.join(DATA_DIR, "toplists");
 const TOPLISTS_PATH = path.join(DATA_DIR, "toplists.json");
 const CATEGORIES_PATH = path.join(DATA_DIR, "categories.json");
-const AMAZON_CACHE_PATH = path.join(ROOT, ".cache", "amazon-products.json");
 
 const TARGET_CHILD_SUBCATEGORIES = ["air-fryers"];
 const SEARCH_RESULTS_LIMIT = 50;
@@ -22,10 +22,7 @@ const DEFAULT_OPENAI_CONCURRENCY = 3;
 const DEFAULT_ASIN_FETCH_LIMIT = 30;
 const DEFAULT_OPENAI_IMAGE_CONCURRENCY = 2;
 const DEFAULT_OPENAI_IMAGE_MODEL = "dall-e-3";
-const AMAZON_CACHE_TTL_MS = 1000 * 60 * 60 * 24; // 24 hours
 const execFileAsync = promisify(execFile);
-
-let amazonProductCache = null;
 
 async function loadEnv() {
   const envPath = path.join(ROOT, ".env");
@@ -48,37 +45,6 @@ async function loadEnv() {
   }
 }
 
-async function readAmazonCache() {
-  if (amazonProductCache) return amazonProductCache;
-  try {
-    const raw = await fs.readFile(AMAZON_CACHE_PATH, "utf8");
-    amazonProductCache = JSON.parse(raw);
-  } catch (error) {
-    amazonProductCache = {};
-  }
-  return amazonProductCache;
-}
-
-async function writeAmazonCache() {
-  if (!amazonProductCache) return;
-  await fs.mkdir(path.dirname(AMAZON_CACHE_PATH), { recursive: true });
-  await fs.writeFile(AMAZON_CACHE_PATH, JSON.stringify(amazonProductCache, null, 2), "utf8");
-}
-
-async function getCachedAmazonProduct(asin, ttlMs = AMAZON_CACHE_TTL_MS) {
-  const cache = await readAmazonCache();
-  const entry = cache[asin];
-  if (!entry) return null;
-  const age = Date.now() - new Date(entry.cachedAt).getTime();
-  if (age > ttlMs) return null;
-  return entry.data;
-}
-
-async function setCachedAmazonProduct(asin, data) {
-  const cache = await readAmazonCache();
-  cache[asin] = { asin, data, cachedAt: new Date().toISOString() };
-  await writeAmazonCache();
-}
 
 function normalizeAmazonProduct(input) {
   return {
@@ -88,7 +54,12 @@ function normalizeAmazonProduct(input) {
     price: input.price ?? null,
     image: input.image ?? null,
     rating: typeof input.rating === "number" ? input.rating : null,
-    reviewCount: typeof input.reviewCount === "number" ? input.reviewCount : typeof input.ratingCount === "number" ? input.ratingCount : null,
+    reviewCount:
+      typeof input.reviewCount === "number"
+        ? input.reviewCount
+        : typeof input.ratingCount === "number"
+          ? input.ratingCount
+          : null,
     specs: input.specs && typeof input.specs === "object" ? input.specs : undefined,
     bullets: Array.isArray(input.bullets) ? input.bullets : [],
     reviewHighlights: Array.isArray(input.reviewHighlights) ? input.reviewHighlights : [],
@@ -139,10 +110,6 @@ function extractPriceLimit(text) {
 
 function isAmazonUrl(url) {
   return url.includes("amazon.") || url.includes("amzn.to");
-}
-
-async function fetchHtmlDisabled() {
-  throw new Error("Auto-generation is disabled. Manual content only.");
 }
 
 function parseJsonLd(html) {
@@ -317,7 +284,7 @@ function updateProductFromScrape(existing, scraped, ai, associateTag) {
 }
 
 async function fetchAmazonSearchAsins(query) {
-  await fetchHtmlDisabled();
+  console.warn(`Amazon search auto-generation disabled for query: ${query}`);
   return [];
 }
 
@@ -332,6 +299,25 @@ async function loadToplists() {
   }
   const raw = await fs.readFile(TOPLISTS_PATH, "utf8");
   return JSON.parse(raw);
+}
+
+async function loadProducts() {
+  const entries = await fs.readdir(PRODUCTS_DIR).catch(() => []);
+  const files = entries.filter((entry) => entry.endsWith(".json"));
+  if (!files.length) {
+    return [];
+  }
+  const all = await Promise.all(
+    files.map((file) => fs.readFile(path.join(PRODUCTS_DIR, file), "utf8").then((data) => JSON.parse(data)))
+  );
+  return all.flat();
+}
+
+async function getMissingImageSlugs() {
+  const products = await loadProducts();
+  return products
+    .filter((product) => product?.slug && !product?.image)
+    .map((product) => product.slug);
 }
 
 async function saveToplists(toplists) {
@@ -606,36 +592,30 @@ async function updateOpenAiImages({ categories, toplists, refresh, concurrency }
 }
 
 async function fetchAmazonProduct(asin) {
-  const cached = await getCachedAmazonProduct(asin);
-  if (cached) return cached;
+  const cached = await getCachedProduct(asin);
+  if (cached) {
+    return normalizeAmazonProduct(cached);
+  }
 
   const endpoint = process.env.AMAZON_PRODUCT_API_URL || "http://localhost:4321/api/amazon-products";
-  if (endpoint) {
-    try {
-      const url = new URL(endpoint);
-      url.searchParams.set("asin", asin);
-      const response = await fetch(url.toString());
-      if (response.ok) {
-        const payload = await response.json();
-        const normalized = normalizeAmazonProduct({ asin, ...payload });
-        await setCachedAmazonProduct(asin, normalized);
-        return normalized;
-      }
-      console.warn(`Amazon API responded with ${response.status} for ASIN ${asin}`);
-    } catch (error) {
-      console.warn(`Amazon API fetch failed for ASIN ${asin}:`, error);
-    }
-  }
-
   try {
-    await fetchHtmlDisabled();
+    const url = new URL(endpoint);
+    url.searchParams.set("asin", asin);
+    const response = await fetch(url.toString());
+    if (response.ok) {
+      const payload = await response.json();
+      const sanitized = sanitizeProduct({ asin, ...payload });
+      await setCachedProduct(asin, sanitized);
+      return normalizeAmazonProduct(sanitized);
+    }
+    console.warn(`Amazon API responded with ${response.status} for ASIN ${asin}`);
   } catch (error) {
-    console.warn(`Amazon fallback disabled for ASIN ${asin}:`, error.message || error);
+    console.warn(`Amazon API fetch failed for ASIN ${asin}:`, error);
   }
 
-  const fallback = normalizeAmazonProduct({ asin });
-  await setCachedAmazonProduct(asin, fallback);
-  return fallback;
+  const fallback = sanitizeProduct({ asin, url: `https://www.amazon.com/dp/${asin}` });
+  await setCachedProduct(asin, fallback);
+  return normalizeAmazonProduct(fallback);
 }
 
 async function callOpenAI(messages, { temperature = 0.3, responseFormat } = {}) {
@@ -834,7 +814,7 @@ async function main() {
   await loadEnv();
   const hasOpenAI = Boolean(process.env.OPENAI_API_KEY);
   const enableAutoGeneration = String(process.env.ENABLE_AUTOGENERATION || "").toLowerCase() === "1";
-  const associateTag = process.env.AMAZON_ASSOCIATE_TAG || process.env.AMAZON_AFFILIATE_TAG || "";
+  const associateTag = process.env.AMAZON_ASSOCIATE_TAG || "";
   const overwriteProducts = String(process.env.OVERWRITE_PRODUCTS || "").toLowerCase() === "1";
   const fetchProductImages = String(process.env.FETCH_PRODUCT_IMAGES || "").toLowerCase() === "1";
   const forceProductImages = String(process.env.FETCH_PRODUCT_IMAGES_FORCE || "").toLowerCase() === "1";
@@ -884,6 +864,10 @@ async function main() {
       const args = ["scripts/fetch-amazon-images.py"];
       if (!forceProductImages) {
         args.push("--only-missing");
+      }
+      const missingSlugs = await getMissingImageSlugs();
+      if (missingSlugs.length > 0) {
+        args.push("--slugs", ...missingSlugs);
       }
       const { stdout, stderr } = await execFileAsync(pythonBin, args, {
         cwd: ROOT,
@@ -1022,7 +1006,11 @@ async function main() {
         .map((item) => item.slug);
       return { ...product, alternatives };
     });
-    withAlternatives.forEach((product) => imageSlugs.add(product.slug));
+    withAlternatives.forEach((product) => {
+      if (!product.image) {
+        imageSlugs.add(product.slug);
+      }
+    });
 
     const articleHtml = await generateToplistArticle({
       title: list.title,

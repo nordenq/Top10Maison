@@ -1,9 +1,11 @@
 ---
-const { url, label, productSlug } = Astro.props as {
+const { url, label = "View on Amazon", productSlug } = Astro.props as {
   url: string;
-  label: string;
+  label?: string;
   productSlug: string;
 };
+
+const isAmazon = url.includes("amazon.") || url.includes("amzn.to");
 ---
 
 <a
@@ -11,7 +13,7 @@ const { url, label, productSlug } = Astro.props as {
   href={url}
   rel="nofollow sponsored"
   target="_blank"
-  data-affiliate="amazon"
+  data-affiliate={isAmazon ? "amazon" : undefined}
   data-product={productSlug}
 >
   {label}
