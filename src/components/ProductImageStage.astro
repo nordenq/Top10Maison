@@ -1,15 +1,17 @@
 ---
 import { Image } from "astro:assets";
 
-const { src, alt, rank, tag, loading = "lazy", width = 800, height = 800 } = Astro.props as {
-  src: string;
-  alt: string;
-  rank?: number;
-  tag?: string;
-  loading?: "lazy" | "eager";
-  width?: number;
-  height?: number;
-};
+const { src, alt, rank, tag, loading = "lazy", width = 800, height = 800, fetchpriority = "auto" } =
+  Astro.props as {
+    src: string;
+    alt: string;
+    rank?: number;
+    tag?: string;
+    loading?: "lazy" | "eager";
+    width?: number;
+    height?: number;
+    fetchpriority?: "high" | "low" | "auto";
+  };
 ---
 
 <div class="product-image-frame">
@@ -22,6 +24,7 @@ const { src, alt, rank, tag, loading = "lazy", width = 800, height = 800 } = Ast
     sizes="(max-width: 768px) 100vw, 480px"
     aspectRatio={width / height}
     decoding="async"
+    fetchpriority={fetchpriority}
     width={width}
     height={height}
   />

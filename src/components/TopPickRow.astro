@@ -17,6 +17,7 @@ export interface Props {
   rank?: number;
   schema?: boolean;
   loading?: "lazy" | "eager";
+  fetchpriority?: "high" | "low" | "auto";
   affiliateLabel?: string;
   affiliate?: string;
 }
@@ -36,6 +37,7 @@ const {
   rank,
   schema = false,
   loading = "lazy",
+  fetchpriority = "auto",
   affiliateLabel = "View on Amazon",
   affiliate = "amazon"
 } = Astro.props as Props;
@@ -90,6 +92,7 @@ const productSchema =
     src={image}
     alt={displayTitle}
     loading={loading}
+    fetchpriority={fetchpriority}
     tag={badge}
     rank={rank}
   />

@@ -321,6 +321,7 @@ if (faqSchema) {
                     src={image}
                     alt={display.schemaHeadline}
                     loading={isLcp ? "eager" : "lazy"}
+                    fetchpriority={isLcp ? "high" : "auto"}
                     widths={[240, 360, 480, 640]}
                     sizes="(max-width: 768px) 100vw, 200px"
                     aspectRatio={4 / 3}

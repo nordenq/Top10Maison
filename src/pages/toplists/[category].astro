@@ -87,12 +87,13 @@ const getCardImage = (list) =>
   <section class="section">
     <div class="page-container">
       <ul class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {sortedLists.map((list) => {
+        {sortedLists.map((list, index) => {
           const display = getToplistDisplay(list, dataIndex);
           const subcategory = dataIndex.subcategoryMap.get(`${list.category}:${list.subcategory}`);
           const child = dataIndex.childSubcategoryMap.get(`${list.category}:${list.subcategory}:${list.childsubcategory}`);
           const labelParts = [subcategory?.name, child?.name].filter(Boolean);
           const label = labelParts.join(" / ");
+          const isLcp = index === 0;
           return (
             <li class="card card-hover h-full overflow-hidden" key={list.slug}>
               <a class="block h-full" href={buildHref(list)}>
@@ -100,7 +101,8 @@ const getCardImage = (list) =>
                   src={getCardImage(list)}
                   alt={display.productName}
                   class="aspect-[4/3] w-full object-cover"
-                  loading="lazy"
+                  loading={isLcp ? "eager" : "lazy"}
+                  fetchpriority={isLcp ? "high" : "auto"}
                   widths={[320, 480, 640, 800]}
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 360px"
                   aspectRatio={4 / 3}

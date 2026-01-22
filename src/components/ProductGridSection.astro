@@ -46,6 +46,7 @@ const {
           rank={startRank + index}
           schema={schema}
           loading={index < eagerCount ? "eager" : "lazy"}
+          fetchpriority={index === 0 ? "high" : "auto"}
         />
       ))}
     </div>
@@ -72,6 +73,7 @@ const {
           rank={startRank + index}
           schema={schema}
           loading={index < eagerCount ? "eager" : "lazy"}
+          fetchpriority={index === 0 ? "high" : "auto"}
         />
         ))}
       </div>
