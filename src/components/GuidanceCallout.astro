@@ -1,0 +1,12 @@
+---
+const { title } = Astro.props as {
+  title?: string;
+};
+---
+<!-- Use for: "How we rank" explanations, editorial notes, helper/guidance content. Do not use for product cards, pricing, CTAs, "View on Amazon", hero or above-the-fold sections. -->
+<div class="bg-accent-quiet text-ink border border-ink/10 rounded-lg p-4 space-y-2">
+  {title ? <h3 class="text-sm font-semibold text-ink">{title}</h3> : null}
+  <div class="text-sm text-ink/80">
+    <slot />
+  </div>
+</div>

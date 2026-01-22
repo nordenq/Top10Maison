@@ -8,6 +8,7 @@ export default {
         accent: "#0B4F43",
         "accent-hover": "#093E3A",
         "accent-soft": "#D7F4EF",
+        "accent-quiet": "#EBF1F0",
         secondary: "#F7A6A8",
         page: "var(--bg-page)",
         soft: "var(--bg-soft)",
