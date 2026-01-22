@@ -164,7 +164,7 @@ const showFeatures = Boolean(
 );
 const showCommonMistakes = Boolean(guide?.commonMistakes?.length);
 const showHowWePicked = Boolean(bestToplist?.howWePicked?.length);
-const showFaq = Boolean(faqItems.length);
+const showFaq = Boolean(bestToplist && faqItems.length);
 const guideSectionOrder = [
   { key: "buyingGuide", show: showBuyingGuide },
   { key: "features", show: showFeatures },
@@ -218,6 +218,7 @@ const tocItems = bestToplist
       ...(faqItems.length ? [{ id: "faq", label: "FAQ" }] : [])
     ]
   : [];
+const faqSchema = showFaq ? buildFaqSchema(faqItems) : null;
 
 if (bestToplistProducts.length) {
   schema.push(
@@ -235,8 +236,8 @@ if (bestToplist) {
   schema.push(buildArticleSchema(site, bestToplist, canonical));
 }
 
-if (faqItems.length) {
-  schema.push(buildFaqSchema(faqItems));
+if (faqSchema) {
+  schema.push(faqSchema);
 }
 ---
 
