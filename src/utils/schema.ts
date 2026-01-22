@@ -212,7 +212,7 @@ export function buildFaqSchema(items: Array<{ question: string; answer: string }
 }
 
 export function buildItemListSchema(
-  items: Array<{ name: string; url: string }>,
+  items: Array<{ name: string; url: string; description?: string }>,
   options: { ordered?: boolean; itemType?: string } = {}
 ): SchemaGraph {
   const { ordered, itemType } = options;
@@ -226,7 +226,8 @@ export function buildItemListSchema(
       item: {
         ...(itemType ? { "@type": itemType } : {}),
         name: item.name,
-        url: item.url
+        url: item.url,
+        ...(item.description ? { description: item.description } : {})
       }
     }))
   };
