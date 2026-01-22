@@ -3,20 +3,20 @@
 Small Appliances
 Sub-category	SEO-Optimal Top	Reason
 
-Air Fryers	✅ Top 7	Already strong, high competition
-Coffee Makers	Top 9	Many formats (pod, drip, espresso)
-Countertop Ovens	Top 7	Fewer serious models
-Blenders	Top 9	Huge range, strong intent
-Stand Mixers	Top 7	Brand-dominated but high interest
-Electric Kettles	Top 6	Limited differentiation
-Rice Cookers	Top 7	Trust brands + tech variance
+Air Fryers	✅ Top 7	
+Coffee Makers	Top 9	
+Countertop Ovens	Top 7	
+Blenders	Top 9	
+Stand Mixers	Top 7	
+Electric Kettles	Top 6	
+Rice Cookers	Top 7	
 
 Cookware & Bakeware
-Sub-category	SEO-Optimal Top	Reason
-Cookware Sets	Top 9	Materials + price tiers
-Frying Pans	Top 9	Cast iron vs nonstick vs steel
-Sauce Pans	Top 7	Narrower use
-Dutch Ovens	Top 7	Premium-heavy
+Sub-category	
+Cookware Sets	Top 9	
+Frying Pans	Top 9	
+Sauce Pans	Top 7	
+Dutch Ovens	Top 7	
 Bakeware Sets	Top 6	Low variance
 
 Utensils & Tools
