@@ -13,3 +13,5 @@ published: true
 
 ## Quick setup tips
 Place units away from walls and corners, run on high for the first hour, then balance noise and airflow. Replace filters on the manufacturer cadence or sooner if air quality drops.
+
+Compare picks in our [air purifier toplist](/toplists/air-purifiers/).

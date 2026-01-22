@@ -13,3 +13,5 @@ published: true
 
 ## Maintenance checklist
 Empty the bin after each run, wash filters monthly if washable, and trim hair from rollers weekly to keep suction steady.
+
+Compare options in our [robot vacuum toplist](/toplists/robot-vacuums/).

@@ -13,3 +13,5 @@ published: true
 
 ## Quick safety notes
 Preheat briefly, avoid aerosol sprays that damage nonstick, and keep space around vents for airflow.
+
+See the latest picks in our [air fryer toplist](/category/kitchen/small-appliances/air-fryers/).

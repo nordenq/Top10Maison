@@ -136,6 +136,14 @@ const collectionSchema = {
 };
 
 const guide = data.childsubcategory?.guide ?? null;
+const guideLinkMap: Record<string, string> = {
+  "kitchen:small-appliances:air-fryers": "/guides/how-to-choose-an-air-fryer/"
+};
+const guideLinkKey =
+  data.category && data.subcategory && data.childsubcategory
+    ? `${data.category.slug}:${data.subcategory.slug}:${data.childsubcategory.slug}`
+    : null;
+const guideLinkHref = guideLinkKey ? guideLinkMap[guideLinkKey] : undefined;
 const requiredFaqQuestion = "How are these rankings created?";
 const requiredFaqAnswer =
   "Rankings are created using data-based review technology that analyzes publicly available product information, review trends, and availability. Each list follows the same evaluation criteria to ensure fair comparisons.";
@@ -394,6 +402,7 @@ if (faqSchema) {
               profiles={guide?.buyerProfiles ?? []}
               sections={guide?.howToChoose ?? []}
               id="how-to-choose"
+              ctaHref={guideLinkHref}
             />
           </div>
           </section>

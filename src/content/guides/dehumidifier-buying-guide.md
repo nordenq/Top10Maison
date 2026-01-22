@@ -13,3 +13,5 @@ published: true
 
 ## Placement tips
 Keep doors/windows closed in the target area, leave clearance around the intake and exhaust, and route hoses with a smooth downward run to avoid clogs.
+
+See current picks in our [dehumidifier toplist](/toplists/dehumidifiers/).
