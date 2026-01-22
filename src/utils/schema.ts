@@ -166,6 +166,36 @@ export function buildArticleSchema(site: URL, toplist: Toplist, canonicalUrl?: s
   return schema;
 }
 
+export function buildGuideArticleSchema(
+  site: URL,
+  guide: { title: string; description: string },
+  canonicalUrl: string
+): SchemaGraph {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: guide.title,
+    description: guide.description,
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": canonicalUrl
+    },
+    url: canonicalUrl,
+    author: {
+      "@type": "Organization",
+      name: "Top10Maison"
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "Top10Maison",
+      logo: {
+        "@type": "ImageObject",
+        url: new URL("/logo.svg", site).toString()
+      }
+    }
+  };
+}
+
 export function buildFaqSchema(items: Array<{ question: string; answer: string }>): SchemaGraph {
   return {
     "@context": "https://schema.org",

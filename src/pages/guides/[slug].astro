@@ -1,0 +1,56 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection, getEntryBySlug } from "astro:content";
+import { buildCanonical, buildTitle, requireSite } from "../../utils/seo";
+import { buildBreadcrumbSchema, buildGuideArticleSchema } from "../../utils/schema";
+
+export async function getStaticPaths() {
+  const guides = await getCollection("guides", ({ data }) => data.published);
+  return guides.map((guide) => ({ params: { slug: guide.slug } }));
+}
+
+const site = requireSite(Astro.site);
+const { slug } = Astro.params;
+
+if (!slug || Array.isArray(slug)) {
+  return Astro.redirect("/404", 302);
+}
+
+const guide = await getEntryBySlug("guides", slug);
+
+if (!guide || !guide.data.published) {
+  return Astro.redirect("/404", 302);
+}
+
+const { Content } = await guide.render();
+const canonical = buildCanonical(site, `/guides/${guide.slug}/`);
+const title = buildTitle(guide.data.title, "Top10Maison");
+const description = guide.data.description;
+const schema = [
+  buildBreadcrumbSchema(site, [
+    { name: "Home", path: "/" },
+    { name: "Guides", path: "/guides/" },
+    { name: guide.data.title, path: `/guides/${guide.slug}/` }
+  ]),
+  buildGuideArticleSchema(site, { title: guide.data.title, description }, canonical)
+];
+---
+
+<BaseLayout title={title} description={description} canonical={canonical} schema={schema} ogType="article">
+  <section class="section section--soft">
+    <div class="page-container space-y-3">
+      <h1 class="text-3xl font-semibold">{guide.data.title}</h1>
+      <p class="text-sm text-ink/70">{description}</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="page-container">
+      <article class="card p-6">
+        <div class="space-y-6 leading-relaxed">
+          <Content />
+        </div>
+      </article>
+    </div>
+  </section>
+</BaseLayout>
