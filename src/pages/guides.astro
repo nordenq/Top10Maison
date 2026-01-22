@@ -1,0 +1,69 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+import { buildCanonical, requireSite } from "../utils/seo";
+
+const site = requireSite(Astro.site);
+const title = "Home Product Guides – Top10Maison";
+const description =
+  "Browse published home product guides with concise overviews and neutral shopping checkpoints.";
+const canonical = buildCanonical(site, "/guides/");
+
+const guides = (await getCollection("guides", ({ data }) => data.published)).sort((a, b) =>
+  a.data.title.localeCompare(b.data.title)
+);
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: title,
+    description,
+    url: canonical
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: guides.map((guide, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      url: new URL(`/guides/${guide.slug}/`, site).toString(),
+      name: guide.data.title,
+      description: guide.data.description
+    }))
+  }
+];
+---
+
+<BaseLayout title={title} description={description} canonical={canonical} schema={schema}>
+  <section class="section section--soft">
+    <div class="page-container">
+      <h1 class="text-3xl font-semibold">Home product guides</h1>
+      <p class="mt-3 text-lg text-ink/70">
+        Explore published guides covering home and kitchen products. Each guide stays neutral and focuses on what
+        matters before you buy.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="page-container space-y-6">
+      <h2 class="text-2xl font-semibold">Published guides</h2>
+      {guides.length ? (
+        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {guides.map((guide) => (
+            <a class="card card-hover group flex h-full flex-col gap-3 p-6" href={`/guides/${guide.slug}/`}>
+              <div class="flex items-start justify-between gap-3">
+                <h3 class="text-lg font-semibold">{guide.data.title}</h3>
+                <span class="text-lg text-accent transition group-hover:text-ink" aria-hidden="true">→</span>
+              </div>
+              <p class="text-sm text-ink/70">{guide.data.description}</p>
+            </a>
+          ))}
+        </div>
+      ) : (
+        <p class="text-sm text-ink/70">Guides are coming soon.</p>
+      )}
+    </div>
+  </section>
+</BaseLayout>
