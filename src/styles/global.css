@@ -56,7 +56,7 @@
   }
 
   .card-link {
-    @apply text-ink/80 transition-colors;
+    @apply text-ink/80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface focus-visible:rounded-lg;
   }
 
   .card-link:hover,
@@ -83,8 +83,8 @@
   textarea:focus-visible,
   summary:focus-visible,
   [role="button"]:focus-visible {
-    outline: 2px solid #2563eb;
-    outline-offset: 2px;
+    @apply outline-2 outline-accent outline-offset-2;
+    outline-style: solid;
   }
 
   button {
@@ -265,11 +265,11 @@
   }
 
   .btn {
-    @apply inline-flex items-center justify-center rounded-xl px-4 py-2 font-medium text-white bg-accent hover:bg-accent-hover transition-colors shadow-sm;
+    @apply inline-flex items-center justify-center rounded-xl px-4 py-2 font-medium text-white bg-accent hover:bg-accent-hover transition-colors shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface;
   }
 
   .btn-ghost {
-    @apply inline-flex items-center justify-center rounded-xl px-4 py-2 font-medium text-ink border border-border bg-surface hover:border-accent hover:text-accent hover:bg-accent-soft transition-colors;
+    @apply inline-flex items-center justify-center rounded-xl px-4 py-2 font-medium text-ink border border-border bg-surface hover:border-accent hover:text-accent hover:bg-accent-soft transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface;
   }
 
   .article-content {
@@ -293,7 +293,7 @@
   }
 
   .nav-link {
-    @apply relative text-ink/80 transition-colors hover:text-accent;
+    @apply relative text-ink/80 transition-colors hover:text-accent focus-visible:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface rounded-md;
   }
 
   .nav-link::after {

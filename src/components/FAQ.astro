@@ -26,7 +26,7 @@ const mergedItems = hasRequired
   <div class="mt-4 divide-y divide-border">
     {mergedItems.map((item) => (
       <details class="group py-3">
-        <summary class="flex cursor-pointer items-center justify-between text-sm font-medium text-ink focus-visible:outline-none focus-visible:text-accent">
+        <summary class="flex cursor-pointer items-center justify-between text-sm font-medium text-ink focus-visible:outline-none focus-visible:text-accent focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface focus-visible:rounded-lg">
           <span>{item.question}</span>
           <span class="ml-4 inline-flex h-4 w-4 items-center justify-center text-accent transition-transform group-open:rotate-180">
             <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
