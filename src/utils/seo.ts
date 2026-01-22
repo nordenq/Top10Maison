@@ -33,12 +33,37 @@ export function buildPageTitle(options: {
   baseTitle: string;
   year: string | number;
   brand?: string;
+  qualifier?: string;
+  useQualifier?: boolean;
+  maxLength?: number;
 }): string {
-  const { bestToplistTitle, baseTitle, year, brand = "Top10Maison" } = options;
-  if (bestToplistTitle) {
-    return titleHasYear(bestToplistTitle, year)
+  const {
+    bestToplistTitle,
+    baseTitle,
+    year,
+    brand = "Top10Maison",
+    qualifier = "Sizes & Cleanup Tips",
+    useQualifier = false,
+    maxLength = 60
+  } = options;
+
+  const basePageTitle = bestToplistTitle
+    ? titleHasYear(bestToplistTitle, year)
       ? bestToplistTitle
-      : `${bestToplistTitle} (${year})`;
+      : `${bestToplistTitle} (${year})`
+    : `${baseTitle} Rankings ${year} | ${brand}`;
+
+  if (!useQualifier) {
+    return basePageTitle;
   }
-  return `${baseTitle} Rankings ${year} | ${brand}`;
+
+  const trimmedQualifier = qualifier.trim();
+  const separator = " - ";
+  const candidate = trimmedQualifier ? `${basePageTitle}${separator}${trimmedQualifier}` : basePageTitle;
+
+  if (!trimmedQualifier || candidate.length > maxLength) {
+    return basePageTitle;
+  }
+
+  return candidate;
 }

@@ -76,6 +76,13 @@ const bestToplistTitle = bestToplist?.metaTitle ?? bestToplist?.title;
 const bestToplistDescription = bestToplist?.metaDescription;
 const baseTitle = data.childsubcategory?.name ?? data.subcategory?.name ?? data.category.name;
 const title = buildPageTitle({ bestToplistTitle, baseTitle, year });
+const metaTitle = buildPageTitle({
+  bestToplistTitle,
+  baseTitle,
+  year,
+  useQualifier: Boolean(bestToplist),
+  maxLength: 60
+});
 const baseDescription =
   (data.childsubcategory && bestToplistDescription
     ? bestToplistDescription
@@ -242,7 +249,7 @@ if (faqSchema) {
 ---
 
 <Layout
-  title={title}
+  title={metaTitle}
   description={pageDescription}
   canonical={canonical}
   schema={[...schema, collectionSchema]}
