@@ -183,17 +183,21 @@ export function buildFaqSchema(items: Array<{ question: string; answer: string }
 
 export function buildItemListSchema(
   items: Array<{ name: string; url: string }>,
-  options: { ordered?: boolean } = {}
+  options: { ordered?: boolean; itemType?: string } = {}
 ): SchemaGraph {
+  const { ordered, itemType } = options;
   return {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    ...(options.ordered ? { itemListOrder: "https://schema.org/ItemListOrderAscending" } : {}),
+    ...(ordered ? { itemListOrder: "https://schema.org/ItemListOrderAscending" } : {}),
     itemListElement: items.map((item, index) => ({
       "@type": "ListItem",
       position: index + 1,
-      name: item.name,
-      url: item.url
+      item: {
+        ...(itemType ? { "@type": itemType } : {}),
+        name: item.name,
+        url: item.url
+      }
     }))
   };
 }

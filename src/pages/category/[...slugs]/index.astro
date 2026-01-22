@@ -223,11 +223,11 @@ const faqSchema = showFaq ? buildFaqSchema(faqItems) : null;
 if (bestToplistProducts.length) {
   schema.push(
     buildItemListSchema(
-      bestToplistProducts.map((product) => ({
+      bestToplistProductsWithBadges.map((product) => ({
         name: product.name,
         url: new URL(productUrl(product.slug), site).toString()
       })),
-      { ordered: true }
+      { ordered: true, itemType: "Product" }
     )
   );
 }
