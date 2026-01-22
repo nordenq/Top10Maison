@@ -138,13 +138,13 @@ const productSchema =
           href={ctaUrl}
           target="_blank"
           rel="nofollow sponsored noopener"
-          class="btn text-sm"
+          class="btn text-sm py-4 md:py-2"
           data-affiliate={affiliate === "amazon" ? "amazon" : undefined}
           aria-label={affiliateLabel}
         >
           {affiliateLabel}
         </a>
-        {reviewUrl ? <a class="btn-ghost text-sm" href={reviewUrl} data-drawer-link>Read review</a> : null}
+        {reviewUrl ? <a class="btn-ghost text-sm py-4 md:py-2" href={reviewUrl} data-drawer-link>Read review</a> : null}
       </div>
     </div>
   </div>
