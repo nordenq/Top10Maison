@@ -13,3 +13,5 @@
 - ✅ Performance: target LCP < 2.5s, CLS < 0.1; test with Lighthouse/PageSpeed
 - ✅ Mobile menu and interactive elements expose clear focus states and accessible labels
 - ✅ Environment configured from `.env.sample` (GA/GSC IDs, Oxylabs credentials, Amazon affiliate tag)
+- ✅ Schema emitted via `SEO.astro` + helper builders; ensure page provides `title`, `description`, `canonical`, `ogImage`, and schema array when applicable.
+- Assumptions: Organization/WebSite schema auto-added by SEO component; OG images derive from hero/category/toplist/product images; Oxylabs-backed product data supplies ratings/specs used in schema.
