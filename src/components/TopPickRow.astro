@@ -17,6 +17,8 @@ export interface Props {
   rank?: number;
   schema?: boolean;
   loading?: "lazy" | "eager";
+  affiliateLabel?: string;
+  affiliate?: string;
 }
 
 const {
@@ -33,7 +35,9 @@ const {
   reviewUrl,
   rank,
   schema = false,
-  loading = "lazy"
+  loading = "lazy",
+  affiliateLabel = "View on Amazon",
+  affiliate = "amazon"
 } = Astro.props as Props;
 
 const shortenTitle = (value: string, maxLength = 90, maxSegments = 3) => {
@@ -135,8 +139,10 @@ const productSchema =
           target="_blank"
           rel="nofollow sponsored noopener"
           class="btn text-sm"
+          data-affiliate={affiliate === "amazon" ? "amazon" : undefined}
+          aria-label={affiliateLabel}
         >
-          View on Amazon
+          {affiliateLabel}
         </a>
         {reviewUrl ? <a class="btn-ghost text-sm" href={reviewUrl} data-drawer-link>Read review</a> : null}
       </div>

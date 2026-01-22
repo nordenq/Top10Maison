@@ -39,7 +39,12 @@ const glanceItems = glanceKeys
       This summary reflects publicly available data analyzed using our review framework.
     </p>
     <div class="mt-4">
-      <AffiliateButton url={product.affiliateUrl} label="View on Amazon" productSlug={product.slug} />
+      <AffiliateButton
+        url={product.affiliateUrl}
+        label="View on Amazon"
+        productSlug={product.slug}
+        affiliate="amazon"
+      />
     </div>
   </section>
 

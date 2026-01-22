@@ -1,9 +1,18 @@
 ---
-const { url, label, productSlug } = Astro.props as {
+const { url, label = "View on Amazon", productSlug, affiliate = "amazon", ariaLabel } = Astro.props as {
   url: string;
-  label: string;
+  label?: string;
   productSlug: string;
+  affiliate?: string;
+  ariaLabel?: string;
 };
+
+const isAmazon = affiliate.toLowerCase() === "amazon";
+const dataAttrs = {
+  "data-product": productSlug,
+  ...(isAmazon ? { "data-affiliate": "amazon" } : {})
+};
+const computedAriaLabel = ariaLabel || label;
 ---
 
 <a
@@ -11,8 +20,8 @@ const { url, label, productSlug } = Astro.props as {
   href={url}
   rel="nofollow sponsored"
   target="_blank"
-  data-affiliate="amazon"
-  data-product={productSlug}
+  aria-label={computedAriaLabel}
+  {...dataAttrs}
 >
   {label}
 </a>
