@@ -146,16 +146,9 @@ const guideLinkKey =
     : null;
 const guideLinkHref = guideLinkKey ? guideLinkMap[guideLinkKey] : undefined;
 const showGuideLink = Boolean(guideLinkHref);
-const requiredFaqQuestion = "How are these rankings created?";
-const requiredFaqAnswer =
-  "Rankings are created using data-based review technology that analyzes publicly available product information, review trends, and availability. Each list follows the same evaluation criteria to ensure fair comparisons.";
 const rawFaqItems =
   data.childsubcategory?.faq?.length ? data.childsubcategory.faq : bestToplist?.faq ?? [];
-const faqItems = rawFaqItems.some(
-  (item) => (item.question ?? "").trim().toLowerCase() === requiredFaqQuestion.toLowerCase()
-)
-  ? rawFaqItems
-  : [{ question: requiredFaqQuestion, answer: requiredFaqAnswer }, ...rawFaqItems];
+const faqItems = rawFaqItems;
 const relatedToplists = bestToplist
   ? toplists.filter((list) => list.category === bestToplist.category && list.slug !== bestToplist.slug)
   : [];
@@ -235,8 +228,8 @@ const showQuickSummary = Boolean(guide?.quickSummary?.length);
 const tocItems = bestToplist
   ? [
       { id: "top-picks", label: "Top picks" },
-      ...(showGuideLink ? [{ id: "full-guide", label: "See the full guide" }] : []),
       ...(showQuickSummary ? [{ id: "quick-summary", label: "Quick buying summary" }] : []),
+      ...(showGuideLink ? [{ id: "full-guide", label: "See the full guide" }] : []),
       ...(!hideGuideSections && (guide?.buyerProfiles?.length || guide?.howToChoose?.length)
         ? [{ id: "how-to-choose", label: `How to choose the right ${productName}` }]
         : []),
@@ -383,6 +376,14 @@ if (faqSchema) {
         </div>
       </section>
 
+      {showQuickSummary ? (
+        <section class={highlightSectionClass()}>
+          <div class="page-container">
+            <QuickSummary bullets={guide.quickSummary} />
+          </div>
+        </section>
+      ) : null}
+
       {showGuideLink ? (
         <section class={highlightSectionClass()} id="full-guide">
           <div class="page-container">
@@ -397,14 +398,6 @@ if (faqSchema) {
                 Read the air fryer guide
               </a>
             </div>
-          </div>
-        </section>
-      ) : null}
-
-      {showQuickSummary ? (
-        <section class={highlightSectionClass()}>
-          <div class="page-container">
-            <QuickSummary bullets={guide.quickSummary} />
           </div>
         </section>
       ) : null}

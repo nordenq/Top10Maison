@@ -1,9 +1,6 @@
 ---
-import { getDataIndex } from "../utils/dataIndex";
 import { homeUrl } from "../utils/routes";
-import CategoryNav from "./CategoryNav.astro";
-
-const { categories } = getDataIndex();
+import BrowseByNav from "./BrowseByNav.astro";
 ---
 
 <header
@@ -32,9 +29,7 @@ const { categories } = getDataIndex();
     </button>
   </div>
   <div class="hidden border-t border-border bg-surface md:block">
-    <div class="page-container py-3">
-      <CategoryNav categories={categories} />
-    </div>
+    <BrowseByNav />
   </div>
   <div id="mobile-menu" class="hidden border-t border-border bg-surface md:hidden">
     <nav class="space-y-4 px-6 py-4 text-sm" aria-label="Mobile">
@@ -45,5 +40,8 @@ const { categories } = getDataIndex();
       <a class="block font-medium text-ink/80 hover:text-accent" href="/about/">About</a>
       <a class="block font-medium text-ink/80 hover:text-accent" href="/contact/">Contact</a>
     </nav>
+    <div class="mt-4 border-t border-border pt-4">
+      <BrowseByNav />
+    </div>
   </div>
 </header>

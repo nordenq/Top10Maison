@@ -1,0 +1,305 @@
+---
+import { browseByModes, defaultBrowseModeId } from "../utils/browseBy";
+
+const modes = Object.values(browseByModes);
+const fallbackMode = modes[0];
+const activeMode = browseByModes[defaultBrowseModeId] ?? fallbackMode;
+---
+
+<section
+  class="browseby block"
+  aria-label="Browse by navigation"
+  data-browseby
+  data-active-mode={activeMode?.id ?? ""}
+>
+  <div class="page-container flex flex-wrap items-center gap-3 py-2">
+    <p class="text-xs font-semibold uppercase tracking-[0.25em] text-ink/60">Browse by</p>
+    <div class="flex items-center gap-2" data-browse-mode-list aria-label="Browse modes">
+      {modes.map((mode) => (
+        <button
+          type="button"
+          class="browseby__mode"
+          data-browse-mode-trigger={mode.id}
+          aria-expanded="false"
+          aria-controls={`browseby-panel-${mode.id}`}
+        >
+          {mode.label}
+        </button>
+      ))}
+    </div>
+  </div>
+
+  <div class="hidden md:block" data-browseby-desktop>
+    <div class="page-container relative">
+      {modes.map((mode) => {
+        return (
+          <div
+            id={`browseby-panel-${mode.id}`}
+            class={`browseby__panel hidden pointer-events-none opacity-0 ${mode.id === (activeMode?.id ?? "") ? "" : "hidden"}`}
+            data-browse-panel
+            data-mode={mode.id}
+            data-default-room=""
+            aria-hidden="true"
+          >
+            <div class="browseby__panel-surface">
+              <div class="flex items-center gap-2 overflow-x-auto pb-1" role="tablist" aria-label={`${mode.label} options`}>
+                {mode.items.map((room) => (
+                  <a
+                    class="browseby__room"
+                    data-room-trigger={room.id}
+                    data-mode={mode.id}
+                    aria-selected="false"
+                    href={room.href}
+                    role="tab"
+                  >
+                    {room.label}
+                  </a>
+                ))}
+              </div>
+
+              <div class="mt-4" data-room-panels role="tabpanel">
+                {mode.items.map((room) => (
+                  <div
+                    data-room-panel={room.id}
+                    data-mode={mode.id}
+                    class="browseby__room-panel hidden"
+                    aria-label={`${room.label} categories`}
+                  >
+                    <div class="grid gap-6 md:grid-cols-[240px_1fr] lg:grid-cols-[260px_1fr]">
+                      <div class="flex flex-col gap-2" role="tablist" aria-label={`${room.label} categories`}>
+                        {room.categories.map((category) => (
+                          <a
+                            class="browseby__category"
+                            href={category.href}
+                            data-category-trigger={category.id}
+                            data-room={room.id}
+                            data-mode={mode.id}
+                            aria-selected="false"
+                            role="tab"
+                          >
+                            {category.label}
+                          </a>
+                        ))}
+                      </div>
+                      <div class="space-y-4" data-category-panels>
+                        {room.categories.map((category) => (
+                          <div
+                            data-category-panel={category.id}
+                            data-room={room.id}
+                            data-mode={mode.id}
+                            class="browseby__category-panel hidden"
+                            aria-hidden="true"
+                            aria-label={`${category.label} items`}
+                          >
+                            <div class="grid gap-2 text-sm text-ink/80 sm:grid-cols-2 lg:grid-cols-3">
+                              {category.items.map((item) => (
+                                <a class="browseby__sub" href={item.href}>{item.label}</a>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  </div>
+
+  <div class="md:hidden" data-browseby-mobile>
+    <div class="px-6 pb-4">
+      <div class="flex flex-wrap items-center gap-2">
+        {modes.map((mode) => (
+          <button
+            type="button"
+            class="browseby__mode browseby__mode--mobile"
+            data-browse-mode-trigger={mode.id}
+            aria-expanded="false"
+            aria-controls={`browseby-mobile-${mode.id}`}
+          >
+            {mode.label}
+          </button>
+        ))}
+      </div>
+    </div>
+    <div class="border-t border-border">
+      {modes.map((mode) => {
+        const firstRoom = mode.items[0];
+        return (
+          <div
+            class={mode.id === (activeMode?.id ?? "") ? "" : "hidden"}
+            data-mobile-mode={mode.id}
+            id={`browseby-mobile-${mode.id}`}
+            data-default-room={firstRoom?.id ?? ""}
+          >
+            <div class="browseby-mobile" data-mobile-stage="rooms" data-mode={mode.id}>
+              <div class="px-6 py-3">
+                <p class="text-sm font-semibold text-ink/80">Choose a {mode.label.toLowerCase()}</p>
+              </div>
+              <div class="divide-y divide-border">
+                {mode.items.map((room) => (
+                  <button
+                    type="button"
+                    class="browseby-mobile__item"
+                    data-mobile-room={room.id}
+                    data-mode={mode.id}
+                    aria-controls={`browseby-mobile-categories-${mode.id}-${room.id}`}
+                  >
+                    <span>{room.label}</span>
+                    <span aria-hidden="true">›</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {mode.items.map((room) => (
+              <div
+                class="browseby-mobile hidden"
+                data-mobile-stage="categories"
+                data-room={room.id}
+                data-mode={mode.id}
+                id={`browseby-mobile-categories-${mode.id}-${room.id}`}
+              >
+                <div class="flex items-center gap-3 px-6 py-3">
+                  <button type="button" class="browseby-mobile__back" data-mobile-back="rooms" data-mode={mode.id} aria-label="Back to rooms">
+                    ‹
+                  </button>
+                  <p class="text-sm font-semibold text-ink/80">{room.label}</p>
+                </div>
+                <div class="divide-y divide-border">
+                  {room.categories.map((category) => (
+                    <div class="flex flex-col">
+                      <button
+                        type="button"
+                        class="browseby-mobile__item"
+                        data-mobile-category={category.id}
+                        data-room={room.id}
+                        data-mode={mode.id}
+                        aria-controls={`browseby-mobile-subcategories-${mode.id}-${room.id}-${category.id}`}
+                      >
+                        <span class="font-semibold">{category.label}</span>
+                        <span aria-hidden="true">›</span>
+                      </button>
+                      <a class="browseby-mobile__link" href={category.href}>View {category.label}</a>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+
+            {mode.items.flatMap((room) =>
+              room.categories.map((category) => (
+                <div
+                  class="browseby-mobile hidden"
+                  data-mobile-stage="subcategories"
+                  data-room={room.id}
+                  data-category={category.id}
+                  data-mode={mode.id}
+                  id={`browseby-mobile-subcategories-${mode.id}-${room.id}-${category.id}`}
+                >
+                  <div class="flex items-center gap-3 px-6 py-3">
+                    <button
+                      type="button"
+                      class="browseby-mobile__back"
+                      data-mobile-back="categories"
+                      data-room={room.id}
+                      data-mode={mode.id}
+                      aria-label={`Back to ${room.label} categories`}
+                    >
+                      ‹
+                    </button>
+                    <p class="text-sm font-semibold text-ink/80">{category.label}</p>
+                  </div>
+                  <div class="divide-y divide-border">
+                    <a class="browseby-mobile__item browseby-mobile__item--link" href={category.href}>
+                      <span>View all {category.label}</span>
+                    </a>
+                    {category.items.map((item) => (
+                      <a class="browseby-mobile__item browseby-mobile__item--link" href={item.href}>
+                        <span>{item.label}</span>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        );
+      })}
+    </div>
+  </div>
+</section>
+
+<style>
+  :global(.browseby__mode) {
+    @apply rounded-full border border-border px-3 py-1 text-sm font-medium text-ink/80 transition hover:border-accent hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface;
+  }
+
+  :global(.browseby__mode[aria-expanded="true"]) {
+    @apply border-accent bg-accent-soft text-accent;
+  }
+
+  :global(.browseby__mode--active) {
+    @apply border-accent bg-accent-soft text-accent;
+  }
+
+  :global(.browseby__panel) {
+    @apply absolute left-0 right-0 top-full mt-3 z-30 opacity-0 transition-opacity duration-150 ease-out;
+  }
+
+  :global(.browseby__panel.is-open) {
+    @apply opacity-100 pointer-events-auto;
+  }
+
+  :global(.browseby__panel-surface) {
+    @apply rounded-2xl border border-border bg-surface p-4 shadow-card;
+  }
+
+  :global(.browseby__room) {
+    @apply rounded-full px-4 py-2 text-sm font-medium text-ink/80 transition hover:bg-accent-soft hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface;
+  }
+
+  :global(.browseby__room[aria-selected="true"]) {
+    @apply bg-accent-soft text-accent;
+  }
+
+  :global(.browseby__category) {
+    @apply text-base font-semibold text-ink hover:text-accent transition rounded-lg px-3 py-2;
+  }
+
+  :global(.browseby__sub) {
+    @apply text-ink/80 hover:text-accent transition;
+  }
+
+  :global(.browseby__category[aria-selected="true"]) {
+    @apply bg-accent-soft text-accent;
+  }
+
+  :global(.browseby__category-panel) {
+    @apply rounded-xl border border-border bg-surface-muted/50 p-3;
+  }
+
+  :global(.browseby-mobile) {
+    @apply bg-surface;
+  }
+
+  :global(.browseby-mobile__item) {
+    @apply flex w-full items-center justify-between px-6 py-3 text-left text-base font-medium text-ink;
+  }
+
+  :global(.browseby-mobile__item--link) {
+    @apply font-normal text-ink/80;
+  }
+
+  :global(.browseby-mobile__back) {
+    @apply rounded-full border border-border px-3 py-1 text-sm text-ink/80 transition hover:border-accent hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface;
+  }
+
+  :global(.browseby-mobile__link) {
+    @apply px-6 pb-3 text-sm text-ink/70 underline-offset-4 hover:text-accent;
+  }
+</style>

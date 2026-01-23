@@ -3,6 +3,7 @@ import type { Product, Toplist } from "../utils/data";
 import AffiliateButton from "./AffiliateButton.astro";
 import ProductImageStage from "./ProductImageStage.astro";
 import { childSubcategoryUrl, subcategoryToplistUrl } from "../utils/routes";
+import { shortProductName } from "../utils/productName";
 
 const {
   product,
@@ -15,6 +16,8 @@ const {
   relatedToplist?: Toplist | null;
   relatedChildsubcategory?: { name: string; slug: string } | null;
 };
+
+const displayName = shortProductName(product.name);
 
 const glanceKeys = [
   { label: "Capacity", key: "Capacity" },
@@ -30,11 +33,11 @@ const glanceItems = glanceKeys
 ---
 
 <article class="space-y-6" data-drawer-fragment>
-  <span class="sr-only" data-drawer-title>{product.name}</span>
+  <span class="sr-only" data-drawer-title>{displayName}</span>
   <span class="sr-only" data-drawer-verdict>{shortVerdict}</span>
 
   <section class="card p-5">
-    <ProductImageStage src={product.image} alt={product.name} />
+    <ProductImageStage src={product.image} alt={displayName} />
     <p class="mt-3 text-sm text-ink/60">
       This summary reflects publicly available data analyzed using our review framework.
     </p>
