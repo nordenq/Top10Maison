@@ -5,6 +5,7 @@ export type ChildSubcategory = {
   name: string;
   description: string;
   intentCopy: string;
+  hideGuideSections?: boolean;
   guide?: {
     quickSummary?: string[];
     buyerProfiles?: Array<{

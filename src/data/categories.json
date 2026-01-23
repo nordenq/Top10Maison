@@ -70,6 +70,7 @@
             "name": "Air Fryers",
             "description": "Fast, low-oil cooking with everyday value.",
             "intentCopy": "If you want crispy results without the fuss, start here. We\u2019ll help you choose the right size, features, and price range for how you cook at home.",
+            "hideGuideSections": true,
             "guide": {
               "quickSummary": [
                 "For most homes, a 5-6 qt air fryer offers the best balance of capacity and counter space.",

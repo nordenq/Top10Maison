@@ -136,6 +136,7 @@ const collectionSchema = {
 };
 
 const guide = data.childsubcategory?.guide ?? null;
+const hideGuideSections = Boolean(data.childsubcategory?.hideGuideSections);
 const guideLinkMap: Record<string, string> = {
   "kitchen:small-appliances:air-fryers": "/guides/how-to-choose-an-air-fryer/"
 };
@@ -144,6 +145,7 @@ const guideLinkKey =
     ? `${data.category.slug}:${data.subcategory.slug}:${data.childsubcategory.slug}`
     : null;
 const guideLinkHref = guideLinkKey ? guideLinkMap[guideLinkKey] : undefined;
+const showGuideLink = Boolean(guideLinkHref);
 const requiredFaqQuestion = "How are these rankings created?";
 const requiredFaqAnswer =
   "Rankings are created using data-based review technology that analyzes publicly available product information, review trends, and availability. Each list follows the same evaluation criteria to ensure fair comparisons.";
@@ -182,13 +184,14 @@ const topPicksIntro = bestToplist?.quickCompareCriteria?.length
     )}.`
   : bestToplist?.metaDescription;
 const whoForItems = bestToplist?.whoShouldBuy ?? [];
-const whoSkipItems = guide?.whoShouldSkip ?? [];
-const hasAudienceSplit = whoForItems.length || whoSkipItems.length;
-const showBuyingGuide = Boolean(guide?.buyerProfiles?.length || guide?.howToChoose?.length);
-const showFeatures = Boolean(
-  guide?.featuresThatMatter?.matters?.length && guide?.featuresThatMatter?.ignore?.length
-);
-const showCommonMistakes = Boolean(guide?.commonMistakes?.length);
+const whoSkipItems = hideGuideSections ? [] : guide?.whoShouldSkip ?? [];
+const hasAudienceSplit = !hideGuideSections && (whoForItems.length || whoSkipItems.length);
+const showBuyingGuide =
+  !hideGuideSections && Boolean(guide?.buyerProfiles?.length || guide?.howToChoose?.length);
+const showFeatures =
+  !hideGuideSections &&
+  Boolean(guide?.featuresThatMatter?.matters?.length && guide?.featuresThatMatter?.ignore?.length);
+const showCommonMistakes = !hideGuideSections && Boolean(guide?.commonMistakes?.length);
 const showHowWePicked = Boolean(bestToplist?.howWePicked?.length);
 const showFaq = Boolean(bestToplist && faqItems.length);
 const guideSectionOrder = [
@@ -228,20 +231,26 @@ const highlightSectionClass = () => {
   highlightUsed = true;
   return "section section--soft";
 };
+const showQuickSummary = Boolean(guide?.quickSummary?.length);
 const tocItems = bestToplist
   ? [
       { id: "top-picks", label: "Top picks" },
-      ...(guide?.quickSummary?.length ? [{ id: "quick-summary", label: "Quick buying summary" }] : []),
-      ...(guide?.buyerProfiles?.length || guide?.howToChoose?.length
+      ...(showGuideLink ? [{ id: "full-guide", label: "See the full guide" }] : []),
+      ...(showQuickSummary ? [{ id: "quick-summary", label: "Quick buying summary" }] : []),
+      ...(!hideGuideSections && (guide?.buyerProfiles?.length || guide?.howToChoose?.length)
         ? [{ id: "how-to-choose", label: `How to choose the right ${productName}` }]
         : []),
-      ...(guide?.featuresThatMatter?.matters?.length && guide?.featuresThatMatter?.ignore?.length
+      ...(!hideGuideSections &&
+      guide?.featuresThatMatter?.matters?.length &&
+      guide?.featuresThatMatter?.ignore?.length
         ? [{ id: "features-that-matter", label: "Features that matter" }]
         : []),
-      ...(guide?.commonMistakes?.length ? [{ id: "common-mistakes", label: "Common mistakes" }] : []),
+      ...(!hideGuideSections && guide?.commonMistakes?.length
+        ? [{ id: "common-mistakes", label: "Common mistakes" }]
+        : []),
       ...(hasAudienceSplit ? [{ id: "who-this-is-for", label: "Who this is for" }] : []),
-      ...(bestToplist?.howWePicked?.length ? [{ id: "how-we-picked", label: "How we picked" }] : []),
-      ...(faqItems.length ? [{ id: "faq", label: "FAQ" }] : [])
+      ...(showHowWePicked ? [{ id: "how-we-picked", label: "How we picked" }] : []),
+      ...(showFaq ? [{ id: "faq", label: "FAQ" }] : [])
     ]
   : [];
 const faqSchema = showFaq ? buildFaqSchema(faqItems) : null;
@@ -374,7 +383,25 @@ if (faqSchema) {
         </div>
       </section>
 
-      {guide?.quickSummary?.length ? (
+      {showGuideLink ? (
+        <section class={highlightSectionClass()} id="full-guide">
+          <div class="page-container">
+            <div class="card card-hover flex flex-col gap-3 p-5 md:flex-row md:items-center md:justify-between">
+              <div>
+                <h2 class="text-xl font-semibold text-ink">See the full guide</h2>
+                <p class="mt-2 text-sm text-ink/70">
+                  Get sizing charts, feature breakdowns, and cleaning tips for air fryers.
+                </p>
+              </div>
+              <a class="btn md:w-auto" href={guideLinkHref}>
+                Read the air fryer guide
+              </a>
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      {showQuickSummary ? (
         <section class={highlightSectionClass()}>
           <div class="page-container">
             <QuickSummary bullets={guide.quickSummary} />
@@ -499,12 +526,8 @@ if (faqSchema) {
           <div class="page-container">
             <section id="how-we-picked">
               <h2 class="text-2xl font-semibold text-ink">How we picked</h2>
-              <GuidanceCallout title="How we rank">
-                <p class="mt-2 text-sm text-ink/60">
-                  We analyze review data, specs, capacity, and availability, then apply editorial checks to keep
-                  comparisons consistent.
-                </p>
-                <ul class="mt-4 list-clean space-y-2 text-sm text-ink/70">
+              <GuidanceCallout>
+                <ul class="list-clean space-y-2 text-sm text-ink/70">
                   {bestToplist.howWePicked.map((item) => (
                     <li>{item}</li>
                   ))}
